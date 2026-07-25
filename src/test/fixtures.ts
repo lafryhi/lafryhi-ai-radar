@@ -3,6 +3,7 @@ import type { AnalysisResult, SourceDefinition, SourceRecord } from "@/domain/sc
 export function sourceDefinitionFixture(domain = "cloud.google.com", id = "source-definition-1"): SourceDefinition {
   return {
     id, displayName: "Official AI source", publisher: domain, canonicalDomain: domain,
+    allowedFeedDomains: [], allowedArticleDomains: [],
     homepage: `https://${domain}`, rssUrl: null, documentationUrl: null,
     category: "ai_platform", language: "en", country: "US", trustLevel: "official",
     status: "enabled", requiresHumanReview: true, notes: "Deterministic test source.",

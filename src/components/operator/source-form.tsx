@@ -10,7 +10,7 @@ export function SourceForm({ source }: { source?: SourceDefinition }) {
       <label>Publisher<input name="publisher" defaultValue={source?.publisher} minLength={2} maxLength={120} required disabled={archived} /></label>
       <label>Canonical domain<input name="canonicalDomain" defaultValue={source?.canonicalDomain} placeholder="example.com" required disabled={archived} /></label>
       <label>Homepage<input name="homepage" type="url" defaultValue={source?.homepage} placeholder="https://example.com" required disabled={archived} /></label>
-      <label>RSS URL (metadata only)<input name="rssUrl" type="url" defaultValue={source?.rssUrl || ""} disabled={archived} /></label>
+      <label>RSS URL<input name="rssUrl" type="url" defaultValue={source?.rssUrl || ""} disabled={archived} /></label>
       <label>Documentation URL<input name="documentationUrl" type="url" defaultValue={source?.documentationUrl || ""} disabled={archived} /></label>
       <label>Category<select name="category" defaultValue={source?.category || "ai_platform"} disabled={archived}><option value="ai_platform">AI platform</option><option value="model_provider">Model provider</option><option value="research_lab">Research lab</option><option value="developer_platform">Developer platform</option><option value="business_program">Business program</option><option value="public_policy">Public policy</option><option value="other">Other</option></select></label>
       <label>Language<input name="language" defaultValue={source?.language || "en"} required disabled={archived} /></label>
@@ -18,6 +18,8 @@ export function SourceForm({ source }: { source?: SourceDefinition }) {
       <label>Trust level<select name="trustLevel" defaultValue={source?.trustLevel || "official"} disabled={archived}><option value="official">Official</option><option value="verified">Verified</option><option value="community">Community</option><option value="experimental">Experimental</option><option value="blocked">Blocked</option></select></label>
       <label>Status<select name="status" defaultValue={source?.status || "disabled"} disabled={archived}><option value="enabled">Enabled</option><option value="disabled">Disabled</option><option value="blocked">Blocked</option><option value="archived">Archived</option></select></label>
     </div>
+    <label>Allowed feed domains<textarea name="allowedFeedDomains" defaultValue={source?.allowedFeedDomains.join("\n") || ""} disabled={archived} /><span className="muted">Additional trusted domains from which this source&apos;s RSS feed and redirects may be retrieved.</span></label>
+    <label>Allowed article domains<textarea name="allowedArticleDomains" defaultValue={source?.allowedArticleDomains.join("\n") || ""} disabled={archived} /><span className="muted">Additional trusted domains that feed items may link to.</span></label>
     <label>Operator notes<textarea name="notes" defaultValue={source?.notes} maxLength={2000} disabled={archived} /></label>
     <p className="notice">Human review is mandatory for every analysis from this source.</p>
     {!archived && <button>{source ? "Update source metadata" : "Register source"}</button>}

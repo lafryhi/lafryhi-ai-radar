@@ -19,11 +19,19 @@ export const SourceTrustLevelSchema = z.enum(["official", "verified", "community
 export const SourceStatusSchema = z.enum(["enabled", "disabled", "blocked", "archived"]);
 export const SourceCategorySchema = z.enum(["ai_platform", "model_provider", "research_lab", "developer_platform", "business_program", "public_policy", "other"]);
 
+export const DomainSchema = z.string().trim().toLowerCase()
+  .regex(/^(?=.{3,253}$)(?!-)[a-z0-9-]+(?:\.[a-z0-9-]+)+$/);
+const DomainAllowlistSchema = z.array(DomainSchema).max(20).default([]).superRefine((domains, context) => {
+  if (new Set(domains).size !== domains.length) context.addIssue({ code: "custom", message: "Domain allowlists cannot contain duplicates." });
+});
+
 export const SourceDefinitionSchema = z.object({
   id: z.string().min(1),
   displayName: z.string().trim().min(2).max(120),
   publisher: z.string().trim().min(2).max(120),
-  canonicalDomain: z.string().trim().toLowerCase().regex(/^(?=.{3,253}$)(?!-)[a-z0-9-]+(?:\.[a-z0-9-]+)+$/),
+  canonicalDomain: DomainSchema,
+  allowedFeedDomains: DomainAllowlistSchema,
+  allowedArticleDomains: DomainAllowlistSchema,
   homepage: z.string().url().refine((value) => new URL(value).protocol === "https:", "Homepage must use HTTPS."),
   rssUrl: z.string().url().refine((value) => new URL(value).protocol === "https:", "RSS URL must use HTTPS.").nullable(),
   documentationUrl: z.string().url().refine((value) => new URL(value).protocol === "https:", "Documentation URL must use HTTPS.").nullable(),

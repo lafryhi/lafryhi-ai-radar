@@ -79,9 +79,40 @@ describe("controlled RSS discovery", () => {
   });
 
   it("rejects unsafe hosts, literal IPs, and private DNS answers", async () => {
-    await expect(validateNetworkTarget(new URL("https://127.0.0.1/feed"), "cloud.google.com", resolver)).rejects.toMatchObject({ category: "unsafe_url" });
-    await expect(validateNetworkTarget(new URL("https://cloud.google.com/feed"), "cloud.google.com", async () => ["10.0.0.1"])).rejects.toMatchObject({ category: "unsafe_url" });
-    await expect(validateNetworkTarget(new URL("https://localhost/feed"), "localhost", resolver)).rejects.toMatchObject({ category: "unsafe_url" });
+    await expect(validateNetworkTarget(new URL("https://127.0.0.1/feed"), "cloud.google.com", [], resolver)).rejects.toMatchObject({ category: "unsafe_url" });
+    await expect(validateNetworkTarget(new URL("https://cloud.google.com/feed"), "cloud.google.com", [], async () => ["10.0.0.1"])).rejects.toMatchObject({ category: "unsafe_url" });
+    await expect(validateNetworkTarget(new URL("https://localhost/feed"), "localhost", [], resolver)).rejects.toMatchObject({ category: "unsafe_url" });
+  });
+
+  it("applies the feed allowlist strictly, including subdomains and deceptive hosts", async () => {
+    await expect(validateNetworkTarget(new URL("https://cloud.google.com/feed"), "cloud.google.com", [], resolver)).resolves.toBeUndefined();
+    await expect(validateNetworkTarget(new URL("https://feeds.publisher.example/feed"), "publisher.example", ["feeds.publisher.example"], resolver)).resolves.toBeUndefined();
+    await expect(validateNetworkTarget(new URL("https://sub.feeds.publisher.example/feed"), "publisher.example", ["feeds.publisher.example"], resolver)).resolves.toBeUndefined();
+    await expect(validateNetworkTarget(new URL("https://articles.example/feed"), "publisher.example", [], resolver)).rejects.toMatchObject({ reason: "unsafe_url" });
+    await expect(validateNetworkTarget(new URL("https://cloud.google.com.evil.example/feed"), "cloud.google.com", [], resolver)).rejects.toMatchObject({ reason: "unsafe_url" });
+  });
+
+  it("accepts redirects only when every feed target is explicitly trusted", async () => {
+    const repository = await repositoryWith({ allowedFeedDomains: ["feeds.google.example"] });
+    const fetcher = vi.fn(async (url: URL | RequestInfo) => String(url).includes("cloud.google.com")
+      ? response("", { location: "https://feeds.google.example/rss.xml" }, 302)
+      : response(rss(item("https://cloud.google.com/blog/redirected"))));
+    const run = await discoverRss(repository, "manual", "source-definition-1", { resolver, fetcher: fetcher as typeof fetch });
+    expect(run.candidatesAccepted).toBe(1);
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps feed and article domain policies separate", async () => {
+    const repository = await repositoryWith({ allowedFeedDomains: ["feeds.example.com"], allowedArticleDomains: ["articles.example.com"], rssUrl: "https://feeds.example.com/rss.xml" });
+    const feed = rss(item("https://articles.example.com/accepted", "accepted") + item("https://feeds.example.com/not-an-article", "feed-only") + item("https://unrelated.example/rejected", "unrelated"));
+    const run = await discoverRss(repository, "manual", "source-definition-1", { resolver, fetcher: vi.fn(async () => response(feed)) as typeof fetch });
+    expect(run).toMatchObject({ candidatesAccepted: 1, validationFailures: 2 });
+  });
+
+  it("accepts the Google Cloud split feed-domain configuration", async () => {
+    const repository = await repositoryWith({ canonicalDomain: "cloud.google.com", allowedFeedDomains: ["cloudblog.withgoogle.com"], allowedArticleDomains: [], rssUrl: "https://cloudblog.withgoogle.com/rss/" });
+    const run = await discoverRss(repository, "manual", "source-definition-1", { resolver, fetcher: vi.fn(async () => response(rss(item("https://cloud.google.com/blog/products/data-analytics/example/")))) as typeof fetch });
+    expect(run.candidatesAccepted).toBe(1);
   });
 
   it("isolates out-of-domain and malformed items while accepting a valid item", async () => {

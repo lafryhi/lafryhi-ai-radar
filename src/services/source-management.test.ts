@@ -5,13 +5,16 @@ import { createSourceDefinition, getSourceStatistics, listManagedSources, normal
 import { ingestSource, IngestionError } from "./ingestion";
 import { runPipeline } from "./pipeline";
 import { reviewAnalysis } from "./review";
-import { analysisFixture } from "@/test/fixtures";
+import { analysisFixture, sourceDefinitionFixture, sourceFixture } from "@/test/fixtures";
 import type { AiAnalyzer } from "./ai";
+import { SourceDefinitionSchema } from "@/domain/schemas";
 
 const input = {
   displayName: "Google Cloud AI",
   publisher: "Google Cloud",
   canonicalDomain: "cloud.google.com",
+  allowedFeedDomains: ["cloudblog.withgoogle.com"],
+  allowedArticleDomains: ["blog.google"],
   homepage: "https://cloud.google.com",
   rssUrl: null,
   documentationUrl: "https://cloud.google.com/docs",
@@ -39,6 +42,8 @@ describe("source management", () => {
     expect(updated.id).toBe(created.id);
     expect(updated.createdAt).toBe(created.createdAt);
     expect(updated.displayName).toContain("Vertex AI");
+    expect(updated.allowedFeedDomains).toEqual(input.allowedFeedDomains);
+    expect(updated.allowedArticleDomains).toEqual(input.allowedArticleDomains);
   });
 
   it("enables, disables, blocks, and archives with deterministic safety", async () => {
@@ -79,6 +84,14 @@ describe("source management", () => {
     const pipeline = await runPipeline("https://cloud.google.com/blog/test", repository, analyzer, fetcher as typeof fetch);
     await reviewAnalysis(repository, pipeline.analysis.id, "approved", "Verified by human");
     await expect(getSourceStatistics(repository, source)).resolves.toMatchObject({ processedArticles: 1, approved: 1, rejected: 0 });
+  });
+
+  it("uses allowed article domains for legacy URL-based statistics matching", async () => {
+    vi.spyOn(console, "info").mockImplementation(() => undefined);
+    const repository = new MemoryRepository();
+    const source = await createSourceDefinition(repository, input);
+    await repository.saveSource({ ...sourceFixture, sourceDefinitionId: undefined, sourceUrl: "https://news.blog.google/announcement" });
+    await expect(getSourceStatistics(repository, source)).resolves.toMatchObject({ processedArticles: 1 });
   });
 
   it("keeps operator authorization server-side and logs no secret fields", async () => {
@@ -133,5 +146,15 @@ describe("source management", () => {
     expect(JSON.stringify(events)).not.toMatch(/operator-token|authorization|credential|cookie|raw xml/i);
     expect(await repository.listRssCandidates(source.id)).toHaveLength(0);
     expect(await repository.listPublishedItems()).toHaveLength(0);
+  });
+  it("parses legacy sources with empty allowlists and validates new domain lists", () => {
+    const legacy = { ...sourceDefinitionFixture() } as Record<string, unknown>;
+    delete legacy.allowedFeedDomains;
+    delete legacy.allowedArticleDomains;
+    expect(SourceDefinitionSchema.parse(legacy)).toMatchObject({ allowedFeedDomains: [], allowedArticleDomains: [] });
+    expect(SourceDefinitionSchema.parse({ ...legacy, allowedFeedDomains: ["Feeds.Example.com"], allowedArticleDomains: ["articles.example.com"] })).toMatchObject({ allowedFeedDomains: ["feeds.example.com"] });
+    expect(() => SourceDefinitionSchema.parse({ ...legacy, allowedFeedDomains: ["not a domain"] })).toThrow();
+    expect(() => SourceDefinitionSchema.parse({ ...legacy, allowedFeedDomains: ["feeds.example.com", "FEEDS.EXAMPLE.COM"] })).toThrow();
+    expect(() => SourceDefinitionSchema.parse({ ...legacy, allowedFeedDomains: Array.from({ length: 21 }, (_, index) => `feed${index}.example.com`) })).toThrow();
   });
 });

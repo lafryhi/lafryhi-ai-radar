@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { z } from "zod";
 import { SourceDefinitionSchema, type SourceDefinition, type SourceStatus } from "@/domain/schemas";
+import { matchesAllowedDomain } from "@/domain/domain-policy";
 import type { RadarRepository } from "@/persistence/repository";
 import { logSourceEvent } from "./source-events";
 
@@ -12,6 +13,8 @@ export const SourceInputSchema = z.object({
   displayName: SourceDefinitionSchema.shape.displayName,
   publisher: SourceDefinitionSchema.shape.publisher,
   canonicalDomain: SourceDefinitionSchema.shape.canonicalDomain,
+  allowedFeedDomains: SourceDefinitionSchema.shape.allowedFeedDomains,
+  allowedArticleDomains: SourceDefinitionSchema.shape.allowedArticleDomains,
   homepage: SourceDefinitionSchema.shape.homepage,
   rssUrl: SourceDefinitionSchema.shape.rssUrl,
   documentationUrl: SourceDefinitionSchema.shape.documentationUrl,
@@ -140,7 +143,7 @@ export async function getSourceStatistics(repository: RadarRepository, source: S
     repository.listAnalyses(SOURCE_QUERY_LIMIT),
     repository.listReviews(SOURCE_QUERY_LIMIT),
   ]);
-  const matched = articles.filter((x) => x.sourceDefinitionId === source.id || new URL(x.sourceUrl).hostname === source.canonicalDomain || new URL(x.sourceUrl).hostname.endsWith(`.${source.canonicalDomain}`));
+  const matched = articles.filter((x) => x.sourceDefinitionId === source.id || matchesAllowedDomain(new URL(x.sourceUrl).hostname, source.canonicalDomain, source.allowedArticleDomains));
   const articleIds = new Set(matched.map((x) => x.id));
   const matchedRuns = runs.filter((x) => articleIds.has(x.sourceRecordId));
   const analysisIds = new Set(analyses.filter((x) => articleIds.has(x.sourceRecordId)).map((x) => x.id));

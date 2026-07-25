@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   const now = new Date().toISOString();
   await repository.saveSourceDefinition(SourceDefinitionSchema.parse({
     id: "rss-diagnostic-source", displayName: "RSS diagnostic fixture", publisher: "LAFRYHI AI Radar",
-    canonicalDomain: "diagnostic.example", homepage: "https://diagnostic.example", rssUrl: "https://diagnostic.example/feed.xml",
+    canonicalDomain: "diagnostic.example", allowedFeedDomains: [], allowedArticleDomains: [], homepage: "https://diagnostic.example", rssUrl: "https://diagnostic.example/feed.xml",
     documentationUrl: null, category: "ai_platform", language: "en", country: "US", trustLevel: "official",
     status: "enabled", requiresHumanReview: true, notes: "Non-persistent deterministic runtime diagnostic.", createdAt: now, updatedAt: now,
   }));
@@ -30,5 +30,6 @@ export async function POST(request: NextRequest) {
     second: { status: second.status, accepted: second.candidatesAccepted, duplicates: second.duplicates },
     candidateCount: candidates.length,
     publicationCount: published.length,
+    domains: { canonicalDomain: "diagnostic.example", allowedFeedDomains: [], allowedArticleDomains: [] },
   });
 }

@@ -65,10 +65,13 @@ function sourceInput(form: FormData): SourceInput {
     const value = String(form.get(name) || "").trim();
     return value || null;
   };
+  const domainList = (name: string) => [...new Set(String(form.get(name) || "").split(/[,\r\n]+/).map((value) => value.trim().toLowerCase()).filter(Boolean))];
   return {
     displayName: String(form.get("displayName") || ""),
     publisher: String(form.get("publisher") || ""),
     canonicalDomain: String(form.get("canonicalDomain") || ""),
+    allowedFeedDomains: domainList("allowedFeedDomains"),
+    allowedArticleDomains: domainList("allowedArticleDomains"),
     homepage: String(form.get("homepage") || ""),
     rssUrl: nullableUrl("rssUrl"),
     documentationUrl: nullableUrl("documentationUrl"),

@@ -2,6 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { isIP } from "node:net";
 import { resolve4, resolve6 } from "node:dns/promises";
 import { RssCandidateSchema, RssDiscoveryRunSchema, type RssDiscoveryRun, type SourceDefinition } from "@/domain/schemas";
+import { matchesAllowedDomain } from "@/domain/domain-policy";
 import type { RadarRepository } from "@/persistence/repository";
 import { TRUSTED_SOURCE_LEVELS } from "./source-management";
 import { logRssEvent } from "./rss-events";
@@ -25,7 +26,6 @@ export class RssDiscoveryError extends Error {
 }
 
 function hash(value: string) { return createHash("sha256").update(value).digest("hex"); }
-function sameDomain(hostname: string, canonicalDomain: string) { return hostname === canonicalDomain || hostname.endsWith(`.${canonicalDomain}`); }
 export function normalizeArticleUrl(input: string) {
   const url = new URL(input);
   if (url.protocol !== "https:" || url.username || url.password) throw new RssDiscoveryError("Discovered URL is unsafe.", "unsafe_url", "unsafe_url");
@@ -52,8 +52,8 @@ async function productionResolver(hostname: string) {
   const [v4, v6] = await Promise.all([resolve4(hostname).catch(() => []), resolve6(hostname).catch(() => [])]);
   return [...v4, ...v6];
 }
-export async function validateNetworkTarget(url: URL, canonicalDomain: string, resolver: Resolver = productionResolver) {
-  if (url.protocol !== "https:" || url.username || url.password || isIP(url.hostname) || url.hostname === "localhost" || !sameDomain(url.hostname, canonicalDomain)) {
+export async function validateNetworkTarget(url: URL, canonicalDomain: string, additionalDomains: string[] = [], resolver: Resolver = productionResolver) {
+  if (url.protocol !== "https:" || url.username || url.password || isIP(url.hostname) || url.hostname === "localhost" || !matchesAllowedDomain(url.hostname, canonicalDomain, additionalDomains)) {
     throw new RssDiscoveryError("Feed target is unsafe.", "unsafe_url", "unsafe_url");
   }
   const addresses = await resolver(url.hostname);
@@ -108,7 +108,7 @@ async function fetchFeed(source: SourceDefinition, dependencies: DiscoveryDepend
   const resolver = dependencies.resolver ?? productionResolver;
   let current = new URL(source.rssUrl);
   for (let redirects = 0; redirects <= RSS_LIMITS.maxRedirects; redirects += 1) {
-    await validateNetworkTarget(current, source.canonicalDomain, resolver);
+    await validateNetworkTarget(current, source.canonicalDomain, source.allowedFeedDomains, resolver);
     const response = await fetcher(current, { redirect: "manual", signal: AbortSignal.timeout(RSS_LIMITS.timeoutMs), headers: { "user-agent": "LAFRYHI-AI-Radar-RSS/1.0" } });
     if (response.status >= 300 && response.status < 400) {
       const location = response.headers.get("location");
@@ -172,7 +172,7 @@ export async function discoverRss(repository: RadarRepository, trigger: "manual"
         try {
           if (!item.title || !item.articleUrl) throw new RssDiscoveryError("Feed item is missing required metadata.", "malformed_feed", "malformed_feed");
           const normalizedUrl = normalizeArticleUrl(new URL(item.articleUrl, source.rssUrl).toString());
-          if (!sameDomain(new URL(normalizedUrl).hostname, source.canonicalDomain)) throw new RssDiscoveryError("Article URL is outside the source domain.", "unsafe_url", "outside_domain");
+          if (!matchesAllowedDomain(new URL(normalizedUrl).hostname, source.canonicalDomain, source.allowedArticleDomains)) throw new RssDiscoveryError("Article URL is outside the source domain.", "unsafe_url", "outside_domain");
           const feedHash = item.feedItemId ? hash(item.feedItemId) : null;
           const duplicateUrl = seenUrls.has(normalizedUrl) || await repository.findSourceByUrl(normalizedUrl) || await repository.findRssCandidateByUrl(normalizedUrl);
           const duplicateFeed = feedHash && (seenFeedIds.has(`${source.id}:${feedHash}`) || await repository.findRssCandidateByFeedId(source.id, feedHash));
