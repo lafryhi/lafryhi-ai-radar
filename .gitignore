@@ -1,0 +1,14 @@
+node_modules/
+.next/
+.data/
+.env*
+coverage/
+*.log
+*.tsbuildinfo
+.DS_Store
+.agents/
+.checkpoint*/
+.phase*/
+*.backup*
+*.tar.gz
+rss.xml
