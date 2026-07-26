@@ -1,4 +1,41 @@
-import type { ProcessingRun, RadarItem, ReviewDecision, RssCandidate, RssDiscoveryRun, SourceDefinition, SourceRecord, StoredAnalysis } from "@/domain/schemas";
+import { RadarItemSchema, ReviewDecisionSchema, type ProcessingRun, type RadarItem, type ReviewDecision, type RssCandidate, type RssDiscoveryRun, type SourceDefinition, type SourceRecord, type StoredAnalysis } from "@/domain/schemas";
+
+export class ApprovalIntegrityError extends Error {}
+
+export interface AtomicApprovalResult {
+  decision: ReviewDecision;
+  item: RadarItem;
+  idempotent: boolean;
+}
+
+export function buildApprovalRecords(analysis: StoredAnalysis, source: SourceRecord, review: ReviewDecision, note: string, reviewedAt: string) {
+  const decision = ReviewDecisionSchema.parse({
+    ...review,
+    status: "approved",
+    reviewerNote: note.trim(),
+    reviewedAt,
+  });
+  const item = RadarItemSchema.parse({
+    id: `radar-${analysis.id}`,
+    publicTitle: source.title,
+    publicSummary: analysis.summary,
+    whyItMatters: analysis.whyItMatters,
+    recommendedAction: analysis.recommendedAction,
+    category: analysis.category,
+    relevanceScore: analysis.relevanceScore,
+    confidenceScore: analysis.confidenceScore,
+    originalSourceUrl: source.sourceUrl,
+    sourceName: source.sourceName,
+    sourcePublishedAt: source.publishedAt,
+    publicationState: "published",
+    sourceRecordId: source.id,
+    processingRunId: analysis.processingRunId,
+    analysisResultId: analysis.id,
+    reviewDecisionId: decision.id,
+    publishedAt: reviewedAt,
+  });
+  return { decision, item };
+}
 
 export interface OperatorCounts {
   pendingReviews: number;
@@ -39,6 +76,7 @@ export interface RadarRepository {
   listReviews(limit?: number): Promise<ReviewDecision[]>;
   saveRadarItem(value: RadarItem): Promise<void>;
   findRadarItemByAnalysis(id: string): Promise<RadarItem | null>;
+  approveReviewAndPublish(analysisId: string, note: string, reviewedAt: string): Promise<AtomicApprovalResult>;
   listPublishedItems(limit?: number): Promise<RadarItem[]>;
   getOperatorCounts(): Promise<OperatorCounts>;
 }

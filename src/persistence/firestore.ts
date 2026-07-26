@@ -1,6 +1,6 @@
 import { Firestore } from "@google-cloud/firestore";
 import { ProcessingRunSchema, RadarItemSchema, ReviewDecisionSchema, RssCandidateSchema, RssDiscoveryRunSchema, SourceDefinitionSchema, SourceRecordSchema, StoredAnalysisSchema, type ProcessingRun, type RadarItem, type ReviewDecision, type RssCandidate, type RssDiscoveryRun, type SourceDefinition, type SourceRecord, type StoredAnalysis } from "@/domain/schemas";
-import type { RadarRepository } from "./repository";
+import { ApprovalIntegrityError, buildApprovalRecords, type RadarRepository } from "./repository";
 
 export class FirestoreRepository implements RadarRepository {
   private db = new Firestore({ databaseId: process.env.FIRESTORE_DATABASE_ID || "(default)" });
@@ -39,6 +39,50 @@ export class FirestoreRepository implements RadarRepository {
   async listReviews(limit = 100) { return (await this.col("reviewDecisions").limit(limit).get()).docs.map((d) => ReviewDecisionSchema.parse(d.data())); }
   async saveRadarItem(v: RadarItem) { const x = RadarItemSchema.parse(v); await this.col("radarItems").doc(x.id).set(x); }
   async findRadarItemByAnalysis(id: string) { const s = await this.col("radarItems").where("analysisResultId", "==", id).limit(1).get(); return s.empty ? null : RadarItemSchema.parse(s.docs[0].data()); }
+  async approveReviewAndPublish(analysisId: string, note: string, reviewedAt: string) {
+    return this.db.runTransaction(async (transaction) => {
+      const analysisRef = this.col("analysisResults").doc(analysisId);
+      const analysisSnapshot = await transaction.get(analysisRef);
+      if (!analysisSnapshot.exists) throw new ApprovalIntegrityError("Approval integrity error: analysis not found.");
+      const analysis = StoredAnalysisSchema.parse(analysisSnapshot.data());
+
+      const sourceRef = this.col("sourceRecords").doc(analysis.sourceRecordId);
+      const sourceSnapshot = await transaction.get(sourceRef);
+      if (!sourceSnapshot.exists) throw new ApprovalIntegrityError("Approval integrity error: source record not found.");
+      const source = SourceRecordSchema.parse(sourceSnapshot.data());
+
+      const reviewQuery = this.col("reviewDecisions").where("analysisResultId", "==", analysisId);
+      const reviewSnapshot = await transaction.get(reviewQuery);
+      if (reviewSnapshot.size === 0) throw new ApprovalIntegrityError("Approval integrity error: no review exists for this analysis.");
+      if (reviewSnapshot.size > 1) throw new ApprovalIntegrityError("Approval integrity error: multiple reviews exist for this analysis.");
+      const reviewDocument = reviewSnapshot.docs[0];
+      const review = ReviewDecisionSchema.parse(reviewDocument.data());
+
+      const radarQuery = this.col("radarItems").where("analysisResultId", "==", analysisId);
+      const radarSnapshot = await transaction.get(radarQuery);
+      if (radarSnapshot.size > 1) throw new ApprovalIntegrityError("Approval integrity error: multiple Radar items exist for this analysis.");
+      const existingDocument = radarSnapshot.docs[0];
+      const existingItem = existingDocument ? RadarItemSchema.parse(existingDocument.data()) : null;
+      const expectedItemId = `radar-${analysisId}`;
+      if (existingItem && existingItem.id !== expectedItemId) {
+        throw new ApprovalIntegrityError("Approval integrity error: the existing Radar item has a non-deterministic identifier.");
+      }
+      if (review.status === "approved") {
+        if (!existingItem) throw new ApprovalIntegrityError("Approval integrity error: approved review is missing its Radar item.");
+        return { decision: review, item: existingItem, idempotent: true };
+      }
+      if (existingItem) throw new ApprovalIntegrityError("Approval integrity error: an unpublished review already has a Radar item.");
+      if (review.status === "rejected") throw new ApprovalIntegrityError("Approval integrity error: a rejected review cannot be published.");
+      if (!["pending", "needs_changes"].includes(review.status)) {
+        throw new ApprovalIntegrityError("Approval integrity error: review status cannot transition to approved.");
+      }
+
+      const records = buildApprovalRecords(analysis, source, review, note, reviewedAt);
+      transaction.set(reviewDocument.ref, records.decision);
+      transaction.set(this.col("radarItems").doc(records.item.id), records.item);
+      return { ...records, idempotent: false };
+    });
+  }
   async listPublishedItems(limit = 100) { const s = await this.col("radarItems").where("publicationState", "==", "published").limit(limit).get(); return s.docs.map((d) => RadarItemSchema.parse(d.data())).sort((a,b) => b.publishedAt.localeCompare(a.publishedAt)); }
   async getOperatorCounts() {
     const [pending, needsChanges, approved, rejected, published, failed, completed, sources] = await Promise.all([

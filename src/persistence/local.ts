@@ -79,6 +79,12 @@ export class LocalFileRepository extends MemoryRepository {
   override async listReviews(limit?: number) { await this.load(); return super.listReviews(limit); }
   override async saveRadarItem(v: Parameters<MemoryRepository["saveRadarItem"]>[0]) { await this.load(); await super.saveRadarItem(v); await this.flush(); }
   override async findRadarItemByAnalysis(id: string) { await this.load(); return super.findRadarItemByAnalysis(id); }
+  override async approveReviewAndPublish(analysisId: string, note: string, reviewedAt: string) {
+    await this.load();
+    const result = await super.approveReviewAndPublish(analysisId, note, reviewedAt);
+    if (!result.idempotent) await this.flush();
+    return result;
+  }
   override async listPublishedItems(limit?: number) { await this.load(); return super.listPublishedItems(limit); }
   override async getOperatorCounts() { await this.load(); return super.getOperatorCounts(); }
 }

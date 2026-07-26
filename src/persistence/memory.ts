@@ -1,5 +1,5 @@
 import { ProcessingRunSchema, RadarItemSchema, ReviewDecisionSchema, RssCandidateSchema, RssDiscoveryRunSchema, SourceDefinitionSchema, SourceRecordSchema, StoredAnalysisSchema, type ProcessingRun, type RadarItem, type ReviewDecision, type RssCandidate, type RssDiscoveryRun, type SourceDefinition, type SourceRecord, type StoredAnalysis } from "@/domain/schemas";
-import type { RadarRepository } from "./repository";
+import { ApprovalIntegrityError, buildApprovalRecords, type AtomicApprovalResult, type RadarRepository } from "./repository";
 
 export class MemoryRepository implements RadarRepository {
   protected sourceDefinitions = new Map<string, SourceDefinition>();
@@ -39,6 +39,39 @@ export class MemoryRepository implements RadarRepository {
   async listReviews(limit = 100) { return [...this.reviews.values()].sort((a, b) => (b.reviewedAt ?? "").localeCompare(a.reviewedAt ?? "")).slice(0, limit); }
   async saveRadarItem(value: RadarItem) { const parsed = RadarItemSchema.parse(value); this.items.set(parsed.id, parsed); }
   async findRadarItemByAnalysis(id: string) { return [...this.items.values()].find((x) => x.analysisResultId === id) ?? null; }
+  protected async commitApproval(decision: ReviewDecision, item: RadarItem) {
+    this.reviews.set(decision.id, decision);
+    this.items.set(item.id, item);
+  }
+  async approveReviewAndPublish(analysisId: string, note: string, reviewedAt: string): Promise<AtomicApprovalResult> {
+    const analysis = this.analyses.get(analysisId);
+    if (!analysis) throw new ApprovalIntegrityError("Approval integrity error: analysis not found.");
+    const source = this.sources.get(analysis.sourceRecordId);
+    if (!source) throw new ApprovalIntegrityError("Approval integrity error: source record not found.");
+    const reviews = [...this.reviews.values()].filter((review) => review.analysisResultId === analysisId);
+    if (reviews.length === 0) throw new ApprovalIntegrityError("Approval integrity error: no review exists for this analysis.");
+    if (reviews.length > 1) throw new ApprovalIntegrityError("Approval integrity error: multiple reviews exist for this analysis.");
+    const review = reviews[0];
+    const matchingItems = [...this.items.values()].filter((item) => item.analysisResultId === analysisId);
+    if (matchingItems.length > 1) throw new ApprovalIntegrityError("Approval integrity error: multiple Radar items exist for this analysis.");
+    const existingItem = matchingItems[0] ?? null;
+    const expectedItemId = `radar-${analysisId}`;
+    if (existingItem && existingItem.id !== expectedItemId) {
+      throw new ApprovalIntegrityError("Approval integrity error: the existing Radar item has a non-deterministic identifier.");
+    }
+    if (review.status === "approved") {
+      if (!existingItem) throw new ApprovalIntegrityError("Approval integrity error: approved review is missing its Radar item.");
+      return { decision: review, item: existingItem, idempotent: true };
+    }
+    if (existingItem) throw new ApprovalIntegrityError("Approval integrity error: an unpublished review already has a Radar item.");
+    if (review.status === "rejected") throw new ApprovalIntegrityError("Approval integrity error: a rejected review cannot be published.");
+    if (!["pending", "needs_changes"].includes(review.status)) {
+      throw new ApprovalIntegrityError("Approval integrity error: review status cannot transition to approved.");
+    }
+    const records = buildApprovalRecords(analysis, source, review, note, reviewedAt);
+    await this.commitApproval(records.decision, records.item);
+    return { ...records, idempotent: false };
+  }
   async listPublishedItems(limit = 100) { return [...this.items.values()].filter((x) => x.publicationState === "published").sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)).slice(0, limit); }
   async getOperatorCounts() {
     const reviews = [...this.reviews.values()];
