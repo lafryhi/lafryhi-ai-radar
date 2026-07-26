@@ -3,6 +3,8 @@ import { z } from "zod";
 import { AnalysisResultSchema, GeminiAnalysisOutputSchema, type AnalysisResult, type SourceRecord, type StoredAnalysis } from "@/domain/schemas";
 
 export const PROMPT_VERSION = "radar-decision-intelligence-v2";
+export const GEMINI_MAX_OUTPUT_TOKENS = 4096;
+export const GEMINI_THINKING_BUDGET = 1024;
 const stringArraySchema = { type: "array", items: { type: "string" } } as const;
 const scoreSchema = { type: "integer" } as const;
 
@@ -137,6 +139,21 @@ function responseIsFenced(text: string) {
   return text.replace(/^\uFEFF/, "").trimStart().startsWith("```");
 }
 
+function logGeminiResponseFailure(
+  event: "gemini.response_parse_failed" | "gemini.response_truncated",
+  text: string,
+  candidates: Array<{ finishReason?: unknown; content?: { parts?: unknown[] } }> | undefined,
+) {
+  console.warn(JSON.stringify({
+    event,
+    responseLength: text.length,
+    fenced: responseIsFenced(text),
+    candidateCount: candidates?.length ?? 0,
+    partCount: candidates?.reduce((count, candidate) => count + (candidate.content?.parts?.length ?? 0), 0) ?? 0,
+    finishReason: candidates?.[0]?.finishReason ?? null,
+  }));
+}
+
 export function parseGeminiJson(text: string): unknown {
   let json = text.replace(/^\uFEFF/, "").trim();
   if (!json) throw new Error("Gemini returned malformed JSON.");
@@ -236,7 +253,7 @@ function normalizeDecisionIntelligence(result: z.infer<typeof GeminiAnalysisOutp
 
 export class VertexAiAnalyzer implements AiAnalyzer {
   private model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-  private maxOutputTokens = Number(process.env.GEMINI_MAX_OUTPUT_TOKENS || "2048");
+  private maxOutputTokens = Number(process.env.GEMINI_MAX_OUTPUT_TOKENS || String(GEMINI_MAX_OUTPUT_TOKENS));
   private client: GoogleGenAI;
   constructor() {
     const project = process.env.GOOGLE_CLOUD_PROJECT;
@@ -274,23 +291,21 @@ ${JSON.stringify(previousCoverage)}`,
         responseJsonSchema: GEMINI_RESPONSE_JSON_SCHEMA,
         temperature: 0.1,
         maxOutputTokens: this.maxOutputTokens,
+        thinkingConfig: { thinkingBudget: GEMINI_THINKING_BUDGET },
       },
     });
-    const text = response.text;
+    const text = response.text ?? "";
+    if (response.candidates?.[0]?.finishReason === "MAX_TOKENS") {
+      logGeminiResponseFailure("gemini.response_truncated", text, response.candidates);
+      throw new Error("Gemini response was truncated after reaching max output tokens.");
+    }
     if (!text) throw new Error("Vertex AI returned no text.");
     const usage = response.usageMetadata;
     let result: AnalysisResult;
     try {
       result = parseGeminiResponse(text);
     } catch (error) {
-      console.warn(JSON.stringify({
-        event: "gemini.response_parse_failed",
-        responseLength: text.length,
-        fenced: responseIsFenced(text),
-        candidateCount: response.candidates?.length ?? 0,
-        partCount: response.candidates?.reduce((count, candidate) => count + (candidate.content?.parts?.length ?? 0), 0) ?? 0,
-        finishReason: response.candidates?.[0]?.finishReason ?? null,
-      }));
+      logGeminiResponseFailure("gemini.response_parse_failed", text, response.candidates);
       throw error;
     }
     return {

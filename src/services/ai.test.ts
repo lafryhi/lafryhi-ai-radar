@@ -1,12 +1,25 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
-import { GEMINI_RESPONSE_JSON_SCHEMA, parseGeminiJson, parseGeminiResponse, VertexAiAnalyzer } from "./ai";
+import {
+  GEMINI_MAX_OUTPUT_TOKENS,
+  GEMINI_RESPONSE_JSON_SCHEMA,
+  GEMINI_THINKING_BUDGET,
+  parseGeminiJson,
+  parseGeminiResponse,
+  VertexAiAnalyzer,
+} from "./ai";
 import { AnalysisResultSchema, GeminiAnalysisOutputSchema } from "@/domain/schemas";
 import { geminiAnalysisFixture, sourceFixture } from "@/test/fixtures";
 
-const { generateContent } = vi.hoisted(() => ({ generateContent: vi.fn() }));
+const { clientConstructor, generateContent } = vi.hoisted(() => ({
+  clientConstructor: vi.fn(),
+  generateContent: vi.fn(),
+}));
 vi.mock("@google/genai", () => ({
   GoogleGenAI: class {
+    constructor(options: unknown) {
+      clientConstructor(options);
+    }
     models = { generateContent };
   },
 }));
@@ -14,6 +27,7 @@ vi.mock("@google/genai", () => ({
 describe("Gemini response parsing", () => {
   afterEach(() => {
     generateContent.mockReset();
+    clientConstructor.mockReset();
     vi.restoreAllMocks();
     delete process.env.GOOGLE_CLOUD_PROJECT;
   });
@@ -122,6 +136,50 @@ describe("Gemini response parsing", () => {
     expect(result.result.category).toBe(geminiAnalysisFixture.category);
     expect(result.model).toBe("gemini-2.5-flash");
     expect(result.tokenUsage?.totalTokens).toBe(30);
+    expect(clientConstructor).toHaveBeenCalledWith(expect.objectContaining({
+      location: "us-central1",
+    }));
+    expect(generateContent.mock.calls[0][0]).toMatchObject({
+      model: "gemini-2.5-flash",
+      config: {
+        maxOutputTokens: GEMINI_MAX_OUTPUT_TOKENS,
+        thinkingConfig: { thinkingBudget: GEMINI_THINKING_BUDGET },
+        temperature: 0.1,
+        responseMimeType: "application/json",
+        responseJsonSchema: GEMINI_RESPONSE_JSON_SCHEMA,
+      },
+    });
+  });
+  it("rejects MAX_TOKENS before parsing and logs safe truncation metadata", async () => {
+    process.env.GOOGLE_CLOUD_PROJECT = "test-project";
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    generateContent.mockResolvedValue({
+      text: "{\"summary\":\"truncated\"",
+      candidates: [{ finishReason: "MAX_TOKENS", content: { parts: [{ text: "not logged" }] } }],
+    });
+
+    await expect(new VertexAiAnalyzer().analyze(sourceFixture))
+      .rejects.toThrow("Gemini response was truncated after reaching max output tokens.");
+    const logged = JSON.parse(String(warn.mock.calls.at(-1)?.[0]));
+    expect(logged).toEqual({
+      event: "gemini.response_truncated",
+      responseLength: 22,
+      fenced: false,
+      candidateCount: 1,
+      partCount: 1,
+      finishReason: "MAX_TOKENS",
+    });
+    expect(JSON.stringify(logged)).not.toMatch(/summary|not logged/i);
+  });
+  it("still treats incomplete JSON with STOP as malformed JSON", async () => {
+    process.env.GOOGLE_CLOUD_PROJECT = "test-project";
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    generateContent.mockResolvedValue({
+      text: "{\"summary\":\"incomplete\"",
+      candidates: [{ finishReason: "STOP", content: { parts: [{ text: "not logged" }] } }],
+    });
+
+    await expect(new VertexAiAnalyzer().analyze(sourceFixture)).rejects.toThrow("Gemini returned malformed JSON.");
   });
   it("logs only bounded response metadata when analyzer parsing fails", async () => {
     process.env.GOOGLE_CLOUD_PROJECT = "test-project";
