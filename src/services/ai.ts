@@ -178,7 +178,7 @@ export function parseGeminiJson(text: string): unknown {
 
 export function parseGeminiResponse(text: string): AnalysisResult {
   const value = parseGeminiJson(text);
-  const parsed = GeminiAnalysisOutputSchema.safeParse(normalizePotentialRisks(value));
+  const parsed = GeminiAnalysisOutputSchema.safeParse(normalizeGeminiOutput(value));
   if (!parsed.success) throw new Error(`Gemini output failed schema validation: ${parsed.error.message}`);
   const normalized = normalizeDecisionIntelligence(parsed.data);
   return AnalysisResultSchema.parse({
@@ -187,14 +187,39 @@ export function parseGeminiResponse(text: string): AnalysisResult {
   });
 }
 
-function normalizePotentialRisks(value: unknown) {
+function normalizeGeminiOutput(value: unknown) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return value;
-  const potentialRisks = (value as Record<string, unknown>).potentialRisks;
-  if (!Array.isArray(potentialRisks)) return value;
+  const output = value as Record<string, unknown>;
+  const duplicateAnalysis = output.duplicateAnalysis;
+
   return {
-    ...value,
-    potentialRisks: potentialRisks.map((risk) => typeof risk === "string" ? risk.trim().slice(0, 160) : risk),
+    ...output,
+    keyPoints: normalizeBoundedStrings(output.keyPoints, 160),
+    potentialRisks: normalizeBoundedStrings(output.potentialRisks, 160),
+    evidence: Array.isArray(output.evidence) ? output.evidence.slice(0, 5) : output.evidence,
+    duplicateAnalysis: normalizeDuplicateReason(duplicateAnalysis),
   };
+}
+
+function normalizeBoundedStrings(value: unknown, maximumLength: number) {
+  if (!Array.isArray(value)) return value;
+  return value.map((entry) => typeof entry === "string" ? entry.trim().slice(0, maximumLength) : entry);
+}
+
+function normalizeDuplicateReason(value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return value;
+  const duplicate = value as Record<string, unknown>;
+  if (duplicate.classification === "unique" || duplicate.duplicateReason != null) return value;
+  if (!Array.isArray(duplicate.relatedPreviousArticles)) return value;
+
+  const suppliedReasons = duplicate.relatedPreviousArticles
+    .map((article) => article && typeof article === "object" && !Array.isArray(article)
+      ? (article as Record<string, unknown>).reason
+      : null)
+    .filter((reason): reason is string => typeof reason === "string" && reason.trim().length > 0);
+
+  if (suppliedReasons.length === 0) return value;
+  return { ...duplicate, duplicateReason: suppliedReasons.join(" ").slice(0, 800) };
 }
 
 export function calculateRelevanceScore(result: z.infer<typeof GeminiAnalysisOutputSchema>) {
@@ -275,9 +300,12 @@ Evidence quotes must be exact short excerpts from SOURCE. If a fact is absent, u
 Evaluate importance, novelty, confidence, timeliness, educational value, developer impact, enterprise impact, and research impact independently as integer scores from 0 to 100.
 Choose one advisory overallRecommendation: Publish, Needs Human Attention, Archive, or Reject.
 Every potentialRisks item must be at most 160 characters.
+Every keyPoints item must be at most 160 characters, and return no more than 8 key points.
+Return between 1 and 5 evidence items, prioritizing the strongest exact source excerpts.
 Extract and normalize named entities. Do not treat incidental words as entities.
 Use PREVIOUS COVERAGE only to assess duplicate, near-duplicate, same-topic, or already-covered status. It is not evidence for new source claims.
 Do not automatically reject duplicates. Explain similarity and preserve the advisory-only recommendation.
+When duplicate classification is not unique, duplicateReason must explain the relationship and must not be null.
 Opportunity details must all be null when isOpportunity is false.
 SOURCE TITLE: ${source.title}
 SOURCE URL: ${source.sourceUrl}

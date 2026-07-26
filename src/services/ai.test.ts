@@ -121,6 +121,53 @@ describe("Gemini response parsing", () => {
     expect(parsed.potentialRisks.every((risk) => risk.length <= 160)).toBe(true);
     expect(() => AnalysisResultSchema.parse(parsed)).not.toThrow();
   });
+  it("normalizes bounded key points and keeps the first five ordered evidence items", () => {
+    const evidence = Array.from({ length: 7 }, (_, index) => ({
+      quote: `Exact source excerpt ${index + 1}`,
+      significance: `Grounded significance ${index + 1}`,
+    }));
+    const parsed = parseGeminiResponse(JSON.stringify({
+      ...geminiAnalysisFixture,
+      keyPoints: [`  ${"K".repeat(200)}  `, "A concise point remains unchanged."],
+      evidence,
+    }));
+
+    expect(parsed.keyPoints).toEqual(["K".repeat(160), "A concise point remains unchanged."]);
+    expect(parsed.evidence).toEqual(evidence.slice(0, 5));
+    expect(() => AnalysisResultSchema.parse(parsed)).not.toThrow();
+  });
+  it("derives a missing non-unique reason only from supplied related-article reasons", () => {
+    const relatedPreviousArticles = [{
+      sourceRecordId: "previous-1",
+      title: "Previous coverage",
+      sourceUrl: "https://example.com/previous",
+      relation: "near_duplicate" as const,
+      reason: "Both articles describe the same product launch and capabilities.",
+    }];
+    const parsed = parseGeminiResponse(JSON.stringify({
+      ...geminiAnalysisFixture,
+      duplicateAnalysis: {
+        similarityScore: 82,
+        classification: "near_duplicate",
+        relatedPreviousArticles,
+        duplicateReason: null,
+      },
+    }));
+
+    expect(parsed.duplicateAnalysis.duplicateReason).toBe(relatedPreviousArticles[0].reason);
+    expect(() => AnalysisResultSchema.parse(parsed)).not.toThrow();
+  });
+  it("does not invent duplicate evidence when no related reason was supplied", () => {
+    expect(() => parseGeminiResponse(JSON.stringify({
+      ...geminiAnalysisFixture,
+      duplicateAnalysis: {
+        similarityScore: 82,
+        classification: "near_duplicate",
+        relatedPreviousArticles: [],
+        duplicateReason: null,
+      },
+    }))).toThrow("schema validation");
+  });
   it("parses a valid fenced response through the complete Vertex analyzer path", async () => {
     process.env.GOOGLE_CLOUD_PROJECT = "test-project";
     generateContent.mockResolvedValue({
