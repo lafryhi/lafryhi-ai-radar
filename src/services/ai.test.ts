@@ -1,10 +1,22 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
-import { GEMINI_RESPONSE_JSON_SCHEMA, parseGeminiResponse } from "./ai";
+import { GEMINI_RESPONSE_JSON_SCHEMA, parseGeminiJson, parseGeminiResponse, VertexAiAnalyzer } from "./ai";
 import { AnalysisResultSchema, GeminiAnalysisOutputSchema } from "@/domain/schemas";
-import { geminiAnalysisFixture } from "@/test/fixtures";
+import { geminiAnalysisFixture, sourceFixture } from "@/test/fixtures";
+
+const { generateContent } = vi.hoisted(() => ({ generateContent: vi.fn() }));
+vi.mock("@google/genai", () => ({
+  GoogleGenAI: class {
+    models = { generateContent };
+  },
+}));
 
 describe("Gemini response parsing", () => {
+  afterEach(() => {
+    generateContent.mockReset();
+    vi.restoreAllMocks();
+    delete process.env.GOOGLE_CLOUD_PROJECT;
+  });
   it("provides every required analysis field in the structural Vertex schema", () => {
     expect(GEMINI_RESPONSE_JSON_SCHEMA).toMatchObject({
       type: "object",
@@ -30,6 +42,27 @@ describe("Gemini response parsing", () => {
       expect(serialized).not.toContain(`"${keyword}"`);
     }
     expect(serialized).toContain('"enum"');
+  });
+  it("accepts raw JSON, fenced JSON, and BOM-surrounded JSON", () => {
+    const raw = JSON.stringify(geminiAnalysisFixture);
+    expect(parseGeminiJson(raw)).toEqual(geminiAnalysisFixture);
+    expect(parseGeminiJson(`\n\`\`\`json\n${raw}\n\`\`\`\n`)).toEqual(geminiAnalysisFixture);
+    expect(parseGeminiJson(`\`\`\`\n${raw}\n\`\`\``)).toEqual(geminiAnalysisFixture);
+    expect(parseGeminiJson(`\uFEFF \n${raw}\n`)).toEqual(geminiAnalysisFixture);
+  });
+  it("rejects prose, invalid JSON, empty responses, and multiple fenced blocks", () => {
+    const raw = JSON.stringify(geminiAnalysisFixture);
+    for (const invalid of [
+      `Here is the result: ${raw}`,
+      `${raw}\nDone.`,
+      "{\"summary\":\"incomplete\"",
+      "{\"summary\":\"trailing\",}",
+      "",
+      " \uFEFF ",
+      `\`\`\`json\n${raw}\n\`\`\`\n\`\`\`json\n${raw}\n\`\`\``,
+    ]) {
+      expect(() => parseGeminiJson(invalid)).toThrow("malformed JSON");
+    }
   });
   it("rejects malformed JSON", () => expect(() => parseGeminiResponse("{bad")).toThrow("malformed JSON"));
   it("rejects schema-invalid JSON", () => expect(() => parseGeminiResponse(JSON.stringify({ summary: "missing fields" }))).toThrow("schema validation"));
@@ -73,5 +106,41 @@ describe("Gemini response parsing", () => {
     expect(parsed.potentialRisks[2]).toHaveLength(160);
     expect(parsed.potentialRisks.every((risk) => risk.length <= 160)).toBe(true);
     expect(() => AnalysisResultSchema.parse(parsed)).not.toThrow();
+  });
+  it("parses a valid fenced response through the complete Vertex analyzer path", async () => {
+    process.env.GOOGLE_CLOUD_PROJECT = "test-project";
+    generateContent.mockResolvedValue({
+      text: `\`\`\`json\n${JSON.stringify({ ...geminiAnalysisFixture, potentialRisks: ["R".repeat(220)] })}\n\`\`\``,
+      candidates: [{ finishReason: "STOP", content: { parts: [{ text: "redacted" }] } }],
+      usageMetadata: { promptTokenCount: 10, candidatesTokenCount: 20, totalTokenCount: 30 },
+    });
+
+    const result = await new VertexAiAnalyzer().analyze(sourceFixture);
+
+    expect(generateContent).toHaveBeenCalledOnce();
+    expect(result.result.potentialRisks[0]).toHaveLength(160);
+    expect(result.result.category).toBe(geminiAnalysisFixture.category);
+    expect(result.model).toBe("gemini-2.5-flash");
+    expect(result.tokenUsage?.totalTokens).toBe(30);
+  });
+  it("logs only bounded response metadata when analyzer parsing fails", async () => {
+    process.env.GOOGLE_CLOUD_PROJECT = "test-project";
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    generateContent.mockResolvedValue({
+      text: "prose before {\"unsafe\":\"article text\"}",
+      candidates: [{ finishReason: "STOP", content: { parts: [{ text: "not logged" }, { text: "not logged" }] } }],
+    });
+
+    await expect(new VertexAiAnalyzer().analyze(sourceFixture)).rejects.toThrow("malformed JSON");
+    const logged = JSON.parse(String(warn.mock.calls.at(-1)?.[0]));
+    expect(logged).toEqual({
+      event: "gemini.response_parse_failed",
+      responseLength: 38,
+      fenced: false,
+      candidateCount: 1,
+      partCount: 2,
+      finishReason: "STOP",
+    });
+    expect(JSON.stringify(logged)).not.toMatch(/unsafe|article text|not logged/i);
   });
 });

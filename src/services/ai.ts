@@ -133,9 +133,34 @@ export interface AiAnalyzer {
   analyze(source: SourceRecord, context?: AnalysisContext): Promise<AnalysisMetadata>;
 }
 
+function responseIsFenced(text: string) {
+  return text.replace(/^\uFEFF/, "").trimStart().startsWith("```");
+}
+
+export function parseGeminiJson(text: string): unknown {
+  let json = text.replace(/^\uFEFF/, "").trim();
+  if (!json) throw new Error("Gemini returned malformed JSON.");
+
+  if (json.startsWith("```")) {
+    const openingEnd = json.indexOf("\n");
+    if (openingEnd < 0) throw new Error("Gemini returned malformed JSON.");
+    const opening = json.slice(0, openingEnd).trim();
+    if (opening !== "```" && opening !== "```json") throw new Error("Gemini returned malformed JSON.");
+    const fencedBody = json.slice(openingEnd + 1);
+    if (!fencedBody.endsWith("```")) throw new Error("Gemini returned malformed JSON.");
+    json = fencedBody.slice(0, -3).trim();
+    if (!json || json.includes("```")) throw new Error("Gemini returned malformed JSON.");
+  }
+
+  try {
+    return JSON.parse(json);
+  } catch {
+    throw new Error("Gemini returned malformed JSON.");
+  }
+}
+
 export function parseGeminiResponse(text: string): AnalysisResult {
-  let value: unknown;
-  try { value = JSON.parse(text); } catch { throw new Error("Gemini returned malformed JSON."); }
+  const value = parseGeminiJson(text);
   const parsed = GeminiAnalysisOutputSchema.safeParse(normalizePotentialRisks(value));
   if (!parsed.success) throw new Error(`Gemini output failed schema validation: ${parsed.error.message}`);
   const normalized = normalizeDecisionIntelligence(parsed.data);
@@ -254,8 +279,22 @@ ${JSON.stringify(previousCoverage)}`,
     const text = response.text;
     if (!text) throw new Error("Vertex AI returned no text.");
     const usage = response.usageMetadata;
+    let result: AnalysisResult;
+    try {
+      result = parseGeminiResponse(text);
+    } catch (error) {
+      console.warn(JSON.stringify({
+        event: "gemini.response_parse_failed",
+        responseLength: text.length,
+        fenced: responseIsFenced(text),
+        candidateCount: response.candidates?.length ?? 0,
+        partCount: response.candidates?.reduce((count, candidate) => count + (candidate.content?.parts?.length ?? 0), 0) ?? 0,
+        finishReason: response.candidates?.[0]?.finishReason ?? null,
+      }));
+      throw error;
+    }
     return {
-      result: parseGeminiResponse(text), model: this.model,
+      result, model: this.model,
       tokenUsage: usage ? { inputTokens: usage.promptTokenCount, outputTokens: usage.candidatesTokenCount, totalTokens: usage.totalTokenCount } : undefined,
     };
   }
