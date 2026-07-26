@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { GEMINI_RESPONSE_JSON_SCHEMA, parseGeminiResponse } from "./ai";
+import { AnalysisResultSchema } from "@/domain/schemas";
 import { geminiAnalysisFixture } from "@/test/fixtures";
 
 describe("Gemini response parsing", () => {
@@ -22,5 +23,23 @@ describe("Gemini response parsing", () => {
     expect(parsed.relevanceScore).toBe(71);
     expect(parsed.mentionedCompanies).toEqual(["Google"]);
     expect(parsed.entities.filter((entity) => entity.normalizedName === "Google")).toHaveLength(1);
+  });
+  it("bounds potential risks before final strict schema validation", () => {
+    const shortRisk = "A shorter valid risk remains unchanged.";
+    const parsed = parseGeminiResponse(JSON.stringify({
+      ...geminiAnalysisFixture,
+      potentialRisks: [
+        `  ${"A".repeat(200)}  `,
+        shortRisk,
+        `${"B".repeat(159)}!`,
+      ],
+    }));
+
+    expect(parsed.potentialRisks).toHaveLength(3);
+    expect(parsed.potentialRisks[0]).toBe("A".repeat(160));
+    expect(parsed.potentialRisks[1]).toBe(shortRisk);
+    expect(parsed.potentialRisks[2]).toHaveLength(160);
+    expect(parsed.potentialRisks.every((risk) => risk.length <= 160)).toBe(true);
+    expect(() => AnalysisResultSchema.parse(parsed)).not.toThrow();
   });
 });

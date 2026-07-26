@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { MemoryRepository } from "@/persistence/memory";
-import type { AiAnalyzer } from "./ai";
+import { parseGeminiResponse, type AiAnalyzer } from "./ai";
 import { rerunPipeline, runPipeline } from "./pipeline";
 import { reviewAnalysis } from "./review";
-import { analysisFixture, sourceDefinitionFixture } from "@/test/fixtures";
+import { analysisFixture, geminiAnalysisFixture, sourceDefinitionFixture } from "@/test/fixtures";
 
 const html = `<html><head><title>Official announcement</title><meta property="article:published_time" content="2026-07-24T00:00:00Z"></head><body>${"Authoritative details about a product announcement. ".repeat(20)}</body></html>`;
 const fetcher = async () => new Response(html, { status: 200, headers: { "content-type": "text/html" } });
@@ -91,6 +91,28 @@ describe("pipeline and approval gate", () => {
     expect(result.run.status).toBe("pending_review");
     expect(await repo.listPublishedItems()).toHaveLength(0);
     await reviewAnalysis(repo, result.analysis.id, "rejected", "Not suitable");
+    expect(await repo.listPublishedItems()).toHaveLength(0);
+  });
+  it("keeps normalized Gemini output pending for human review without publishing", async () => {
+    const repo = await repositoryFor();
+    const normalizedAnalyzer: AiAnalyzer = {
+      async analyze() {
+        return {
+          result: parseGeminiResponse(JSON.stringify({
+            ...geminiAnalysisFixture,
+            potentialRisks: ["R".repeat(220)],
+          })),
+          model: "deterministic-test-model",
+        };
+      },
+    };
+
+    const result = await runPipeline("https://cloud.google.com/blog/bounded-risk", repo, normalizedAnalyzer, fetcher as typeof fetch);
+    const review = await repo.getReviewForAnalysis(result.analysis.id);
+
+    expect(result.analysis.potentialRisks[0]).toHaveLength(160);
+    expect(result.run.status).toBe("pending_review");
+    expect(review?.status).toBe("pending");
     expect(await repo.listPublishedItems()).toHaveLength(0);
   });
   it("provides bounded previous coverage to Gemini before duplicate recommendation", async () => {
