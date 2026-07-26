@@ -36,4 +36,24 @@ describe("schemas", () => {
     });
     expect(legacy.keyPoints).toEqual(["A".repeat(160)]);
   });
+  it("normalizes overlong legacy warnings into bounded potential risks", () => {
+    const legacy = StoredAnalysisSchema.parse({
+      id: "legacy-analysis-risk", sourceRecordId: "legacy-source", processingRunId: "legacy-run",
+      createdAt: "2026-07-24T00:00:00.000Z",
+      summary: analysisFixture.summary, whyItMatters: analysisFixture.whyItMatters,
+      category: analysisFixture.category, relevanceScore: 72, confidenceScore: 90,
+      recommendedAction: analysisFixture.recommendedAction, evidence: analysisFixture.evidence,
+      warnings: [`  ${"R".repeat(240)}  `], opportunity: analysisFixture.opportunity,
+    });
+    expect(legacy.potentialRisks).toEqual(["R".repeat(160)]);
+    expect(legacy.potentialRisks[0]).toHaveLength(160);
+  });
+  it("preserves modern potential risks without legacy adaptation", () => {
+    const modern = {
+      ...analysisFixture,
+      id: "modern-analysis", sourceRecordId: "modern-source", processingRunId: "modern-run",
+      createdAt: "2026-07-24T00:00:00.000Z",
+    };
+    expect(StoredAnalysisSchema.parse(modern)).toEqual(modern);
+  });
 });

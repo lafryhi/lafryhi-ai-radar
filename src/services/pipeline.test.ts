@@ -1,9 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { StoredAnalysisSchema } from "@/domain/schemas";
 import { MemoryRepository } from "@/persistence/memory";
 import { parseGeminiResponse, type AiAnalyzer } from "./ai";
 import { rerunPipeline, runPipeline } from "./pipeline";
 import { reviewAnalysis } from "./review";
-import { analysisFixture, geminiAnalysisFixture, sourceDefinitionFixture } from "@/test/fixtures";
+import { analysisFixture, geminiAnalysisFixture, sourceDefinitionFixture, sourceFixture } from "@/test/fixtures";
 
 const html = `<html><head><title>Official announcement</title><meta property="article:published_time" content="2026-07-24T00:00:00Z"></head><body>${"Authoritative details about a product announcement. ".repeat(20)}</body></html>`;
 const fetcher = async () => new Response(html, { status: 200, headers: { "content-type": "text/html" } });
@@ -131,6 +132,48 @@ describe("pipeline and approval gate", () => {
       summary: first.analysis.summary,
     });
     expect(context?.previousArticles[0]).not.toHaveProperty("normalizedText");
+  });
+  it("waits for bounded legacy previous coverage before invoking Gemini", async () => {
+    vi.spyOn(console, "info").mockImplementation(() => undefined);
+    const repo = await repositoryFor();
+    const previousSource = {
+      ...sourceFixture,
+      id: "legacy-source",
+      sourceDefinitionId: "definition-cloud.google.com",
+      contentHash: "b".repeat(64),
+    };
+    await repo.saveSource(previousSource);
+
+    let releaseCoverage!: () => void;
+    let coverageReadStarted!: () => void;
+    const coverageGate = new Promise<void>((resolve) => { releaseCoverage = resolve; });
+    const coverageStarted = new Promise<void>((resolve) => { coverageReadStarted = resolve; });
+    vi.spyOn(repo, "listAnalyses").mockImplementation(async () => {
+      coverageReadStarted();
+      await coverageGate;
+      return [StoredAnalysisSchema.parse({
+        id: "legacy-analysis-risk", sourceRecordId: previousSource.id, processingRunId: "legacy-run",
+        createdAt: "2026-07-24T00:00:00.000Z",
+        summary: analysisFixture.summary, whyItMatters: analysisFixture.whyItMatters,
+        category: analysisFixture.category, relevanceScore: 72, confidenceScore: 90,
+        recommendedAction: analysisFixture.recommendedAction, evidence: analysisFixture.evidence,
+        warnings: ["R".repeat(240)], opportunity: analysisFixture.opportunity,
+      })];
+    });
+    const analyze = vi.fn<AiAnalyzer["analyze"]>(async () => ({ result: analysisFixture, model: "context-test-model" }));
+    const processing = runPipeline("https://cloud.google.com/blog/legacy-context", repo, { analyze }, fetcher as typeof fetch);
+
+    await coverageStarted;
+    expect(analyze).not.toHaveBeenCalled();
+    releaseCoverage();
+    const result = await processing;
+
+    expect(analyze).toHaveBeenCalledOnce();
+    expect(analyze.mock.calls[0][1]?.previousArticles[0]).toMatchObject({
+      sourceRecordId: previousSource.id,
+      title: previousSource.title,
+    });
+    expect(result.run.status).toBe("pending_review");
   });
   it("publishes approved analysis with full provenance", async () => {
     const repo = await repositoryFor("blog.google");

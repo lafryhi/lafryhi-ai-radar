@@ -205,7 +205,7 @@ export const StoredAnalysisSchema = z.union([DecisionStoredAnalysisSchema, Legac
       mentionedProducts: [],
       mentionedTechnologies: [],
       entities: [],
-      potentialRisks: value.warnings,
+      potentialRisks: value.warnings.map((warning) => warning.trim().slice(0, 160)),
       followUpRecommended: true,
       breakingNews: false,
       estimatedReadingTime: 1,
