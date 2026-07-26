@@ -3,7 +3,110 @@ import { z } from "zod";
 import { AnalysisResultSchema, GeminiAnalysisOutputSchema, type AnalysisResult, type SourceRecord, type StoredAnalysis } from "@/domain/schemas";
 
 export const PROMPT_VERSION = "radar-decision-intelligence-v2";
-export const GEMINI_RESPONSE_JSON_SCHEMA = z.toJSONSchema(GeminiAnalysisOutputSchema);
+const stringArraySchema = { type: "array", items: { type: "string" } } as const;
+const scoreSchema = { type: "integer" } as const;
+
+export const GEMINI_RESPONSE_JSON_SCHEMA = {
+  type: "object",
+  properties: {
+    summary: { type: "string" },
+    keyPoints: stringArraySchema,
+    whyItMatters: { type: "string" },
+    category: {
+      type: "string",
+      enum: ["model_release", "product_launch", "platform_update", "developer_announcement", "grant", "hackathon", "business_opportunity", "policy", "ecosystem_change"],
+    },
+    importanceScore: scoreSchema,
+    noveltyScore: scoreSchema,
+    confidenceScore: scoreSchema,
+    timelinessScore: scoreSchema,
+    educationalValueScore: scoreSchema,
+    developerImpactScore: scoreSchema,
+    enterpriseImpactScore: scoreSchema,
+    researchImpactScore: scoreSchema,
+    overallRecommendation: { type: "string", enum: ["Publish", "Needs Human Attention", "Archive", "Reject"] },
+    recommendedAction: { type: "string" },
+    reasoning: { type: "string" },
+    targetAudience: stringArraySchema,
+    relatedTopics: stringArraySchema,
+    mentionedCompanies: stringArraySchema,
+    mentionedProducts: stringArraySchema,
+    mentionedTechnologies: stringArraySchema,
+    entities: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          normalizedName: { type: "string" },
+          type: {
+            type: "string",
+            enum: ["company", "product", "model", "technology", "programming_language", "cloud_platform", "standard", "research_paper", "api", "framework"],
+          },
+        },
+        required: ["name", "normalizedName", "type"],
+      },
+    },
+    potentialRisks: stringArraySchema,
+    followUpRecommended: { type: "boolean" },
+    breakingNews: { type: "boolean" },
+    estimatedReadingTime: { type: "integer" },
+    evidence: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          quote: { type: "string" },
+          significance: { type: "string" },
+        },
+        required: ["quote", "significance"],
+      },
+    },
+    warnings: stringArraySchema,
+    opportunity: {
+      type: "object",
+      properties: {
+        isOpportunity: { type: "boolean" },
+        deadline: { type: ["string", "null"] },
+        eligibility: { type: ["string", "null"] },
+        benefit: { type: ["string", "null"] },
+        effortEstimate: { type: ["string", "null"], enum: ["low", "medium", "high", null] },
+      },
+      required: ["isOpportunity", "deadline", "eligibility", "benefit", "effortEstimate"],
+    },
+    duplicateAnalysis: {
+      type: "object",
+      properties: {
+        similarityScore: { type: "integer" },
+        classification: { type: "string", enum: ["unique", "duplicate", "near_duplicate", "same_topic", "already_covered"] },
+        relatedPreviousArticles: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              sourceRecordId: { type: "string" },
+              title: { type: "string" },
+              sourceUrl: { type: "string" },
+              relation: { type: "string", enum: ["duplicate", "near_duplicate", "same_topic", "already_covered"] },
+              reason: { type: "string" },
+            },
+            required: ["sourceRecordId", "title", "sourceUrl", "relation", "reason"],
+          },
+        },
+        duplicateReason: { type: ["string", "null"] },
+      },
+      required: ["similarityScore", "classification", "relatedPreviousArticles", "duplicateReason"],
+    },
+  },
+  required: [
+    "summary", "keyPoints", "whyItMatters", "category", "importanceScore", "noveltyScore",
+    "confidenceScore", "timelinessScore", "educationalValueScore", "developerImpactScore",
+    "enterpriseImpactScore", "researchImpactScore", "overallRecommendation", "recommendedAction",
+    "reasoning", "targetAudience", "relatedTopics", "mentionedCompanies", "mentionedProducts",
+    "mentionedTechnologies", "entities", "potentialRisks", "followUpRecommended", "breakingNews",
+    "estimatedReadingTime", "evidence", "warnings", "opportunity", "duplicateAnalysis",
+  ],
+} as const;
 
 export interface PreviousArticleContext {
   sourceRecordId: string;

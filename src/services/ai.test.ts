@@ -1,17 +1,49 @@
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
 import { GEMINI_RESPONSE_JSON_SCHEMA, parseGeminiResponse } from "./ai";
-import { AnalysisResultSchema } from "@/domain/schemas";
+import { AnalysisResultSchema, GeminiAnalysisOutputSchema } from "@/domain/schemas";
 import { geminiAnalysisFixture } from "@/test/fixtures";
 
 describe("Gemini response parsing", () => {
-  it("provides the production response schema to Gemini", () => {
+  it("provides every required analysis field in the structural Vertex schema", () => {
     expect(GEMINI_RESPONSE_JSON_SCHEMA).toMatchObject({
       type: "object",
       required: expect.arrayContaining(["summary", "keyPoints", "importanceScore", "noveltyScore", "overallRecommendation", "entities", "duplicateAnalysis"]),
     });
+    expect(new Set(GEMINI_RESPONSE_JSON_SCHEMA.required)).toEqual(new Set(Object.keys(geminiAnalysisFixture)));
+    expect(GEMINI_RESPONSE_JSON_SCHEMA.properties.entities.items.required).toEqual(["name", "normalizedName", "type"]);
+    expect(GEMINI_RESPONSE_JSON_SCHEMA.properties.duplicateAnalysis.required).toEqual([
+      "similarityScore", "classification", "relatedPreviousArticles", "duplicateReason",
+    ]);
+  });
+  it("keeps service-side schema structural instead of sending local validation constraints", () => {
+    const generatedFromStrictZod = JSON.stringify(z.toJSONSchema(GeminiAnalysisOutputSchema));
+    const serialized = JSON.stringify(GEMINI_RESPONSE_JSON_SCHEMA);
+    expect(generatedFromStrictZod).toContain('"maxLength"');
+    expect(generatedFromStrictZod).toContain('"maxItems"');
+    expect(generatedFromStrictZod).toContain('"minimum"');
+    expect(generatedFromStrictZod).toContain('"anyOf"');
+    for (const keyword of [
+      "anyOf", "oneOf", "allOf", "pattern", "format", "minLength", "maxLength",
+      "minItems", "maxItems", "minimum", "maximum",
+    ]) {
+      expect(serialized).not.toContain(`"${keyword}"`);
+    }
+    expect(serialized).toContain('"enum"');
   });
   it("rejects malformed JSON", () => expect(() => parseGeminiResponse("{bad")).toThrow("malformed JSON"));
   it("rejects schema-invalid JSON", () => expect(() => parseGeminiResponse(JSON.stringify({ summary: "missing fields" }))).toThrow("schema validation"));
+  it("rejects missing fields, wrong types, and invalid protected enums locally", () => {
+    const missingSummary: Partial<typeof geminiAnalysisFixture> = { ...geminiAnalysisFixture };
+    delete missingSummary.summary;
+    expect(() => parseGeminiResponse(JSON.stringify(missingSummary))).toThrow("schema validation");
+    expect(() => parseGeminiResponse(JSON.stringify({ ...geminiAnalysisFixture, importanceScore: "high" }))).toThrow("schema validation");
+    expect(() => parseGeminiResponse(JSON.stringify({ ...geminiAnalysisFixture, category: "unsupported" }))).toThrow("schema validation");
+    expect(() => parseGeminiResponse(JSON.stringify({
+      ...geminiAnalysisFixture,
+      entities: [{ ...geminiAnalysisFixture.entities[0], type: "unsupported" }],
+    }))).toThrow("schema validation");
+  });
   it("rejects unsupported output fields", () => expect(() => parseGeminiResponse(JSON.stringify({ ...geminiAnalysisFixture, rawResponse: "unsafe" }))).toThrow("schema validation"));
   it("accepts strict output, derives relevance, and normalizes repeated entities", () => {
     const parsed = parseGeminiResponse(JSON.stringify({
