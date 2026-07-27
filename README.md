@@ -78,3 +78,5 @@ AI Radar transforms trusted AI information into verified intelligence, editorial
 - Every important conclusion must remain traceable.
 
 For the deterministic operator demo, set `AI_RADAR_DEMO_MODE=true` and open `/operator/mission-control`. See `docs/SPRINT_1_DEMO_EXECUTION_PLAN.md` for local instructions and boundaries.
+
+Mission Control also supports an explicit Live Collection mode backed by the trusted Source Registry and existing RSS discovery safeguards. Live collection stops before Vertex AI analysis; see `docs/SPRINT_3_1_LIVE_SOURCE_COLLECTION.md`.

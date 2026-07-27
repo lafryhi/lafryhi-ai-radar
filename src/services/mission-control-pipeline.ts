@@ -1,5 +1,7 @@
 import { rankIntelligenceItems, type IntelligenceItem, type MissionControlRequest, type MissionControlResponse, type PipelineLogEntry, type PipelineStageName, type PipelineStageResult, WeeklyIntelligenceReportSchema, VideoProductionPackageSchema } from "@/domain/mission-control";
 import { getDemoIntelligenceItems, isDemoModeEnabled } from "@/services/mission-control-demo";
+import { collectLiveIntelligenceItems } from "@/services/mission-control-live";
+import type { RadarRepository } from "@/persistence/repository";
 
 export class MissionControlConflictError extends Error {}
 export class MissionControlInputError extends Error {}
@@ -25,15 +27,24 @@ function buildVideo(report: NonNullable<ReturnType<typeof buildReport>>) {
   return VideoProductionPackageSchema.parse({ title: report.title, narrationScript: `This week, AI Radar highlights ${report.topStories.length} approved intelligence signals. The editorial team selected these stories for their impact, confidence, and evidence depth.`, scenes: report.topStories.slice(0, 3).map((item, index) => ({ number: index + 1, purpose: "Approved intelligence highlight", narration: item.title, visualDescription: `Clean editorial card for ${item.category}.`, imagePrompt: `Editorial illustration for ${item.category}, no logos, no fabricated people.` })), thumbnailPrompt: "Clean blue and yellow editorial intelligence dashboard with the words AI Radar Weekly Intelligence", status: "ready" });
 }
 
-export async function runMissionControl(request: MissionControlRequest, now = () => new Date()): Promise<MissionControlResponse> {
+export async function runMissionControl(request: MissionControlRequest, now = () => new Date(), repository?: RadarRepository): Promise<MissionControlResponse> {
   if (activeRun) throw new MissionControlConflictError("A Mission Control run is already active.");
   if (request.mode === "demo" && !isDemoModeEnabled()) throw new MissionControlInputError("Demo mode is disabled. Set AI_RADAR_DEMO_MODE=true for the prepared demo workflow.");
   activeRun = true;
   try {
     const start = now(); const startedAt = start.toISOString();
     if (request.mode === "live") {
-      const completedAt = new Date(start.getTime() + 100).toISOString();
-      return { runId: `mission-live-${start.getTime()}`, mode: "live", status: "warning", startedAt, completedAt, elapsedMs: 100, stages: stageOrder.map((name) => stage(name, "warning", startedAt, 0, 0, 0, "Live collection is not enabled in this demo sprint.", "LIVE_MODE_UNAVAILABLE")), logs: [log("collect", "warning", "Live collection is not enabled; choose Demo Mode for the prepared workflow.", startedAt, 0)], summary: { collected: 0, qualified: 0, verified: 0, highImpact: 0, editorialCandidates: 0, approved: 0, reportStatus: "not_created", videoPackageStatus: "not_created" }, items: [], report: null, videoPackage: null };
+      const collectionStarted = Date.now();
+      if (!repository) {
+        const completedAt = new Date(start.getTime() + 1).toISOString();
+        return { runId: `mission-live-${start.getTime()}`, mode: "live", status: "error", startedAt, completedAt, elapsedMs: 1, stages: [stage("collect", "error", startedAt, 1, 0, 0, "Live collection requires the server repository.", "LIVE_REPOSITORY_UNAVAILABLE"), ...stageOrder.slice(1).map((name) => stage(name, "warning", completedAt, 0, 0, 0, "Deferred until live collection succeeds.", "LIVE_ANALYSIS_DEFERRED"))], logs: [log("collect", "error", "Live collection could not start safely.", startedAt, 0)], summary: { collected: 0, qualified: 0, verified: 0, highImpact: 0, editorialCandidates: 0, approved: 0, reportStatus: "not_created", videoPackageStatus: "not_created" }, items: [], report: null, videoPackage: null };
+      }
+      const collection = await collectLiveIntelligenceItems(repository, request);
+      const collectionElapsed = Math.max(1, Date.now() - collectionStarted);
+      const completedAt = new Date(start.getTime() + collectionElapsed).toISOString();
+      const downstream = stageOrder.slice(1).map((name) => stage(name, "warning", completedAt, 0, collection.items.length, 0, "Deferred in Sprint 3.1; live analysis is not run.", "LIVE_ANALYSIS_DEFERRED"));
+      const collectStage = stage("collect", collection.status === "error" ? "error" : collection.status === "warning" ? "warning" : "success", startedAt, collectionElapsed, collection.summary.attemptedSources, collection.items.length, collection.status === "error" ? "Live collection failed safely." : `Live collection completed with ${collection.items.length} usable records.`);
+      return { runId: `mission-live-${start.getTime()}`, mode: "live", status: collection.status, startedAt, completedAt, elapsedMs: collectionElapsed, stages: [collectStage, ...downstream], logs: collection.logs, summary: { collected: collection.items.length, qualified: collection.items.length, verified: 0, highImpact: 0, editorialCandidates: 0, approved: 0, reportStatus: "not_created", videoPackageStatus: "not_created" }, items: collection.items, report: null, videoPackage: null, liveCollection: collection.summary };
     }
     const items = getDemoIntelligenceItems(); const ranked = rankIntelligenceItems(items); const approved = ranked.filter((item) => item.verificationStatus === "verified" && item.editorialStatus === "approved");
     let offset = 0; const stages: PipelineStageResult[] = []; const logs: PipelineLogEntry[] = [];

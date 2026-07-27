@@ -12,6 +12,7 @@ export const IntelligenceItemSchema = z.object({
   impactScore: ScoreSchema, confidenceScore: ScoreSchema, evidenceCount: z.number().int().nonnegative(),
   verificationStatus: z.enum(["pending", "verified", "rejected"]),
   editorialStatus: z.enum(["pending", "approved", "rejected", "published"]),
+  sourceUrl: z.string().url().optional(), analysisStatus: z.enum(["deferred", "complete"]).optional(),
   whyRanked: z.array(z.string().min(1).max(240)).max(5).optional(),
   publishedAt: IsoDateSchema.optional(), createdAt: IsoDateSchema, updatedAt: IsoDateSchema.optional(),
 }).strict();
@@ -58,6 +59,17 @@ export interface MissionControlResponse {
   startedAt: string; completedAt: string; elapsedMs: number; stages: PipelineStageResult[];
   logs: PipelineLogEntry[]; summary: { collected: number; qualified: number; verified: number; highImpact: number; editorialCandidates: number; approved: number; reportStatus: "not_created" | "ready"; videoPackageStatus: "not_created" | "ready" };
   items: IntelligenceItem[]; report: WeeklyIntelligenceReport | null; videoPackage: VideoProductionPackage | null;
+  liveCollection?: LiveCollectionSummary;
+}
+
+export interface LiveCollectionSummary {
+  totalRegistrySources: number;
+  eligibleLiveSources: number;
+  attemptedSources: number;
+  successfulSources: number;
+  failedSources: number;
+  duplicateRecords: number;
+  recordsCollected: number;
 }
 
 export function rankIntelligenceItems(items: IntelligenceItem[]): IntelligenceItem[] {

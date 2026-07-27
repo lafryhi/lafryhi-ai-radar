@@ -3,6 +3,7 @@ import { MissionControlRequestSchema } from "@/domain/mission-control";
 import { validOperatorToken } from "@/auth/operator";
 import { isDemoModeEnabled } from "@/services/mission-control-demo";
 import { MissionControlConflictError, MissionControlInputError, runMissionControl } from "@/services/mission-control-pipeline";
+import { getRepository } from "@/persistence";
 
 export async function POST(request: NextRequest) {
   const token = request.cookies.get("lafryhi_operator")?.value;
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
   const parsed = MissionControlRequestSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Invalid Mission Control request." }, { status: 400 });
   if (parsed.data.mode === "demo" && !isDemoModeEnabled()) return NextResponse.json({ error: "Demo mode is disabled." }, { status: 400 });
-  try { return NextResponse.json(await runMissionControl(parsed.data)); }
+  try { return NextResponse.json(await runMissionControl(parsed.data, undefined, await getRepository())); }
   catch (error) {
     if (error instanceof MissionControlConflictError) return NextResponse.json({ error: "A Mission Control run is already active." }, { status: 409 });
     if (error instanceof MissionControlInputError) return NextResponse.json({ error: error.message }, { status: 400 });
