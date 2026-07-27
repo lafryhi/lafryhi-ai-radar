@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { EvidenceMismatchClassifications } from "./failure-recovery";
 
 const timestamp = z.string().datetime({ offset: true });
 const optionalCandidateId = z.string().min(1).optional();
@@ -161,6 +162,13 @@ export const GeminiRecoveryEventSchema = z.object({
   ]).nullable(),
   issuePaths: z.array(z.string().max(300)).max(25),
   issueCodes: z.array(z.string().max(100)).max(25),
+  evidenceMismatchDiagnostics: z.array(z.object({
+    fieldPath: z.string().max(300),
+    quoteLength: z.number().int().min(0).max(500),
+    longestMatchingPrefixLength: z.number().int().min(0).max(500),
+    longestMatchingSuffixLength: z.number().int().min(0).max(500),
+    mismatchClassification: z.enum(EvidenceMismatchClassifications),
+  }).strict()).max(5),
   timestamp,
 }).strict();
 

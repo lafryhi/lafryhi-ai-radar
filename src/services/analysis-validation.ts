@@ -6,6 +6,8 @@ import {
   ResponseEnvelopeFailure,
   SchemaValidationFailure,
   safeZodIssues,
+  type EvidenceMismatchDiagnostic,
+  type EvidenceMismatchClassification,
   type SafeFailureIssue,
 } from "./failure-recovery";
 
@@ -230,8 +232,73 @@ export function applyLosslessRepairs(value: unknown) {
   return { value: output, repairs };
 }
 
-function normalizedEvidenceText(value: string) {
+const MAX_EVIDENCE_DIAGNOSTIC_LENGTH = 500;
+const MEANINGFUL_EVIDENCE_OVERLAP_LENGTH = 8;
+
+function whitespaceNormalizedEvidenceText(value: string) {
   return value.replace(/\s+/g, " ").trim();
+}
+
+function normalizedEvidenceText(value: string) {
+  return whitespaceNormalizedEvidenceText(value.normalize("NFC"));
+}
+
+function codePoints(value: string) {
+  return Array.from(value);
+}
+
+function boundedLength(value: string) {
+  return Math.min(MAX_EVIDENCE_DIAGNOSTIC_LENGTH, codePoints(value).length);
+}
+
+function longestEdgeMatch(source: string, quote: string, edge: "prefix" | "suffix") {
+  const characters = codePoints(quote).slice(0, MAX_EVIDENCE_DIAGNOSTIC_LENGTH);
+  let lower = 0;
+  let upper = characters.length;
+  while (lower < upper) {
+    const length = Math.ceil((lower + upper) / 2);
+    const candidate = edge === "prefix"
+      ? characters.slice(0, length).join("")
+      : characters.slice(characters.length - length).join("");
+    if (source.includes(candidate)) lower = length;
+    else upper = length - 1;
+  }
+  return lower;
+}
+
+function withoutUnicodePunctuation(value: string) {
+  return whitespaceNormalizedEvidenceText(value.replace(/\p{P}+/gu, " "));
+}
+
+export function classifyEvidenceMismatch(source: string, quote: string): EvidenceMismatchClassification {
+  const whitespaceSource = whitespaceNormalizedEvidenceText(source);
+  const whitespaceQuote = whitespaceNormalizedEvidenceText(quote);
+  if (whitespaceSource.includes(whitespaceQuote)) return "whitespace";
+
+  if (whitespaceSource.toLowerCase().includes(whitespaceQuote.toLowerCase())) return "case";
+
+  const nfcSource = whitespaceNormalizedEvidenceText(source.normalize("NFC"));
+  const nfcQuote = whitespaceNormalizedEvidenceText(quote.normalize("NFC"));
+  if (nfcSource.includes(nfcQuote)) return "unicode_normalization";
+
+  const punctuationSource = withoutUnicodePunctuation(nfcSource);
+  const punctuationQuote = withoutUnicodePunctuation(nfcQuote);
+  if (punctuationQuote && punctuationSource.includes(punctuationQuote)) return "punctuation";
+
+  const prefix = longestEdgeMatch(nfcSource, nfcQuote, "prefix");
+  const suffix = longestEdgeMatch(nfcSource, nfcQuote, "suffix");
+  return Math.max(prefix, suffix) < MEANINGFUL_EVIDENCE_OVERLAP_LENGTH ? "absent" : "unknown";
+}
+
+export function evidenceMismatchDiagnostic(source: string, quote: string): EvidenceMismatchDiagnostic {
+  const normalizedSource = normalizedEvidenceText(source);
+  const normalizedQuote = normalizedEvidenceText(quote);
+  return {
+    quoteLength: boundedLength(quote),
+    longestMatchingPrefixLength: longestEdgeMatch(normalizedSource, normalizedQuote, "prefix"),
+    longestMatchingSuffixLength: longestEdgeMatch(normalizedSource, normalizedQuote, "suffix"),
+    mismatchClassification: classifyEvidenceMismatch(source, quote),
+  };
 }
 
 export function validateEvidenceIntegrity(result: AnalysisResult, source: SourceRecord) {
@@ -239,7 +306,11 @@ export function validateEvidenceIntegrity(result: AnalysisResult, source: Source
   const issues: SafeFailureIssue[] = [];
   result.evidence.forEach((entry, index) => {
     if (!sourceText.includes(normalizedEvidenceText(entry.quote))) {
-      issues.push({ path: `evidence.${index}.quote`, code: "quote_not_in_source" });
+      issues.push({
+        path: `evidence.${index}.quote`,
+        code: "quote_not_in_source",
+        evidenceMismatch: evidenceMismatchDiagnostic(source.normalizedText, entry.quote),
+      });
     }
   });
   if (issues.length) throw new EvidenceIntegrityFailure(issues);

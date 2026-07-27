@@ -2,6 +2,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { geminiAnalysisFixture, sourceFixture } from "@/test/fixtures";
 import {
   applyLosslessRepairs,
+  classifyEvidenceMismatch,
+  evidenceMismatchDiagnostic,
   parseAnalysisEnvelope,
   validateDuplicateIntegrity,
   validateEvidenceIntegrity,
@@ -140,6 +142,75 @@ describe("Phase 4.1 analysis validation", () => {
       evidence: [{ quote: "Exact quoted text from source.", significance: "Source grounded." }],
     }), source);
     expect(result.evidence[0].quote).toBe("Exact quoted text from source.");
+  });
+
+  it.each([
+    ["exact contiguous quote", "Alpha beta gamma.", "Alpha beta gamma."],
+    ["shorter exact quote", "Alpha beta gamma.", "beta gamma"],
+  ])("accepts an %s", (_label, normalizedText, quote) => {
+    const result = parseGeminiResponseWithRecovery(JSON.stringify(geminiAnalysisFixture), sourceFixture);
+    expect(() => validateEvidenceIntegrity({
+      ...result,
+      evidence: [{ quote, significance: "Grounded evidence." }],
+    }, { ...sourceFixture, normalizedText })).not.toThrow();
+  });
+
+  it.each([
+    ["paraphrased quote", "The model reduces latency for developers.", "Developers get a faster model."],
+    ["combined fragments", "Alpha launch. Unrelated material. Beta ready.", "Alpha launch. Beta ready."],
+    ["inserted ellipsis", "Alpha launch is ready.", "Alpha…ready."],
+    ["curly versus straight apostrophe", "The model’s output is grounded.", "The model's output is grounded."],
+    ["case-altered quote", "Exact Case Matters.", "exact Case Matters."],
+    ["punctuation-altered quote", "Safety-first deployment.", "Safety first deployment."],
+  ])("rejects a %s", (_label, normalizedText, quote) => {
+    const result = parseGeminiResponseWithRecovery(JSON.stringify(geminiAnalysisFixture), sourceFixture);
+    expect(() => validateEvidenceIntegrity({
+      ...result,
+      evidence: [{ quote, significance: "Claimed evidence." }],
+    }, { ...sourceFixture, normalizedText })).toThrow(EvidenceIntegrityFailure);
+  });
+
+  it("accepts canonically equivalent NFC evidence", () => {
+    const result = parseGeminiResponseWithRecovery(JSON.stringify(geminiAnalysisFixture), sourceFixture);
+    expect(() => validateEvidenceIntegrity({
+      ...result,
+      evidence: [{ quote: "Cafe\u0301 model", significance: "Canonical Unicode match." }],
+    }, { ...sourceFixture, normalizedText: "The Café model is available." })).not.toThrow();
+  });
+
+  it("does not accept NFKC-only compatibility equivalence", () => {
+    const result = parseGeminiResponseWithRecovery(JSON.stringify(geminiAnalysisFixture), sourceFixture);
+    expect(() => validateEvidenceIntegrity({
+      ...result,
+      evidence: [{ quote: "Version ① is ready", significance: "Compatibility-only match." }],
+    }, { ...sourceFixture, normalizedText: "Version 1 is ready for testing." })).toThrow(EvidenceIntegrityFailure);
+  });
+
+  it.each([
+    ["whitespace", "Alpha   beta", "Alpha beta"],
+    ["case", "Alpha beta", "alpha beta"],
+    ["unicode_normalization", "Café model", "Cafe\u0301 model"],
+    ["punctuation", "Alpha—beta", "Alpha beta"],
+    ["absent", "Completely unrelated source", "No overlap here"],
+    ["unknown", "abcdefghZZijklmnop", "abcdefghYYijklmnop"],
+  ] as const)("classifies %s mismatches deterministically", (classification, source, quote) => {
+    expect(classifyEvidenceMismatch(source, quote)).toBe(classification);
+  });
+
+  it("bounds mismatch lengths without retaining content", () => {
+    const diagnostic = evidenceMismatchDiagnostic("A".repeat(600), `${"A".repeat(499)}B`);
+    expect(diagnostic).toEqual({
+      quoteLength: 500,
+      longestMatchingPrefixLength: 499,
+      longestMatchingSuffixLength: 0,
+      mismatchClassification: "unknown",
+    });
+    expect(Object.keys(diagnostic).sort()).toEqual([
+      "longestMatchingPrefixLength",
+      "longestMatchingSuffixLength",
+      "mismatchClassification",
+      "quoteLength",
+    ]);
   });
 
   it("validates duplicate references against the supplied context", () => {

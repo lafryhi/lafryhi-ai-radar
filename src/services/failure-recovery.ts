@@ -17,6 +17,25 @@ export type AnalysisFailureCategory = typeof AnalysisFailureCategories[number];
 export interface SafeFailureIssue {
   path: string;
   code: string;
+  evidenceMismatch?: EvidenceMismatchDiagnostic;
+}
+
+export const EvidenceMismatchClassifications = [
+  "whitespace",
+  "case",
+  "unicode_normalization",
+  "punctuation",
+  "absent",
+  "unknown",
+] as const;
+
+export type EvidenceMismatchClassification = typeof EvidenceMismatchClassifications[number];
+
+export interface EvidenceMismatchDiagnostic {
+  quoteLength: number;
+  longestMatchingPrefixLength: number;
+  longestMatchingSuffixLength: number;
+  mismatchClassification: EvidenceMismatchClassification;
 }
 
 export class AnalysisFailure extends Error {

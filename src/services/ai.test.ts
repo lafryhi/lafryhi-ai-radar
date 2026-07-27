@@ -8,6 +8,7 @@ import {
   GEMINI_RESPONSE_JSON_SCHEMA,
   GEMINI_SCHEMA_VERSION,
   GEMINI_THINKING_BUDGET,
+  PROMPT_VERSION,
   parseGeminiJson,
   parseGeminiResponse,
   VertexAiAnalyzer,
@@ -326,6 +327,22 @@ describe("Phase 4.2 bounded Gemini recovery", () => {
     expect(GEMINI_MAX_REGENERATIONS).toBe(1);
     expect(GEMINI_MAX_CALLS).toBe(4);
     expect(GEMINI_SCHEMA_VERSION).toBe("gemini-analysis-v2");
+    expect(PROMPT_VERSION).toBe("radar-decision-intelligence-v3");
+  });
+
+  it("uses explicit character-for-character evidence instructions in the base prompt", async () => {
+    generateContent.mockResolvedValue(validResponse);
+    await analyzer().analyze(sourceFixture);
+    const prompt = String(generateContent.mock.calls[0][0].contents);
+    expect(prompt).toContain("short contiguous substring copied directly from SOURCE");
+    expect(prompt).toContain("character-for-character identical");
+    expect(prompt).toContain("Preserve case, punctuation, apostrophes, quotation marks, dashes, and Unicode characters exactly.");
+    expect(prompt).toContain("Do not insert ellipses unless those ellipsis characters exist in SOURCE.");
+    expect(prompt).toContain("Never paraphrase a quote or assemble it from separate fragments.");
+    expect(prompt).toContain("Copy the quote directly from SOURCE. Do not rewrite it from memory.");
+    expect(prompt).toContain("Prefer a shorter quote when uncertain.");
+    expect(prompt).toContain("Do not include surrounding quotation marks unless those marks exist in SOURCE.");
+    expect(prompt).toContain("For any regeneration, return a complete replacement analysis object, never a patch.");
   });
 
   it("retries a timeout identically and then succeeds", async () => {
@@ -434,6 +451,7 @@ describe("Phase 4.2 bounded Gemini recovery", () => {
   });
 
   it("uses correction regeneration for evidence-integrity failure", async () => {
+    const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
     generateContent.mockResolvedValueOnce({
       ...validResponse,
       text: JSON.stringify({
@@ -446,6 +464,24 @@ describe("Phase 4.2 bounded Gemini recovery", () => {
     expect(correction).toContain('"category":"evidence_integrity"');
     expect(correction).toContain('"code":"quote_not_in_source"');
     expect(correction).not.toContain("Unsupported secret evidence quote");
+    const guidance = correction.slice(correction.indexOf("EVIDENCE REMEDIATION:"));
+    expect(guidance).toContain("one short, contiguous, character-for-character substring copied from SOURCE");
+    expect(guidance).toContain("Do not paraphrase, combine fragments, normalize punctuation, or insert ellipses.");
+    expect(correction).toContain("Return the entire object, never a patch.");
+    expect(guidance).not.toContain(sourceFixture.normalizedText);
+    expect(guidance).not.toContain("Unsupported secret evidence quote");
+
+    const event = recoveryEvents(info).find(({ recoveryType }) =>
+      recoveryType === "correction_regeneration_requested");
+    expect(event?.evidenceMismatchDiagnostics).toEqual([{
+      fieldPath: "evidence.0.quote",
+      quoteLength: 33,
+      longestMatchingPrefixLength: 0,
+      longestMatchingSuffixLength: 2,
+      mismatchClassification: "absent",
+    }]);
+    const diagnostics = JSON.stringify(event?.evidenceMismatchDiagnostics);
+    expect(diagnostics).not.toMatch(/Unsupported|secret|authoritative|source text/i);
   });
 
   it("uses correction regeneration for duplicate-integrity failure", async () => {
@@ -541,10 +577,10 @@ describe("Phase 4.2 bounded Gemini recovery", () => {
     });
     await analyzer().analyze(sourceFixture).catch(() => undefined);
     const serialized = JSON.stringify(recoveryEvents(info));
-    expect(serialized).not.toMatch(/raw invalid|authoritative source text|evidence|provider detail|prompt body|credential|token|secret/i);
+    expect(serialized).not.toMatch(/raw invalid|authoritative source text|evidence quote|provider detail|prompt body|credential|token|secret/i);
     expect(recoveryEvents(info).every((event) =>
       event.model === "gemini-2.5-flash"
-      && event.promptVersion === "radar-decision-intelligence-v2"
+      && event.promptVersion === "radar-decision-intelligence-v3"
       && event.schemaVersion === GEMINI_SCHEMA_VERSION
       && event.recoveryEnabled === true)).toBe(true);
   });
