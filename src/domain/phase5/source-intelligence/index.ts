@@ -1,5 +1,6 @@
 export * from "./artifact-envelope";
 export * from "./canonical-url";
+export * from "./corpus-manifest";
 export * from "./exact-duplicate";
 export * from "./identifiers";
 export * from "./provenance";

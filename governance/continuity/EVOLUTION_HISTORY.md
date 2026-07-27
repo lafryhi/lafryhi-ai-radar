@@ -89,3 +89,12 @@ Chronological entries preserve verified outcomes. A commit recorded as a startin
 - **Qualification status:** PASS — Markdown structure, 111-file internal-link scan, diff check, 22 test files/231 tests, lint, typecheck, and production build passed.
 - **Framework validation:** the framework detected the correct branch/tag/milestone and stale starting-commit metadata, preserved safety constraints, correctly blocked the formerly undefined task, exposed sufficient authoritative references, supported a bounded authorization-only path, and produced a fresh-session-ready handoff.
 - **Next authorized step:** implement Phase 5.1C only after fresh-session entry verification.
+
+## 2026-07-27 — Phase 5.1C implementation
+
+- **Commit:** starting commit `9540fd9840c9df1e416081c3fd54952bf6f6b817`; resulting implementation commit must be recorded by the next continuity update.
+- **Branch:** `phase-5/source-intelligence-foundation`
+- **Objective:** implement only the authorized governed corpus manifest tooling slice.
+- **Major outcome:** added pure versioned manifest contracts, canonical serialization, SHA-256 integrity, partition/family/seal validation, composition accounting, bounded diagnostics, focused tests, and boundary registration.
+- **Qualification status:** `PHASE_5_1C_TOOLING_COMPLETE`; full Phase 5.1 qualification remains pending. Controlled full validation passed 23 files/236 tests; default parallel performance evidence remains environment-sensitive and unchanged.
+- **Next authorized step:** none until a separately authorized Phase 5.1 completion-qualification slice exists.

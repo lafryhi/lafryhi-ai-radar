@@ -29,11 +29,12 @@ const prohibitedCapabilities = [
   /^\s*(?:let|var)\s+/m,
 ];
 
-describe("Phase 5.1A pure-module boundary", () => {
+describe("Phase 5.1 pure-module boundary", () => {
   it("contains only the approved production module set", () => {
     expect(productionFiles).toEqual([
       "artifact-envelope.ts",
       "canonical-url.ts",
+      "corpus-manifest.ts",
       "exact-duplicate.ts",
       "identifiers.ts",
       "index.ts",

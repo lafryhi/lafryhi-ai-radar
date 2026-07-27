@@ -26,6 +26,8 @@ This file preserves durable, repository-supported engineering knowledge. Keep tr
 - Exact-duplicate results are advisory and cannot suppress, mutate, or delete records.
 - Before the 2026-07-27 authorization checkpoint, no authoritative document defined Phase 5.1C; the continuity engine correctly blocked implementation.
 - Phase 5.1C now authorizes governed corpus manifest tooling only. Corpus assembly, qualification, review, and milestone closure remain separately gated.
+- Phase 5.1C manifest tooling is pure and content-free: canonical serialization, integrity digests, partition/seal checks, composition accounting, and bounded diagnostics can be validated without importing the planned corpus.
+- The existing 1,000-operation Phase 5.1B p95 test is sensitive to parallel Vitest worker contention; isolated performance and a controlled single-worker complete suite pass without changing the governed thresholds.
 
 ## Rejected Designs
 
