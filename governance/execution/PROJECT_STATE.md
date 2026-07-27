@@ -1,6 +1,8 @@
 # Project State
 
 > Update this file after every completed phase or sub-phase. Keep it factual, compact, and synchronized with accepted implementation reports. The commit below is the state baseline from which this execution-framework commit was created; a commit cannot embed its own final hash.
+>
+> [SESSION_START.md](SESSION_START.md) is part of the mandatory execution framework for every new Codex session.
 
 ## Repository snapshot
 

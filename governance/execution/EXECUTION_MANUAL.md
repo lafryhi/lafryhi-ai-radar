@@ -4,6 +4,8 @@
 
 This manual is the primary authority for executing future repository phases. It defines the execution process, not product behavior. Product, architecture, safety, acceptance, and milestone-specific requirements remain authoritative in their existing documents.
 
+Begin every new Codex session with the mandatory procedure in [SESSION_START.md](SESSION_START.md).
+
 When instructions conflict, apply this precedence:
 
 1. explicit current user instruction;
