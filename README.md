@@ -67,3 +67,14 @@ The token guard is temporary and must be replaced with Firebase Authentication a
 - `GEMINI_XPRIZE_PHASE4_2_BOUNDED_RECOVERY.md`
 - `GEMINI_XPRIZE_PHASE4_3_ATOMIC_READINESS.md`
 - The five Phase 0 documents remain at the root.
+
+## AI Radar Mission Control
+
+AI Radar transforms trusted AI information into verified intelligence, editorial insight, and publication-ready content through a transparent human-centered workflow.
+
+- Truth before speed.
+- Evidence before opinion.
+- Humans make the final publishing decision.
+- Every important conclusion must remain traceable.
+
+For the deterministic operator demo, set `AI_RADAR_DEMO_MODE=true` and open `/operator/mission-control`. See `docs/SPRINT_1_DEMO_EXECUTION_PLAN.md` for local instructions and boundaries.

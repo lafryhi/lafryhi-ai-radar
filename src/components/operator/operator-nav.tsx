@@ -6,6 +6,7 @@ export function OperatorNav() {
     <div><p className="eyebrow">Human control</p><strong>Operator workspace</strong></div>
     <nav>
       <Link href="/operator">Overview</Link>
+      <Link href="/operator/mission-control">Mission Control</Link>
       <Link href="/operator/review">Review queue</Link>
       <Link href="/operator/published">Published</Link>
       <Link href="/operator/rejected">Rejected</Link>
