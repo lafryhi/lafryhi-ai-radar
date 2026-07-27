@@ -1,6 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 import { AnalysisResultSchema, GeminiAnalysisOutputSchema, type AnalysisResult, type SourceRecord, type StoredAnalysis } from "@/domain/schemas";
+import { applyLosslessRepairs, parseAnalysisEnvelope, validateAndDeriveAnalysis } from "./analysis-validation";
+import { aiRecoveryEnabled, AnalysisFailure, decideRecovery } from "./failure-recovery";
+import { logAiRecovery } from "./pipeline-events";
 
 export const PROMPT_VERSION = "radar-decision-intelligence-v2";
 export const GEMINI_MAX_OUTPUT_TOKENS = 4096;
@@ -187,6 +190,48 @@ export function parseGeminiResponse(text: string): AnalysisResult {
   });
 }
 
+export function parseGeminiResponseWithRecovery(
+  text: string,
+  source: SourceRecord,
+  context: AnalysisContext = { previousArticles: [] },
+): AnalysisResult {
+  const started = Date.now();
+  let repairCount = 0;
+  try {
+    const envelope = parseAnalysisEnvelope(text);
+    const repaired = applyLosslessRepairs(envelope.value);
+    const repairs = [...envelope.repairs, ...repaired.repairs];
+    repairCount = repairs.length;
+    const result = validateAndDeriveAnalysis(repaired.value, source, context, calculateRelevanceScore);
+    if (repairs.length === 0) {
+      logAiRecovery({
+        recoveryType: "none", retryCount: 0, regenerationCount: 0, repairCount: 0,
+        recoveryDurationMs: Date.now() - started, terminalFailureCategory: null,
+        repairCode: null, fieldPath: null,
+      });
+    } else {
+      repairs.forEach((repair, index) => logAiRecovery({
+        recoveryType: "lossless_repair", retryCount: 0, regenerationCount: 0,
+        repairCount: index + 1, recoveryDurationMs: Date.now() - started,
+        terminalFailureCategory: null, repairCode: repair.code, fieldPath: repair.path,
+      }));
+    }
+    return result;
+  } catch (error) {
+    const failure = error instanceof AnalysisFailure
+      ? error
+      : new AnalysisFailure("Analysis recovery encountered an internal invariant failure.", "internal_invariant");
+    // Phase 4.1 records the future recovery decision, but never performs retries or regeneration.
+    decideRecovery(failure);
+    logAiRecovery({
+      recoveryType: "terminal_failure", retryCount: 0, regenerationCount: 0, repairCount,
+      recoveryDurationMs: Date.now() - started, terminalFailureCategory: failure.category,
+      repairCode: null, fieldPath: failure.issues[0]?.path ?? null,
+    });
+    throw failure;
+  }
+}
+
 function normalizeGeminiOutput(value: unknown) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return value;
   const output = value as Record<string, unknown>;
@@ -331,7 +376,9 @@ ${JSON.stringify(previousCoverage)}`,
     const usage = response.usageMetadata;
     let result: AnalysisResult;
     try {
-      result = parseGeminiResponse(text);
+      result = aiRecoveryEnabled()
+        ? parseGeminiResponseWithRecovery(text, source, context)
+        : parseGeminiResponse(text);
     } catch (error) {
       logGeminiResponseFailure("gemini.response_parse_failed", text, response.candidates);
       throw error;

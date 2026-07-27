@@ -39,6 +39,7 @@ npm run build      production standalone build
 - `GOOGLE_CLOUD_PROJECT`
 - `GOOGLE_CLOUD_LOCATION`
 - `GEMINI_MODEL`
+- `AI_RECOVERY_ENABLED=true|false` (Phase 4.1 validation engine; defaults to disabled)
 - `FIRESTORE_DATABASE_ID`
 
 Vertex AI uses Application Default Credentials. Locally, authenticate with `gcloud auth application-default login` or use an approved service-account mechanism. On Cloud Run, assign a least-privilege service identity with Vertex AI User and the required Firestore access. Never commit credential JSON or `.env.local`.
@@ -61,4 +62,5 @@ The token guard is temporary and must be replaced with Firebase Authentication a
 
 - `GEMINI_XPRIZE_PHASE1_IMPLEMENTATION.md`
 - `GEMINI_XPRIZE_PHASE1_EVIDENCE.md`
+- `GEMINI_XPRIZE_PHASE4_1_FAILURE_RECOVERY.md`
 - The five Phase 0 documents remain at the root.

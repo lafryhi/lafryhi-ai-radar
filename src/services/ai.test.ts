@@ -30,6 +30,7 @@ describe("Gemini response parsing", () => {
     clientConstructor.mockReset();
     vi.restoreAllMocks();
     delete process.env.GOOGLE_CLOUD_PROJECT;
+    delete process.env.AI_RECOVERY_ENABLED;
   });
   it("provides every required analysis field in the structural Vertex schema", () => {
     expect(GEMINI_RESPONSE_JSON_SCHEMA).toMatchObject({
@@ -247,5 +248,38 @@ describe("Gemini response parsing", () => {
       finishReason: "STOP",
     });
     expect(JSON.stringify(logged)).not.toMatch(/unsafe|article text|not logged/i);
+  });
+  it("preserves legacy production parsing when recovery is disabled", async () => {
+    process.env.GOOGLE_CLOUD_PROJECT = "test-project";
+    process.env.AI_RECOVERY_ENABLED = "false";
+    generateContent.mockResolvedValue({
+      text: JSON.stringify({ ...geminiAnalysisFixture, keyPoints: ["K".repeat(200)] }),
+      candidates: [{ finishReason: "STOP", content: { parts: [{ text: "redacted" }] } }],
+    });
+
+    const result = await new VertexAiAnalyzer().analyze(sourceFixture);
+    expect(result.result.keyPoints).toEqual(["K".repeat(160)]);
+  });
+  it("activates strict lossless recovery only when the feature flag is enabled", async () => {
+    process.env.GOOGLE_CLOUD_PROJECT = "test-project";
+    process.env.AI_RECOVERY_ENABLED = "true";
+    vi.spyOn(console, "info").mockImplementation(() => undefined);
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    generateContent.mockResolvedValue({
+      text: JSON.stringify({ ...geminiAnalysisFixture, keyPoints: ["K".repeat(200)] }),
+      candidates: [{ finishReason: "STOP", content: { parts: [{ text: "redacted" }] } }],
+    });
+
+    await expect(new VertexAiAnalyzer().analyze(sourceFixture))
+      .rejects.toThrow("Gemini output failed schema validation.");
+    const event = JSON.parse(String(vi.mocked(console.info).mock.calls.at(-1)?.[0]));
+    expect(event).toMatchObject({
+      event: "ai.recovery",
+      recoveryType: "terminal_failure",
+      terminalFailureCategory: "schema_validation",
+      retryCount: 0,
+      regenerationCount: 0,
+      repairCount: 0,
+    });
   });
 });

@@ -102,3 +102,30 @@ export function logPipelineValidationRejected() {
   console.warn(JSON.stringify(structured));
   return structured;
 }
+
+export const AiRecoveryEventSchema = z.object({
+  event: z.literal("ai.recovery"),
+  recoveryType: z.enum(["none", "lossless_repair", "terminal_failure"]),
+  retryCount: z.number().int().nonnegative(),
+  regenerationCount: z.number().int().nonnegative(),
+  repairCount: z.number().int().nonnegative(),
+  recoveryDurationMs: z.number().int().nonnegative(),
+  terminalFailureCategory: z.enum([
+    "response_envelope", "schema_validation", "evidence_integrity", "duplicate_integrity",
+    "provider_transient", "provider_permanent", "internal_invariant",
+  ]).nullable(),
+  repairCode: z.enum([
+    "unwrap_json_fence", "trim_string", "deduplicate_string", "deduplicate_entity",
+    "deduplicate_related_article", "derive_duplicate_reason", "empty_opportunity_detail_to_null",
+  ]).nullable(),
+  fieldPath: z.string().max(300).nullable(),
+  timestamp,
+}).strict();
+
+export function logAiRecovery(event: Omit<z.infer<typeof AiRecoveryEventSchema>, "event" | "timestamp">) {
+  return emit(AiRecoveryEventSchema, {
+    event: "ai.recovery",
+    ...event,
+    timestamp: new Date().toISOString(),
+  });
+}
