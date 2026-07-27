@@ -49,10 +49,10 @@ describe("Phase 4.1 analysis validation", () => {
     const repaired = applyLosslessRepairs({
       ...geminiAnalysisFixture,
       summary: ` ${geminiAnalysisFixture.summary} `,
-      keyPoints: [" First point ", "first point", "Second point"],
+      keyPoints: [" First point ", "First point", "Second point"],
       entities: [
         { name: " Google ", normalizedName: " Google ", type: "company" },
-        { name: "google", normalizedName: "google", type: "company" },
+        { name: " Google ", normalizedName: " Google ", type: "company" },
       ],
       opportunity: { isOpportunity: false, deadline: "", eligibility: " ", benefit: null, effortEstimate: null },
     });
@@ -66,6 +66,47 @@ describe("Phase 4.1 analysis validation", () => {
     expect(repaired.repairs.map(({ code }) => code)).toEqual(expect.arrayContaining([
       "trim_string", "deduplicate_string", "deduplicate_entity", "empty_opportunity_detail_to_null",
     ]));
+  });
+
+  it("preserves case-distinct and punctuation-distinct strings", () => {
+    const result = applyLosslessRepairs({
+      ...geminiAnalysisFixture,
+      mentionedProducts: ["US", "us", "Gemini", "Gemini.", " Gemini "],
+    }).value as Record<string, unknown>;
+    expect(result.mentionedProducts).toEqual(["US", "us", "Gemini", "Gemini."]);
+  });
+
+  it("deduplicates strings only after deterministic outer-whitespace normalization", () => {
+    const result = applyLosslessRepairs({
+      ...geminiAnalysisFixture,
+      targetAudience: [" Developers ", "Developers", "developers"],
+    });
+    expect((result.value as Record<string, unknown>).targetAudience)
+      .toEqual(["Developers", "developers"]);
+    expect(result.repairs.filter(({ code }) => code === "deduplicate_string")).toHaveLength(1);
+  });
+
+  it("deduplicates fully equivalent normalized entities", () => {
+    const result = applyLosslessRepairs({
+      ...geminiAnalysisFixture,
+      entities: [
+        { name: " Google ", normalizedName: " Google ", type: "company" },
+        { type: "company", normalizedName: "Google", name: "Google" },
+      ],
+    });
+    expect((result.value as Record<string, unknown>).entities)
+      .toEqual([{ name: "Google", normalizedName: "Google", type: "company" }]);
+    expect(result.repairs).toContainEqual({ code: "deduplicate_entity", path: "entities.1" });
+  });
+
+  it("rejects conflicting entity duplicates before selecting either record", () => {
+    expect(() => applyLosslessRepairs({
+      ...geminiAnalysisFixture,
+      entities: [
+        { name: "Google", normalizedName: "Google", type: "company" },
+        { name: "Alphabet", normalizedName: "Google", type: "company" },
+      ],
+    })).toThrow(DuplicateIntegrityFailure);
   });
 
   it("never truncates semantic content or clamps scores", () => {
@@ -129,6 +170,79 @@ describe("Phase 4.1 analysis validation", () => {
         }],
       },
     }, context)).toThrow(DuplicateIntegrityFailure);
+  });
+
+  const relatedArticle = {
+    sourceRecordId: previous.sourceRecordId,
+    title: previous.title,
+    sourceUrl: previous.sourceUrl,
+    relation: "near_duplicate",
+    reason: "The source substantially overlaps the previous verified announcement.",
+  };
+
+  it("deduplicates fully equivalent normalized related articles", () => {
+    const result = applyLosslessRepairs({
+      ...geminiAnalysisFixture,
+      duplicateAnalysis: {
+        similarityScore: 80,
+        classification: "near_duplicate",
+        relatedPreviousArticles: [
+          { ...relatedArticle, title: ` ${relatedArticle.title} ` },
+          { ...relatedArticle },
+        ],
+        duplicateReason: relatedArticle.reason,
+      },
+    });
+    const duplicate = (result.value as typeof geminiAnalysisFixture).duplicateAnalysis;
+    expect(duplicate.relatedPreviousArticles).toEqual([relatedArticle]);
+    expect(result.repairs).toContainEqual({
+      code: "deduplicate_related_article",
+      path: "duplicateAnalysis.relatedPreviousArticles.1",
+    });
+  });
+
+  it.each([
+    ["title", "Conflicting previous title"],
+    ["sourceUrl", "https://cloud.google.com/blog/conflicting"],
+    ["relation", "same_topic"],
+    ["reason", "A conflicting explanation that must never be silently discarded."],
+  ] as const)("rejects same-ID related articles with conflicting %s", (field, conflictingValue) => {
+    expect(() => applyLosslessRepairs({
+      ...geminiAnalysisFixture,
+      duplicateAnalysis: {
+        similarityScore: 80,
+        classification: "near_duplicate",
+        relatedPreviousArticles: [
+          { ...relatedArticle },
+          { ...relatedArticle, [field]: conflictingValue },
+        ],
+        duplicateReason: relatedArticle.reason,
+      },
+    })).toThrow(DuplicateIntegrityFailure);
+  });
+
+  it("checks every related record for conflict before returning a deduplicated result", () => {
+    const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
+    expect(() => parseGeminiResponseWithRecovery(JSON.stringify({
+      ...geminiAnalysisFixture,
+      duplicateAnalysis: {
+        similarityScore: 80,
+        classification: "near_duplicate",
+        relatedPreviousArticles: [
+          { ...relatedArticle },
+          { ...relatedArticle },
+          { ...relatedArticle, title: "A conflict after an equivalent duplicate" },
+        ],
+        duplicateReason: relatedArticle.reason,
+      },
+    }), sourceFixture, context)).toThrow(DuplicateIntegrityFailure);
+    const event = JSON.parse(String(info.mock.calls.at(-1)?.[0]));
+    expect(event).toMatchObject({
+      recoveryType: "terminal_failure",
+      repairCount: 0,
+      terminalFailureCategory: "duplicate_integrity",
+      fieldPath: "duplicateAnalysis.relatedPreviousArticles.2",
+    });
   });
 
   it("rejects contradictory unique duplicate metadata", () => {

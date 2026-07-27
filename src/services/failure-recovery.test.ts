@@ -2,24 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   AnalysisFailure,
   aiRecoveryEnabled,
-  decideRecovery,
   EvidenceIntegrityFailure,
   ResponseEnvelopeFailure,
 } from "./failure-recovery";
 
 describe("analysis failure recovery policy", () => {
-  it.each([
-    ["response_envelope", "regenerate"],
-    ["schema_validation", "regenerate"],
-    ["evidence_integrity", "regenerate"],
-    ["duplicate_integrity", "regenerate"],
-    ["provider_transient", "retry"],
-    ["provider_permanent", "fail"],
-    ["internal_invariant", "fail"],
-  ] as const)("maps %s to %s", (category, decision) => {
-    expect(decideRecovery(new AnalysisFailure("safe", category))).toBe(decision);
-  });
-
   it("uses typed failures with safe issue metadata", () => {
     const failure = new EvidenceIntegrityFailure([{ path: "evidence.0.quote", code: "quote_not_in_source" }]);
     expect(failure).toBeInstanceOf(AnalysisFailure);

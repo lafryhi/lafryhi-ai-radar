@@ -5,13 +5,10 @@ export const AnalysisFailureCategories = [
   "schema_validation",
   "evidence_integrity",
   "duplicate_integrity",
-  "provider_transient",
-  "provider_permanent",
   "internal_invariant",
 ] as const;
 
 export type AnalysisFailureCategory = typeof AnalysisFailureCategories[number];
-export type RecoveryDecision = "repair" | "regenerate" | "retry" | "fail";
 
 export interface SafeFailureIssue {
   path: string;
@@ -62,21 +59,6 @@ export function safeZodIssues(issues: ZodIssue[]): SafeFailureIssue[] {
     path: issue.path.map(String).join(".") || "$",
     code: issue.code,
   }));
-}
-
-export function decideRecovery(failure: AnalysisFailure): RecoveryDecision {
-  switch (failure.category) {
-    case "response_envelope":
-    case "schema_validation":
-    case "evidence_integrity":
-    case "duplicate_integrity":
-      return "regenerate";
-    case "provider_transient":
-      return "retry";
-    case "provider_permanent":
-    case "internal_invariant":
-      return "fail";
-  }
 }
 
 export function aiRecoveryEnabled(value: string | undefined = process.env.AI_RECOVERY_ENABLED) {

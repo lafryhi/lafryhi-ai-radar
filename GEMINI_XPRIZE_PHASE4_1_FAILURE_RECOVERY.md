@@ -39,7 +39,9 @@ Allowed repairs are limited to:
 
 - recognized JSON-fence removal;
 - surrounding whitespace removal;
-- duplicate string, entity, and related-reference removal;
+- removal of byte-equivalent strings after outer-whitespace normalization;
+- removal of complete byte-equivalent entity and related-reference records after
+  deterministic outer-whitespace normalization;
 - converting empty non-opportunity detail strings to `null`;
 - deriving a missing duplicate reason from already supplied related-reference
   reasons when the complete derived value fits the existing schema.
@@ -47,11 +49,13 @@ Allowed repairs are limited to:
 Every applied repair emits an `ai.recovery` event with its repair code and
 field path. New output is never truncated, array entries are never sliced to a
 maximum, scores are never clamped, and missing values are never invented.
+Case-distinct and punctuation-distinct strings are preserved. Entity identity
+collisions and repeated related-source identifiers with conflicting fields fail
+integrity validation before any conflicting record can be removed.
 
 Because retries and regeneration belong to Phase 4.2, an invalid result that
-remains after lossless repair fails the current processing run. The decision
-engine still classifies the future action as retry, regenerate, or fail for a
-stable Phase 4.2 integration point.
+remains after lossless repair fails the current processing run. Phase 4.1 does
+not expose deferred retry or regeneration decision branches.
 
 ## Metrics
 
@@ -77,8 +81,6 @@ The stable terminal categories are:
 - `schema_validation`;
 - `evidence_integrity`;
 - `duplicate_integrity`;
-- `provider_transient`;
-- `provider_permanent`;
 - `internal_invariant`.
 
 ## Migration notes

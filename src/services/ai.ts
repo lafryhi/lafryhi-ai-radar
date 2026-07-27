@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 import { AnalysisResultSchema, GeminiAnalysisOutputSchema, type AnalysisResult, type SourceRecord, type StoredAnalysis } from "@/domain/schemas";
 import { applyLosslessRepairs, parseAnalysisEnvelope, validateAndDeriveAnalysis } from "./analysis-validation";
-import { aiRecoveryEnabled, AnalysisFailure, decideRecovery } from "./failure-recovery";
+import { aiRecoveryEnabled, AnalysisFailure } from "./failure-recovery";
 import { logAiRecovery } from "./pipeline-events";
 
 export const PROMPT_VERSION = "radar-decision-intelligence-v2";
@@ -158,22 +158,8 @@ function logGeminiResponseFailure(
 }
 
 export function parseGeminiJson(text: string): unknown {
-  let json = text.replace(/^\uFEFF/, "").trim();
-  if (!json) throw new Error("Gemini returned malformed JSON.");
-
-  if (json.startsWith("```")) {
-    const openingEnd = json.indexOf("\n");
-    if (openingEnd < 0) throw new Error("Gemini returned malformed JSON.");
-    const opening = json.slice(0, openingEnd).trim();
-    if (opening !== "```" && opening !== "```json") throw new Error("Gemini returned malformed JSON.");
-    const fencedBody = json.slice(openingEnd + 1);
-    if (!fencedBody.endsWith("```")) throw new Error("Gemini returned malformed JSON.");
-    json = fencedBody.slice(0, -3).trim();
-    if (!json || json.includes("```")) throw new Error("Gemini returned malformed JSON.");
-  }
-
   try {
-    return JSON.parse(json);
+    return parseAnalysisEnvelope(text).value;
   } catch {
     throw new Error("Gemini returned malformed JSON.");
   }
@@ -221,8 +207,6 @@ export function parseGeminiResponseWithRecovery(
     const failure = error instanceof AnalysisFailure
       ? error
       : new AnalysisFailure("Analysis recovery encountered an internal invariant failure.", "internal_invariant");
-    // Phase 4.1 records the future recovery decision, but never performs retries or regeneration.
-    decideRecovery(failure);
     logAiRecovery({
       recoveryType: "terminal_failure", retryCount: 0, regenerationCount: 0, repairCount,
       recoveryDurationMs: Date.now() - started, terminalFailureCategory: failure.category,

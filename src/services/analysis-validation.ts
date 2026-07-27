@@ -65,12 +65,11 @@ function normalizeStringArray(value: unknown, path: string, repairs: LosslessRep
   return value.flatMap((entry, index) => {
     const normalized = trimString(entry, `${path}.${index}`, repairs);
     if (typeof normalized !== "string") return [normalized];
-    const key = normalized.toLocaleLowerCase();
-    if (seen.has(key)) {
+    if (seen.has(normalized)) {
       repairs.push({ code: "deduplicate_string", path: `${path}.${index}` });
       return [];
     }
-    seen.add(key);
+    seen.add(normalized);
     return [normalized];
   });
 }
@@ -90,24 +89,54 @@ function normalizeEvidence(value: unknown, repairs: LosslessRepair[]) {
 
 function normalizeEntities(value: unknown, repairs: LosslessRepair[]) {
   if (!Array.isArray(value)) return value;
-  const seen = new Set<string>();
-  return value.flatMap((entry, index) => {
-    if (!entry || typeof entry !== "object" || Array.isArray(entry)) return [entry];
+  const normalizedEntries = value.map((entry, index) => {
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) return entry;
     const record = entry as Record<string, unknown>;
-    const normalized: Record<string, unknown> = {
+    return {
       ...record,
       name: trimString(record.name, `entities.${index}.name`, repairs),
       normalizedName: trimString(record.normalizedName, `entities.${index}.normalizedName`, repairs),
     };
-    if (typeof normalized.normalizedName !== "string" || typeof normalized.type !== "string") return [normalized];
-    const key = `${normalized.type}:${normalized.normalizedName.toLocaleLowerCase()}`;
-    if (seen.has(key)) {
+  });
+  const identities = new Map<string, string>();
+  normalizedEntries.forEach((normalized, index) => {
+    if (!normalized || typeof normalized !== "object" || Array.isArray(normalized)) return;
+    const record = normalized as Record<string, unknown>;
+    if (typeof record.normalizedName !== "string" || typeof record.type !== "string") return;
+    const identity = `${record.type}\u0000${record.normalizedName}`;
+    const signature = stableSignature(record);
+    const previous = identities.get(identity);
+    if (previous && previous !== signature) {
+      throw new DuplicateIntegrityFailure([{
+        path: `entities.${index}`,
+        code: "conflicting_duplicate_entity",
+      }]);
+    }
+    identities.set(identity, signature);
+  });
+  const seen = new Set<string>();
+  return normalizedEntries.flatMap((normalized, index) => {
+    if (!normalized || typeof normalized !== "object" || Array.isArray(normalized)) return [normalized];
+    const record = normalized as Record<string, unknown>;
+    if (typeof record.normalizedName !== "string" || typeof record.type !== "string") return [record];
+    const signature = stableSignature(record);
+    if (seen.has(signature)) {
       repairs.push({ code: "deduplicate_entity", path: `entities.${index}` });
       return [];
     }
-    seen.add(key);
-    return [normalized];
+    seen.add(signature);
+    return [record];
   });
+}
+
+function stableSignature(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stableSignature).join(",")}]`;
+  if (value && typeof value === "object") {
+    const entries = Object.entries(value as Record<string, unknown>)
+      .sort(([left], [right]) => left < right ? -1 : left > right ? 1 : 0);
+    return `{${entries.map(([key, entry]) => `${JSON.stringify(key)}:${stableSignature(entry)}`).join(",")}}`;
+  }
+  return JSON.stringify(value) ?? "undefined";
 }
 
 function normalizeOpportunity(value: unknown, repairs: LosslessRepair[]) {
@@ -128,22 +157,43 @@ function normalizeDuplicateAnalysis(value: unknown, repairs: LosslessRepair[]) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return value;
   const duplicate = { ...(value as Record<string, unknown>) };
   if (Array.isArray(duplicate.relatedPreviousArticles)) {
-    const seen = new Set<string>();
-    duplicate.relatedPreviousArticles = duplicate.relatedPreviousArticles.flatMap((entry, index) => {
-      if (!entry || typeof entry !== "object" || Array.isArray(entry)) return [entry];
+    const normalizedEntries = duplicate.relatedPreviousArticles.map((entry, index) => {
+      if (!entry || typeof entry !== "object" || Array.isArray(entry)) return entry;
       const article = entry as Record<string, unknown>;
-      if (typeof article.sourceRecordId === "string" && seen.has(article.sourceRecordId)) {
-        repairs.push({ code: "deduplicate_related_article", path: `duplicateAnalysis.relatedPreviousArticles.${index}` });
-        return [];
-      }
-      if (typeof article.sourceRecordId === "string") seen.add(article.sourceRecordId);
-      return [{
+      return {
         ...article,
         sourceRecordId: trimString(article.sourceRecordId, `duplicateAnalysis.relatedPreviousArticles.${index}.sourceRecordId`, repairs),
         title: trimString(article.title, `duplicateAnalysis.relatedPreviousArticles.${index}.title`, repairs),
         sourceUrl: trimString(article.sourceUrl, `duplicateAnalysis.relatedPreviousArticles.${index}.sourceUrl`, repairs),
         reason: trimString(article.reason, `duplicateAnalysis.relatedPreviousArticles.${index}.reason`, repairs),
-      }];
+      };
+    });
+    const identities = new Map<string, string>();
+    normalizedEntries.forEach((entry, index) => {
+      if (!entry || typeof entry !== "object" || Array.isArray(entry)) return;
+      const article = entry as Record<string, unknown>;
+      if (typeof article.sourceRecordId !== "string") return;
+      const signature = stableSignature(article);
+      const previous = identities.get(article.sourceRecordId);
+      if (previous && previous !== signature) {
+        throw new DuplicateIntegrityFailure([{
+          path: `duplicateAnalysis.relatedPreviousArticles.${index}`,
+          code: "conflicting_duplicate_related_article",
+        }]);
+      }
+      identities.set(article.sourceRecordId, signature);
+    });
+    const seen = new Set<string>();
+    duplicate.relatedPreviousArticles = normalizedEntries.flatMap((entry, index) => {
+      if (!entry || typeof entry !== "object" || Array.isArray(entry)) return [entry];
+      const article = entry as Record<string, unknown>;
+      const signature = stableSignature(article);
+      if (seen.has(signature)) {
+        repairs.push({ code: "deduplicate_related_article", path: `duplicateAnalysis.relatedPreviousArticles.${index}` });
+        return [];
+      }
+      seen.add(signature);
+      return [article];
     });
   }
   if (duplicate.classification !== "unique" && duplicate.duplicateReason == null && Array.isArray(duplicate.relatedPreviousArticles)) {

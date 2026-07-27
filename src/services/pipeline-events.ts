@@ -112,7 +112,7 @@ export const AiRecoveryEventSchema = z.object({
   recoveryDurationMs: z.number().int().nonnegative(),
   terminalFailureCategory: z.enum([
     "response_envelope", "schema_validation", "evidence_integrity", "duplicate_integrity",
-    "provider_transient", "provider_permanent", "internal_invariant",
+    "internal_invariant",
   ]).nullable(),
   repairCode: z.enum([
     "unwrap_json_fence", "trim_string", "deduplicate_string", "deduplicate_entity",
