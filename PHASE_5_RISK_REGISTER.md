@@ -6,7 +6,7 @@ This register is proposed. Owners are accountable roles, not named individuals. 
 
 Likelihood and impact use `Low`, `Medium`, or `High`. Priority uses `P0` (release-blocking safety), `P1` (high), `P2` (medium), or `P3` (low).
 
-The `Planned feature` value is the canonical risk identifier in this blueprint. These identifiers are unique and must remain stable; a materially different risk receives a new row rather than reusing an existing identifier. A future governance revision may add numeric aliases without changing these canonical identifiers.
+The `Planned feature` value remains the canonical risk name. Stable numeric aliases are assigned below for cross-document governance. A materially different risk receives a new ID and row rather than reusing an existing identifier.
 
 | Planned feature | Risk | Likelihood | Impact | Mitigation | Owner | Priority | Exit criteria |
 |---|---|---:|---:|---|---|---:|---|
@@ -52,6 +52,72 @@ The `Planned feature` value is the canonical risk identifier in this blueprint. 
 | Capacity planning | Forecast omits human review or provider quota | Medium | High | End-to-end model including operators, quotas, degraded modes, headroom | Operations Lead | P1 | Peak plan demonstrates agreed headroom and queue recovery |
 | Disaster recovery | Restore produces inconsistent authority/derived state | Medium | High | Tiered restore order, integrity checks, rebuild derived state last | Incident Commander | P0 | Tabletop and isolated restore meet accepted RTO/RPO and invariants |
 | Feature controls | Mismanaged activation creates mixed incompatible versions | Medium | High | Version compatibility matrix, change control, captured flags, rollback runbook | Release Manager | P0 | Canary proves controlled activation and rollback without data mutation |
+
+## Risk ID registry and Phase 5.1 classification
+
+Owner labels in the original register are implementation-domain roles. For Phase 5.0 governance, their accountable role mapping follows `PHASE_5_OWNERSHIP_MATRIX.md`.
+
+| Risk ID | Canonical risk name | Phase 5.1 classification | Governance owner |
+|---|---|---|---|
+| P5-RISK-001 | Derived artifact platform | blocking | Architecture Owner |
+| P5-RISK-002 | Deterministic identities | blocking | Architecture Owner |
+| P5-RISK-003 | Provenance graph | blocking | Architecture Owner |
+| P5-RISK-004 | Publisher reputation | non-blocking; implementation excluded | Product and Editorial Owner |
+| P5-RISK-005 | Reliability history | deferred outside milestone | Data Governance Owner |
+| P5-RISK-006 | Exact duplicate detection | blocking | Architecture Owner |
+| P5-RISK-007 | Near-duplicate detection | deferred outside milestone | Evaluation Owner |
+| P5-RISK-008 | Language detection | deferred outside milestone | Evaluation Owner |
+| P5-RISK-009 | Publisher clustering | deferred outside milestone | Data Governance Owner |
+| P5-RISK-010 | Source fingerprinting | blocking | Security and Privacy Owner |
+| P5-RISK-011 | URL canonicalization | blocking | Architecture Owner |
+| P5-RISK-012 | Conflict detection | deferred outside milestone | Evaluation Owner |
+| P5-RISK-013 | Cross-source validation | deferred outside milestone | Architecture Owner |
+| P5-RISK-014 | Event extraction | deferred outside milestone | Architecture Owner |
+| P5-RISK-015 | Entity resolution | deferred outside milestone | Architecture Owner |
+| P5-RISK-016 | Timeline generation | deferred outside milestone | Architecture Owner |
+| P5-RISK-017 | Confidence estimation | deferred outside milestone | Evaluation Owner |
+| P5-RISK-018 | Coverage estimation | deferred outside milestone | Evaluation Owner |
+| P5-RISK-019 | Story grouping | deferred outside milestone | Architecture Owner |
+| P5-RISK-020 | Novelty scoring | deferred outside milestone | Evaluation Owner |
+| P5-RISK-021 | Duplicate-story suppression | deferred outside milestone | Product and Editorial Owner |
+| P5-RISK-022 | Relationship graph | deferred outside milestone | Architecture Owner |
+| P5-RISK-023 | Multi-model compatibility | deferred outside milestone | Architecture Owner |
+| P5-RISK-024 | Story ranking | deferred outside milestone | Product and Editorial Owner |
+| P5-RISK-025 | Breaking-news logic | deferred outside milestone | Product and Editorial Owner |
+| P5-RISK-026 | AI Radar summaries | deferred outside milestone | Product and Editorial Owner |
+| P5-RISK-027 | Digest and weekly report | deferred outside milestone | Product and Editorial Owner |
+| P5-RISK-028 | Story lifecycle | deferred outside milestone | Product and Editorial Owner |
+| P5-RISK-029 | Operational telemetry | blocking | Security and Privacy Owner |
+| P5-RISK-030 | Gemini usage/cost dashboard | deferred outside milestone | Operations Owner |
+| P5-RISK-031 | Pipeline/queue dashboards | deferred outside milestone | Operations Owner |
+| P5-RISK-032 | Operator-action metrics | deferred outside milestone | Security and Privacy Owner |
+| P5-RISK-033 | Trend monitoring | deferred outside milestone | Operations Owner |
+| P5-RISK-034 | Replay simulator | blocking | Reliability Owner |
+| P5-RISK-035 | Fault injection | deferred outside milestone | Reliability Owner |
+| P5-RISK-036 | Synthetic canaries | deferred outside milestone | Reliability Owner |
+| P5-RISK-037 | Load testing | deferred outside milestone | Reliability Owner |
+| P5-RISK-038 | Performance regression | non-blocking for entry; completion evidence required | Reliability Owner |
+| P5-RISK-039 | Long-running validation | deferred outside milestone | Reliability Owner |
+| P5-RISK-040 | Capacity planning | non-blocking for offline foundation; future production blocker | Operations Owner |
+| P5-RISK-041 | Disaster recovery | deferred outside milestone | Reliability Owner |
+| P5-RISK-042 | Feature controls | non-blocking because no feature flag or production activation is authorized | Operations Owner |
+
+## Milestone 5.1 Blocking Risks
+
+These risks remain open. They are not resolved merely because contracts exist.
+
+| Risk ID | Why blocking | Owner | Required exit evidence | Current evidence |
+|---|---|---|---|---|
+| P5-RISK-001 | A derived envelope could mutate or collide with frozen records. | Architecture Owner | Contract/dependency tests proving Phase 4 records and namespaces are untouched | Contract documented; tests not implemented |
+| P5-RISK-002 | Unstable framing could create duplicate or inconsistent identities. | Architecture Owner | Cross-runtime golden vectors and version/namespace separation tests | Encoding documented; tests not implemented |
+| P5-RISK-003 | Missing provenance would make derived intelligence unauditable. | Architecture Owner | 100% provenance validation with missing/unknown negative fixtures | Validator contract documented; tests not implemented |
+| P5-RISK-006 | Exact-equivalence logic could merge distinct records. | Architecture Owner | Approved corpus with 100% precision and zero critical false merges | Corpus not collected; classifier not implemented |
+| P5-RISK-010 | Fingerprints could be nondeterministic, collide in evaluated data, or leak protected inputs. | Security and Privacy Owner | Golden vectors, zero observed collisions, input/privacy audit | Contract documented; evidence absent |
+| P5-RISK-011 | Canonical URL rules could collapse distinct resources. | Architecture Owner | 100% approved-rule correctness and zero false equivalence on adversarial corpus | Corpus and implementation absent |
+| P5-RISK-029 | Test diagnostics could contain protected content. | Security and Privacy Owner | Allowlist/denylist adversarial tests with zero prohibited fields | Privacy contract approved; tests absent |
+| P5-RISK-034 | Evaluation harness could contact production or become a replay path. | Reliability Owner | Capability tests proving no network, production credentials, adapters, writes, or endpoints | Isolation contract approved; harness absent |
+
+Because all eight lack actual exit evidence, the implementation entry gate remains `NOT_READY`.
 
 ## Review cadence
 

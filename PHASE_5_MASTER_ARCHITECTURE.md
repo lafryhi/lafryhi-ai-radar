@@ -13,13 +13,15 @@
 
 - **Blueprint status:** Adopted for implementation planning
 - **Implementation status:** Not started
-- **Architecture decision status:** All Phase 5 ADRs remain Proposed — Not Accepted Yet until individually reviewed and accepted.
+- **Architecture decision status:** Individually reviewed for Phase 5.1. Four ADRs are Accepted, five are Accepted with documented limitations, and six are Deferred. `PHASE_5_ADR_ACCEPTANCE_RECORD.md` is authoritative.
 - **Baseline:** v1.0.0-rc1
 - **Blueprint adoption date:** 2026-07-27
 - **Authority boundary:** This blueprint authorizes phased implementation planning only. It does not authorize production deployment, schema migration, traffic changes, publication automation, or relaxation of Phase 4 integrity controls.
 - **Change-control rule:** Material architectural changes require an ADR update and explicit acceptance before implementation.
 
 Blueprint adoption is a documentation-governance decision, not a production release or approval to begin a milestone.
+
+The Phase 5.1 implementation entry gate remains `NOT_READY`. Accepted governance contracts do not override unresolved entry thresholds or open blocking risks.
 
 ## Vision
 

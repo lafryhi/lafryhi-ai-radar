@@ -2,13 +2,15 @@
 
 ## Governance
 
-These ADRs anticipate decisions required for Phase 5. Every entry is **Proposed — Not Accepted Yet**. None authorizes code, persistence, deployment, or production behavior.
+These ADRs govern decisions required for Phase 5. Each entry is reviewed individually; acceptance is limited to its stated scope and never authorizes deployment or production behavior. The authoritative review rationale and implementation impact are recorded in `PHASE_5_ADR_ACCEPTANCE_RECORD.md`.
 
 An ADR becomes accepted only through the Phase 5 governance process. Acceptance must record the decision date, owners, validation evidence, compatibility assessment, and superseded decisions.
 
 ## P5-ADR-001 — Additive versioned derived artifacts
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Accepted
+
+**Prerequisite classification:** FOUNDATIONAL_BLOCKING
 
 ### Context
 
@@ -33,7 +35,11 @@ Represent Phase 5 intelligence as immutable, versioned derived artifacts referen
 
 ## P5-ADR-002 — Deterministic identities and immutable Story Versions
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Accepted with documented limitations
+
+**Prerequisite classification:** MILESTONE_5_1_BLOCKING
+
+**Accepted limitation:** Phase 5.1 acceptance covers deterministic source-fingerprint and artifact-envelope identities only. Story, Story Version, Entity, graph-edge, split, and merge identity encodings remain unauthorized until their milestone review.
 
 ### Context
 
@@ -57,7 +63,11 @@ Derive artifact identities from canonical ordered input IDs plus algorithm/schem
 
 ## P5-ADR-003 — Provenance-linked claim and event graph
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Accepted with documented limitations
+
+**Prerequisite classification:** FOUNDATIONAL_BLOCKING
+
+**Accepted limitation:** Phase 5.1 may define provenance structures and validate their completeness offline. It may not create a production relationship graph, graph persistence layer, or graph traversal service.
 
 ### Context
 
@@ -82,7 +92,11 @@ Use typed Claims, Extracted Events, Entities, Stories, and provenance-bearing Re
 
 ## P5-ADR-004 — Source reputation is advisory and decomposed
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Accepted
+
+**Prerequisite classification:** NON_BLOCKING_FOR_5_1
+
+**Implementation note:** Acceptance fixes the governance boundary between operator-controlled publisher trust and analytically derived source reputation. Phase 5.1 does not implement or change reputation.
 
 ### Context
 
@@ -106,7 +120,11 @@ Maintain sample-aware reputation components, uncertainty, time windows, and meas
 
 ## P5-ADR-005 — Conservative duplicate and canonicalization model
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Accepted with documented limitations
+
+**Prerequisite classification:** MILESTONE_5_1_BLOCKING
+
+**Accepted limitation:** Phase 5.1 covers conservative canonical URL normalization, deterministic source fingerprinting, exact-identity fixtures, and conflict-preserving contracts offline. Near-duplicate classification, clustering, view suppression, and production behavior remain outside the authorized scope.
 
 ### Context
 
@@ -130,7 +148,9 @@ Separate exact duplicate identity, near-duplicate classification, related-story 
 
 ## P5-ADR-006 — NFC-only exact evidence boundary remains authoritative
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Accepted
+
+**Prerequisite classification:** FOUNDATIONAL_BLOCKING
 
 ### Context
 
@@ -154,7 +174,11 @@ Retain exact contiguous matching after Unicode NFC and deterministic whitespace 
 
 ## P5-ADR-007 — Provider-neutral model task envelope
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Deferred
+
+**Prerequisite classification:** DEFERRED
+
+**Reason:** Phase 5.1 permits no model calls. Provider-neutral model execution is reviewed before a later model-assisted milestone.
 
 ### Context
 
@@ -178,7 +202,11 @@ Define a provider-neutral, versioned task envelope with immutable inputs, model/
 
 ## P5-ADR-008 — Confidence and coverage are separate calibrated outputs
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Deferred
+
+**Prerequisite classification:** DEFERRED
+
+**Reason:** Confidence and coverage are not produced by the deterministic offline Phase 5.1 scope.
 
 ### Context
 
@@ -202,7 +230,11 @@ Calculate confidence and coverage independently, expose components and unknown s
 
 ## P5-ADR-009 — Explainable, human-advisory editorial scoring
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Deferred
+
+**Prerequisite classification:** DEFERRED
+
+**Reason:** Editorial scoring is outside Source Intelligence foundation work.
 
 ### Context
 
@@ -226,7 +258,11 @@ Use versioned component signals and policy weights, expose all contributions and
 
 ## P5-ADR-010 — Append-only bounded operational events
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Accepted with documented limitations
+
+**Prerequisite classification:** FOUNDATIONAL_BLOCKING
+
+**Accepted limitation:** Acceptance covers the field allowlist, denylist, retention classes, and offline evaluation telemetry contract. It does not authorize a production event emitter, metric store, dashboard, alert, or new production logging field.
 
 ### Context
 
@@ -250,7 +286,11 @@ Emit versioned, allowlisted, bounded operational events and build idempotent agg
 
 ## P5-ADR-011 — View-only duplicate suppression
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Deferred
+
+**Prerequisite classification:** NON_BLOCKING_FOR_5_1
+
+**Reason:** Phase 5.1 performs no production suppression or ranking. The lossless and reversible boundary remains mandatory.
 
 ### Context
 
@@ -274,7 +314,11 @@ Represent suppression as a reversible, versioned relation from a candidate to it
 
 ## P5-ADR-012 — Isolated replay and fault-injection boundary
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Accepted with documented limitations
+
+**Prerequisite classification:** FOUNDATIONAL_BLOCKING
+
+**Accepted limitation:** Phase 5.1 may build an offline deterministic corpus harness using synthetic or approved sanitized fixtures. Production replay, fault injection, credentials, endpoints, data, and writes remain prohibited.
 
 ### Context
 
@@ -298,7 +342,9 @@ Run replay and injection only with synthetic/sanitized fixtures in isolated envi
 
 ## P5-ADR-013 — Logical clocks and deterministic cutoffs
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Accepted
+
+**Prerequisite classification:** FOUNDATIONAL_BLOCKING
 
 ### Context
 
@@ -322,7 +368,11 @@ Pass a logical evaluation cutoff through time-dependent Phase 5 computations. Pe
 
 ## P5-ADR-014 — Embeddings are candidate-generation features only
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Deferred
+
+**Prerequisite classification:** DEFERRED
+
+**Reason:** Embeddings and model-assisted candidate generation are excluded from Phase 5.1.
 
 ### Context
 
@@ -346,7 +396,11 @@ If approved, embeddings generate or score candidates only. Deterministic rules a
 
 ## P5-ADR-015 — Rebuildable derived state and tiered disaster recovery
 
-**Status:** Proposed — Not Accepted Yet
+**Status:** Deferred
+
+**Prerequisite classification:** DEFERRED
+
+**Reason:** Disaster-recovery implementation is outside the offline foundation and requires later RTO/RPO decisions.
 
 ### Context
 

@@ -9,7 +9,7 @@
 - Baseline tag: `v1.0.0-rc1`
 - Implementation status: Not started
 - Current implementation entry gate: `NOT_READY`
-- Architecture decisions: Proposed — Not Accepted Yet
+- Architecture decisions: Individually reviewed; 4 Accepted, 5 Accepted with documented limitations, 6 Deferred
 
 This index governs the Phase 5 engineering blueprint. Adoption authorizes planning and controlled decision-making only; it is not a production release and does not authorize implementation, deployment, migration, or activation.
 
@@ -21,7 +21,14 @@ This index governs the Phase 5 engineering blueprint. Adoption authorizes planni
 | [Phase 5 Master Architecture](PHASE_5_MASTER_ARCHITECTURE.md) | Program vision, boundaries, principles, compatibility, releases, rollback, risks, metrics, and gates. |
 | [Phase 5 Roadmap](PHASE_5_ROADMAP.md) | Milestones 5.0 through 5.5, their dependencies, acceptance criteria, complexity, and rollback considerations. |
 | [Phase 5 Implementation Order](PHASE_5_IMPLEMENTATION_ORDER.md) | Risk-minimized engineering sequence with prerequisites, outputs, validation, rollback, and dependency handoffs. |
-| [Phase 5 Architecture Decisions](PHASE_5_ARCHITECTURE_DECISIONS.md) | Proposed ADRs and alternatives awaiting individual review and acceptance. |
+| [Phase 5 Architecture Decisions](PHASE_5_ARCHITECTURE_DECISIONS.md) | ADR decisions, alternatives, individual status, classification, and accepted limitations. |
+| [Phase 5 ADR Acceptance Record](PHASE_5_ADR_ACCEPTANCE_RECORD.md) | Authoritative ADR-by-ADR review, ownership, rationale, risks, evidence, and implementation impact. |
+| [Phase 5 Ownership Matrix](PHASE_5_OWNERSHIP_MATRIX.md) | Role-based RACI and protected authority boundaries. |
+| [Phase 5 Compatibility Contracts](PHASE_5_COMPATIBILITY_CONTRACTS.md) | Immutable Phase 4, evidence, advisory, data, identity, and failure invariants. |
+| [Phase 5 Privacy and Telemetry Contract](PHASE_5_PRIVACY_AND_TELEMETRY_CONTRACT.md) | Allowed and prohibited data, access, retention, logging, incident, and validation rules. |
+| [Phase 5 Evaluation Corpus Governance](PHASE_5_EVALUATION_CORPUS_GOVERNANCE.md) | Corpus licensing, provenance, annotations, partitions, integrity, privacy, and change control. |
+| [Phase 5.1 Acceptance Thresholds](PHASE_5_ACCEPTANCE_THRESHOLDS.md) | Proposed correctness, compatibility, privacy, cost, latency, and regression thresholds. |
+| [Phase 5.1 Scope](PHASE_5_MILESTONE_5_1_SCOPE.md) | Smallest deterministic offline scope, prohibitions, prerequisites, tests, and rollback. |
 | [Phase 5 Risk Register](PHASE_5_RISK_REGISTER.md) | Feature-level risks, likelihood, impact, mitigation, accountable role, priority, and exit evidence. |
 | [Source Intelligence Specification](SOURCE_INTELLIGENCE_SPEC.md) | Architecture for source identity, reliability observations, normalization, duplication, language, clustering, and corroboration. |
 | [Analysis Intelligence Specification](ANALYSIS_INTELLIGENCE_SPEC.md) | Architecture for grounded events, entities, claims, timelines, contradictions, Stories, novelty, coverage, and confidence. |
@@ -37,13 +44,20 @@ This index governs the Phase 5 engineering blueprint. Adoption authorizes planni
 3. [PHASE_5_ROADMAP.md](PHASE_5_ROADMAP.md)
 4. [PHASE_5_IMPLEMENTATION_ORDER.md](PHASE_5_IMPLEMENTATION_ORDER.md)
 5. [PHASE_5_ARCHITECTURE_DECISIONS.md](PHASE_5_ARCHITECTURE_DECISIONS.md)
-6. [PHASE_5_RISK_REGISTER.md](PHASE_5_RISK_REGISTER.md)
-7. [SOURCE_INTELLIGENCE_SPEC.md](SOURCE_INTELLIGENCE_SPEC.md)
-8. [ANALYSIS_INTELLIGENCE_SPEC.md](ANALYSIS_INTELLIGENCE_SPEC.md)
-9. [EDITORIAL_ENGINE_SPEC.md](EDITORIAL_ENGINE_SPEC.md)
-10. [OPERATIONAL_INTELLIGENCE_SPEC.md](OPERATIONAL_INTELLIGENCE_SPEC.md)
-11. [RELIABILITY_EVOLUTION_SPEC.md](RELIABILITY_EVOLUTION_SPEC.md)
-12. [PHASE_5_ENTRY_GATE.md](PHASE_5_ENTRY_GATE.md)
+6. [PHASE_5_ADR_ACCEPTANCE_RECORD.md](PHASE_5_ADR_ACCEPTANCE_RECORD.md)
+7. [PHASE_5_OWNERSHIP_MATRIX.md](PHASE_5_OWNERSHIP_MATRIX.md)
+8. [PHASE_5_COMPATIBILITY_CONTRACTS.md](PHASE_5_COMPATIBILITY_CONTRACTS.md)
+9. [PHASE_5_PRIVACY_AND_TELEMETRY_CONTRACT.md](PHASE_5_PRIVACY_AND_TELEMETRY_CONTRACT.md)
+10. [PHASE_5_EVALUATION_CORPUS_GOVERNANCE.md](PHASE_5_EVALUATION_CORPUS_GOVERNANCE.md)
+11. [PHASE_5_ACCEPTANCE_THRESHOLDS.md](PHASE_5_ACCEPTANCE_THRESHOLDS.md)
+12. [PHASE_5_MILESTONE_5_1_SCOPE.md](PHASE_5_MILESTONE_5_1_SCOPE.md)
+13. [PHASE_5_RISK_REGISTER.md](PHASE_5_RISK_REGISTER.md)
+14. [SOURCE_INTELLIGENCE_SPEC.md](SOURCE_INTELLIGENCE_SPEC.md)
+15. [ANALYSIS_INTELLIGENCE_SPEC.md](ANALYSIS_INTELLIGENCE_SPEC.md)
+16. [EDITORIAL_ENGINE_SPEC.md](EDITORIAL_ENGINE_SPEC.md)
+17. [OPERATIONAL_INTELLIGENCE_SPEC.md](OPERATIONAL_INTELLIGENCE_SPEC.md)
+18. [RELIABILITY_EVOLUTION_SPEC.md](RELIABILITY_EVOLUTION_SPEC.md)
+19. [PHASE_5_ENTRY_GATE.md](PHASE_5_ENTRY_GATE.md)
 
 ## Governance rules
 
@@ -55,7 +69,7 @@ This index governs the Phase 5 engineering blueprint. Adoption authorizes planni
 6. Duplicate suppression is reversible view logic and never deletes source material or derived provenance.
 7. Publisher trust remains operator-controlled. Analytically derived source reputation is separate, uncertainty-aware, and non-authorizing.
 8. Reliability experiments use synthetic or approved sanitized fixtures in isolated environments. No production replay endpoint is authorized.
-9. All Phase 5 ADRs remain Proposed — Not Accepted Yet until individually approved.
+9. ADR status is individual and authoritative only when recorded consistently in the ADR document and acceptance record; deferred decisions provide no implementation authority.
 10. Material architectural changes require an ADR update and explicit acceptance before implementation.
 11. The default for every implementation proposal is no deployment and no production activation.
 
@@ -80,7 +94,7 @@ The adopted blueprint does not authorize:
 - prompt changes;
 - automatic approval or publication;
 - relaxation of Phase 4 evidence or integrity controls;
-- acceptance of any proposed ADR;
+- acceptance of any deferred or future ADR by implication;
 - commencement of Phase 5.1.
 
 ## Open-question handling process
@@ -124,6 +138,6 @@ Additional requirements include an approved milestone and scope, reproducibility
 
 ## Current governance conclusion
 
-The blueprint is adopted for planning, but Phase 5 implementation is not ready to begin. The current gate is `NOT_READY` because foundational ADRs, ownership, the deterministic evaluation corpus, acceptance thresholds, and operational contracts have not yet been individually accepted.
+The blueprint and minimum Phase 5.1 governance contracts are adopted, but implementation is not ready to begin. The current gate is `NOT_READY` because latency and local/CI cost thresholds are unresolved, corpus composition is not numerically approved, eight relevant P0 risks lack exit evidence, and pure-module dependency isolation has not been reviewed.
 
 This is an expected governance state, not an implementation failure.
