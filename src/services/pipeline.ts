@@ -3,6 +3,7 @@ import { ProcessingRunSchema, ReviewDecisionSchema, StoredAnalysisSchema, type P
 import type { RadarRepository } from "@/persistence/repository";
 import type { AiAnalyzer, PreviousArticleContext } from "./ai";
 import { PROMPT_VERSION } from "./ai";
+import { aiRecoveryEnabled, AnalysisFailure } from "./failure-recovery";
 import { ingestSource, validateRegisteredSource, validateSourceUrl } from "./ingestion";
 import { logAnalysisCreated, logPendingReviewCreated, logPipelineCompleted, logPipelineStarted } from "./pipeline-events";
 
@@ -47,6 +48,7 @@ export async function runPipeline(url: string, repository: RadarRepository, anal
     await repository.saveRun(run);
     logPipelineStarted({ processingRunId: run.id, candidateId: context.candidateId, sourceId: source.id });
     const output = await analyzer.analyze(source, { previousArticles: await getPreviousCoverage(repository) });
+    run = ProcessingRunSchema.parse({ ...run, retryCount: output.retryCount ?? run.retryCount });
     const analysis = StoredAnalysisSchema.parse({
       ...output.result, id: randomUUID(), sourceRecordId: source.id,
       processingRunId: run.id, createdAt: new Date().toISOString(),
@@ -79,7 +81,7 @@ export async function runPipeline(url: string, repository: RadarRepository, anal
     return { source, run: completed, analysis };
   } catch (error) {
     if (run) {
-      const failed = ProcessingRunSchema.parse({ ...run, status: "failed", completedAt: new Date().toISOString(), latencyMs: Date.now() - started, validationOutcome: "failed", errorDetails: error instanceof Error ? error.message.slice(0, 2000) : "Unknown processing error" });
+      const failed = ProcessingRunSchema.parse({ ...run, status: "failed", completedAt: new Date().toISOString(), latencyMs: Date.now() - started, validationOutcome: "failed", errorDetails: error instanceof Error ? error.message.slice(0, 2000) : "Unknown processing error", retryCount: error instanceof AnalysisFailure ? error.retryCount : run.retryCount });
       await repository.saveRun(failed);
       console.error(JSON.stringify({ event: "pipeline.failed", runId: run.id, error: failed.errorDetails }));
     }
@@ -97,12 +99,13 @@ export async function rerunPipeline(sourceRecordId: string, repository: RadarRep
     id: randomUUID(), sourceRecordId, status: "processing", model: "pending",
     modelProvider: "vertex-ai", startedAt: new Date(started).toISOString(), completedAt: null,
     latencyMs: null, promptVersion: PROMPT_VERSION, estimatedCostUsd: null,
-    validationOutcome: "not_run", errorDetails: null, retryCount: previousRetries,
+    validationOutcome: "not_run", errorDetails: null, retryCount: aiRecoveryEnabled() ? 0 : previousRetries,
   });
   await repository.saveRun(run);
   logPipelineStarted({ processingRunId: run.id, sourceId: source.id });
   try {
     const output = await analyzer.analyze(source, { previousArticles: await getPreviousCoverage(repository) });
+    run = ProcessingRunSchema.parse({ ...run, retryCount: output.retryCount ?? run.retryCount });
     const analysis = StoredAnalysisSchema.parse({ ...output.result, id: randomUUID(), sourceRecordId, processingRunId: run.id, createdAt: new Date().toISOString() });
     await repository.saveAnalysis(analysis);
     logAnalysisCreated({ analysisId: analysis.id, processingRunId: run.id, model: output.model });
@@ -125,7 +128,7 @@ export async function rerunPipeline(sourceRecordId: string, repository: RadarRep
     });
     return { source, run, analysis };
   } catch (error) {
-    run = ProcessingRunSchema.parse({ ...run, status: "failed", completedAt: new Date().toISOString(), latencyMs: Date.now() - started, validationOutcome: "failed", errorDetails: error instanceof Error ? error.message.slice(0, 2000) : "Unknown processing error" });
+    run = ProcessingRunSchema.parse({ ...run, status: "failed", completedAt: new Date().toISOString(), latencyMs: Date.now() - started, validationOutcome: "failed", errorDetails: error instanceof Error ? error.message.slice(0, 2000) : "Unknown processing error", retryCount: error instanceof AnalysisFailure ? error.retryCount : run.retryCount });
     await repository.saveRun(run);
     throw error;
   }

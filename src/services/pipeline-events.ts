@@ -112,6 +112,7 @@ export const AiRecoveryEventSchema = z.object({
   recoveryDurationMs: z.number().int().nonnegative(),
   terminalFailureCategory: z.enum([
     "response_envelope", "schema_validation", "evidence_integrity", "duplicate_integrity",
+    "empty_output", "response_truncated", "provider_transient", "provider_permanent",
     "internal_invariant",
   ]).nullable(),
   repairCode: z.enum([
@@ -125,6 +126,47 @@ export const AiRecoveryEventSchema = z.object({
 export function logAiRecovery(event: Omit<z.infer<typeof AiRecoveryEventSchema>, "event" | "timestamp">) {
   return emit(AiRecoveryEventSchema, {
     event: "ai.recovery",
+    ...event,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export const GeminiRecoveryEventSchema = z.object({
+  event: z.literal("gemini.recovery"),
+  recoveryType: z.enum([
+    "provider_retry_started",
+    "provider_retry_completed",
+    "compact_regeneration_requested",
+    "correction_regeneration_requested",
+    "recovery_succeeded",
+    "recovery_exhausted",
+  ]),
+  attemptNumber: z.number().int().min(1).max(4),
+  retryCount: z.number().int().min(0).max(3),
+  regenerationCount: z.number().int().min(0).max(1),
+  elapsedRecoveryMs: z.number().int().nonnegative(),
+  model: z.string().min(1).max(200),
+  promptVersion: z.string().min(1).max(200),
+  schemaVersion: z.string().min(1).max(200),
+  recoveryEnabled: z.boolean(),
+  failureCategory: z.enum([
+    "response_envelope", "schema_validation", "evidence_integrity", "duplicate_integrity",
+    "empty_output", "response_truncated", "provider_transient", "provider_permanent",
+    "internal_invariant",
+  ]).nullable(),
+  terminalFailureCategory: z.enum([
+    "response_envelope", "schema_validation", "evidence_integrity", "duplicate_integrity",
+    "empty_output", "response_truncated", "provider_transient", "provider_permanent",
+    "internal_invariant",
+  ]).nullable(),
+  issuePaths: z.array(z.string().max(300)).max(25),
+  issueCodes: z.array(z.string().max(100)).max(25),
+  timestamp,
+}).strict();
+
+export function logGeminiRecovery(event: Omit<z.infer<typeof GeminiRecoveryEventSchema>, "event" | "timestamp">) {
+  return emit(GeminiRecoveryEventSchema, {
+    event: "gemini.recovery",
     ...event,
     timestamp: new Date().toISOString(),
   });

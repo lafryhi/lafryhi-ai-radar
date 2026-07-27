@@ -116,6 +116,30 @@ describe("pipeline and approval gate", () => {
     expect(review?.status).toBe("pending");
     expect(await repo.listPublishedItems()).toHaveLength(0);
   });
+  it("records internal Gemini call count without changing review or publication behavior", async () => {
+    const repo = await repositoryFor();
+    const recoveredAnalyzer: AiAnalyzer = {
+      async analyze() {
+        return {
+          result: analysisFixture,
+          model: "recovered-test-model",
+          retryCount: 2,
+          regenerationCount: 1,
+        };
+      },
+    };
+    const result = await runPipeline(
+      "https://cloud.google.com/blog/recovered",
+      repo,
+      recoveredAnalyzer,
+      fetcher as typeof fetch,
+    );
+    expect(result.run.retryCount).toBe(2);
+    expect(result.run.status).toBe("pending_review");
+    expect(await repo.listReviews()).toHaveLength(1);
+    expect((await repo.listReviews())[0].status).toBe("pending");
+    expect(await repo.listPublishedItems()).toHaveLength(0);
+  });
   it("provides bounded previous coverage to Gemini before duplicate recommendation", async () => {
     vi.spyOn(console, "info").mockImplementation(() => undefined);
     const repo = await repositoryFor();

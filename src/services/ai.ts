@@ -2,12 +2,25 @@ import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 import { AnalysisResultSchema, GeminiAnalysisOutputSchema, type AnalysisResult, type SourceRecord, type StoredAnalysis } from "@/domain/schemas";
 import { applyLosslessRepairs, parseAnalysisEnvelope, validateAndDeriveAnalysis } from "./analysis-validation";
-import { aiRecoveryEnabled, AnalysisFailure } from "./failure-recovery";
-import { logAiRecovery } from "./pipeline-events";
+import {
+  aiRecoveryEnabled,
+  AnalysisFailure,
+  classifyProviderFailure,
+  decideRecovery,
+  EmptyOutputFailure,
+  ResponseTruncatedFailure,
+} from "./failure-recovery";
+import { logAiRecovery, logGeminiRecovery } from "./pipeline-events";
 
 export const PROMPT_VERSION = "radar-decision-intelligence-v2";
 export const GEMINI_MAX_OUTPUT_TOKENS = 4096;
 export const GEMINI_THINKING_BUDGET = 1024;
+export const GEMINI_SCHEMA_VERSION = "gemini-analysis-v2";
+export const GEMINI_MAX_IDENTICAL_RETRIES = 2;
+export const GEMINI_MAX_REGENERATIONS = 1;
+export const GEMINI_MAX_CALLS = 4;
+const GEMINI_BASE_BACKOFF_MS = 250;
+const GEMINI_MAX_BACKOFF_MS = 5_000;
 const stringArraySchema = { type: "array", items: { type: "string" } } as const;
 const scoreSchema = { type: "integer" } as const;
 
@@ -132,6 +145,8 @@ export interface AnalysisMetadata {
   result: AnalysisResult;
   model: string;
   tokenUsage?: { inputTokens?: number; outputTokens?: number; totalTokens?: number };
+  retryCount?: number;
+  regenerationCount?: number;
 }
 
 export interface AiAnalyzer {
@@ -184,11 +199,9 @@ export function parseGeminiResponseWithRecovery(
   const started = Date.now();
   let repairCount = 0;
   try {
-    const envelope = parseAnalysisEnvelope(text);
-    const repaired = applyLosslessRepairs(envelope.value);
-    const repairs = [...envelope.repairs, ...repaired.repairs];
+    const recovered = validateGeminiResponseWithRecovery(text, source, context);
+    const repairs = recovered.repairs;
     repairCount = repairs.length;
-    const result = validateAndDeriveAnalysis(repaired.value, source, context, calculateRelevanceScore);
     if (repairs.length === 0) {
       logAiRecovery({
         recoveryType: "none", retryCount: 0, regenerationCount: 0, repairCount: 0,
@@ -202,7 +215,7 @@ export function parseGeminiResponseWithRecovery(
         terminalFailureCategory: null, repairCode: repair.code, fieldPath: repair.path,
       }));
     }
-    return result;
+    return recovered.result;
   } catch (error) {
     const failure = error instanceof AnalysisFailure
       ? error
@@ -214,6 +227,19 @@ export function parseGeminiResponseWithRecovery(
     });
     throw failure;
   }
+}
+
+function validateGeminiResponseWithRecovery(
+  text: string,
+  source: SourceRecord,
+  context: AnalysisContext,
+) {
+  const envelope = parseAnalysisEnvelope(text);
+  const repaired = applyLosslessRepairs(envelope.value);
+  return {
+    result: validateAndDeriveAnalysis(repaired.value, source, context, calculateRelevanceScore),
+    repairs: [...envelope.repairs, ...repaired.repairs],
+  };
 }
 
 function normalizeGeminiOutput(value: unknown) {
@@ -305,21 +331,50 @@ function normalizeDecisionIntelligence(result: z.infer<typeof GeminiAnalysisOutp
   };
 }
 
+type GenerateRequest = Parameters<GoogleGenAI["models"]["generateContent"]>[0];
+type GenerateResponse = Awaited<ReturnType<GoogleGenAI["models"]["generateContent"]>>;
+
+export interface VertexAiAnalyzerOptions {
+  sleep?: (milliseconds: number) => Promise<void>;
+  now?: () => number;
+}
+
+function deepFreeze<T>(value: T): T {
+  if (value && typeof value === "object" && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    Object.values(value).forEach(deepFreeze);
+  }
+  return value;
+}
+
+function tokenUsage(response: GenerateResponse) {
+  const usage = response.usageMetadata;
+  return usage ? {
+    inputTokens: usage.promptTokenCount,
+    outputTokens: usage.candidatesTokenCount,
+    totalTokens: usage.totalTokenCount,
+  } : undefined;
+}
+
 export class VertexAiAnalyzer implements AiAnalyzer {
   private model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
   private maxOutputTokens = Number(process.env.GEMINI_MAX_OUTPUT_TOKENS || String(GEMINI_MAX_OUTPUT_TOKENS));
   private client: GoogleGenAI;
-  constructor() {
+  private sleep: (milliseconds: number) => Promise<void>;
+  private now: () => number;
+  constructor(options: VertexAiAnalyzerOptions = {}) {
     const project = process.env.GOOGLE_CLOUD_PROJECT;
     if (!project) throw new Error("GOOGLE_CLOUD_PROJECT is required for Vertex AI.");
     const timeout = Number(process.env.VERTEX_TIMEOUT_MS || "60000");
     if (!Number.isInteger(timeout) || timeout < 1_000 || timeout > 120_000) throw new Error("VERTEX_TIMEOUT_MS must be between 1000 and 120000.");
     if (!Number.isInteger(this.maxOutputTokens) || this.maxOutputTokens < 256 || this.maxOutputTokens > 4096) throw new Error("GEMINI_MAX_OUTPUT_TOKENS must be between 256 and 4096.");
     this.client = new GoogleGenAI({ vertexai: true, project, location: process.env.GOOGLE_CLOUD_LOCATION || "us-central1", httpOptions: { timeout } });
+    this.sleep = options.sleep ?? ((milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)));
+    this.now = options.now ?? Date.now;
   }
-  async analyze(source: SourceRecord, context: AnalysisContext = { previousArticles: [] }): Promise<AnalysisMetadata> {
-    const previousCoverage = context.previousArticles.slice(0, 20);
-    const response = await this.client.models.generateContent({
+
+  private buildRequest(source: SourceRecord, previousCoverage: PreviousArticleContext[], temperature: number): GenerateRequest {
+    return {
       model: this.model,
       contents: `You are the decision-intelligence engine for a small-business AI radar. AI advises; a human operator decides.
 Return exactly one JSON object matching the supplied schema. Do not approve, reject, or publish anything.
@@ -346,11 +401,16 @@ ${JSON.stringify(previousCoverage)}`,
       config: {
         responseMimeType: "application/json",
         responseJsonSchema: GEMINI_RESPONSE_JSON_SCHEMA,
-        temperature: 0.1,
+        temperature,
         maxOutputTokens: this.maxOutputTokens,
         thinkingConfig: { thinkingBudget: GEMINI_THINKING_BUDGET },
       },
-    });
+    };
+  }
+
+  private async analyzeLegacy(source: SourceRecord, context: AnalysisContext): Promise<AnalysisMetadata> {
+    const previousCoverage = context.previousArticles.slice(0, 20);
+    const response = await this.client.models.generateContent(this.buildRequest(source, previousCoverage, 0.1));
     const text = response.text ?? "";
     if (response.candidates?.[0]?.finishReason === "MAX_TOKENS") {
       logGeminiResponseFailure("gemini.response_truncated", text, response.candidates);
@@ -360,9 +420,7 @@ ${JSON.stringify(previousCoverage)}`,
     const usage = response.usageMetadata;
     let result: AnalysisResult;
     try {
-      result = aiRecoveryEnabled()
-        ? parseGeminiResponseWithRecovery(text, source, context)
-        : parseGeminiResponse(text);
+      result = parseGeminiResponse(text);
     } catch (error) {
       logGeminiResponseFailure("gemini.response_parse_failed", text, response.candidates);
       throw error;
@@ -371,6 +429,180 @@ ${JSON.stringify(previousCoverage)}`,
       result, model: this.model,
       tokenUsage: usage ? { inputTokens: usage.promptTokenCount, outputTokens: usage.candidatesTokenCount, totalTokens: usage.totalTokenCount } : undefined,
     };
+  }
+
+  private recoveryRequest(base: GenerateRequest, kind: "compact" | "correction", failure: AnalysisFailure): GenerateRequest {
+    const baseContents = String(base.contents);
+    const instruction = kind === "compact"
+      ? `RECOVERY INSTRUCTION:
+Generate the complete replacement JSON object again. Use concise values within every declared bound. Return the entire object, never a patch.`
+      : `RECOVERY INSTRUCTION:
+Generate the complete replacement JSON object again. Correct only the validation issue categories listed below. Return the entire object, never a patch.
+VALIDATION ISSUES:
+${JSON.stringify({
+  category: failure.category,
+  issues: failure.issues.map(({ path, code }) => ({ path, code })).sort((left, right) =>
+    left.path < right.path ? -1 : left.path > right.path ? 1 : left.code < right.code ? -1 : left.code > right.code ? 1 : 0),
+})}`;
+    return deepFreeze({
+      ...base,
+      contents: `${baseContents}\n${instruction}`,
+    });
+  }
+
+  private recoveryEvent(
+    recoveryType: Parameters<typeof logGeminiRecovery>[0]["recoveryType"],
+    started: number,
+    attemptNumber: number,
+    retryCount: number,
+    regenerationCount: number,
+    failure: AnalysisFailure | null = null,
+  ) {
+    logGeminiRecovery({
+      recoveryType,
+      attemptNumber,
+      retryCount,
+      regenerationCount,
+      elapsedRecoveryMs: Math.max(0, this.now() - started),
+      model: this.model,
+      promptVersion: PROMPT_VERSION,
+      schemaVersion: GEMINI_SCHEMA_VERSION,
+      recoveryEnabled: true,
+      failureCategory: failure?.category ?? null,
+      terminalFailureCategory: recoveryType === "recovery_exhausted" ? failure?.category ?? null : null,
+      issuePaths: failure?.issues.map(({ path }) => path).slice(0, 25) ?? [],
+      issueCodes: failure?.issues.map(({ code }) => code).slice(0, 25) ?? [],
+    });
+  }
+
+  private backoffDelay(providerRetryCount: number, retryAfterMs: number | null) {
+    const exponential = GEMINI_BASE_BACKOFF_MS * (2 ** (providerRetryCount - 1));
+    return Math.min(GEMINI_MAX_BACKOFF_MS, Math.max(exponential, retryAfterMs ?? 0));
+  }
+
+  private async analyzeWithRecovery(source: SourceRecord, context: AnalysisContext): Promise<AnalysisMetadata> {
+    const started = this.now();
+    const sourceSnapshot = deepFreeze({ ...source });
+    const contextSnapshot = deepFreeze({
+      previousArticles: context.previousArticles.slice(0, 20).map((article) => ({
+        ...article,
+        keyPoints: [...article.keyPoints],
+        relatedTopics: [...article.relatedTopics],
+        entities: article.entities.map((entity) => ({ ...entity })),
+      })),
+    });
+    const baseRequest = deepFreeze(this.buildRequest(sourceSnapshot, contextSnapshot.previousArticles, 0));
+    let request = baseRequest;
+    let callCount = 0;
+    let retryCount = 0;
+    let providerRetryCount = 0;
+    let regenerationCount = 0;
+    let retryInProgress = false;
+
+    while (true) {
+      callCount += 1;
+      let response: GenerateResponse;
+      try {
+        response = await this.client.models.generateContent(request);
+        if (retryInProgress) {
+          this.recoveryEvent("provider_retry_completed", started, callCount, retryCount, regenerationCount);
+          retryInProgress = false;
+        }
+      } catch (error) {
+        const failure = classifyProviderFailure(error, this.now())
+          .withRecoveryState(retryCount, regenerationCount);
+        if (retryInProgress) {
+          this.recoveryEvent("provider_retry_completed", started, callCount, retryCount, regenerationCount, failure);
+          retryInProgress = false;
+        }
+        if (decideRecovery(failure) === "retry_identical"
+          && providerRetryCount < GEMINI_MAX_IDENTICAL_RETRIES
+          && callCount < GEMINI_MAX_CALLS) {
+          providerRetryCount += 1;
+          retryCount += 1;
+          retryInProgress = true;
+          this.recoveryEvent("provider_retry_started", started, callCount + 1, retryCount, regenerationCount, failure);
+          await this.sleep(this.backoffDelay(providerRetryCount, failure.retryAfterMs));
+          continue;
+        }
+        this.recoveryEvent("recovery_exhausted", started, callCount, retryCount, regenerationCount, failure);
+        throw failure;
+      }
+
+      const text = response.text ?? "";
+      let failure: AnalysisFailure | null = null;
+      let recovered: ReturnType<typeof validateGeminiResponseWithRecovery> | null = null;
+      if (response.candidates?.[0]?.finishReason === "MAX_TOKENS") {
+        logGeminiResponseFailure("gemini.response_truncated", text, response.candidates);
+        failure = new ResponseTruncatedFailure();
+      } else if (!text) {
+        failure = new EmptyOutputFailure();
+      } else {
+        try {
+          recovered = validateGeminiResponseWithRecovery(text, sourceSnapshot, contextSnapshot);
+        } catch (error) {
+          failure = error instanceof AnalysisFailure
+            ? error
+            : new AnalysisFailure("Analysis recovery encountered an internal invariant failure.", "internal_invariant");
+          logGeminiResponseFailure("gemini.response_parse_failed", text, response.candidates);
+        }
+      }
+
+      if (recovered) {
+        recovered.repairs.forEach((repair, index) => logAiRecovery({
+          recoveryType: "lossless_repair",
+          retryCount,
+          regenerationCount,
+          repairCount: index + 1,
+          recoveryDurationMs: Math.max(0, this.now() - started),
+          terminalFailureCategory: null,
+          repairCode: repair.code,
+          fieldPath: repair.path,
+        }));
+        if (retryCount > 0 || regenerationCount > 0 || recovered.repairs.length > 0) {
+          this.recoveryEvent("recovery_succeeded", started, callCount, retryCount, regenerationCount);
+        }
+        return {
+          result: recovered.result,
+          model: this.model,
+          tokenUsage: tokenUsage(response),
+          retryCount,
+          regenerationCount,
+        };
+      }
+
+      if (!failure) {
+        failure = new AnalysisFailure("Analysis recovery encountered an internal invariant failure.", "internal_invariant");
+      }
+      failure.withRecoveryState(retryCount, regenerationCount);
+      const decision = decideRecovery(failure);
+      if ((decision === "regenerate_compact" || decision === "regenerate_correction")
+        && regenerationCount < GEMINI_MAX_REGENERATIONS
+        && callCount < GEMINI_MAX_CALLS) {
+        regenerationCount += 1;
+        retryCount += 1;
+        const kind = decision === "regenerate_compact" ? "compact" : "correction";
+        this.recoveryEvent(
+          kind === "compact" ? "compact_regeneration_requested" : "correction_regeneration_requested",
+          started,
+          callCount + 1,
+          retryCount,
+          regenerationCount,
+          failure,
+        );
+        request = this.recoveryRequest(baseRequest, kind, failure);
+        continue;
+      }
+      failure.withRecoveryState(retryCount, regenerationCount);
+      this.recoveryEvent("recovery_exhausted", started, callCount, retryCount, regenerationCount, failure);
+      throw failure;
+    }
+  }
+
+  async analyze(source: SourceRecord, context: AnalysisContext = { previousArticles: [] }): Promise<AnalysisMetadata> {
+    return aiRecoveryEnabled()
+      ? this.analyzeWithRecovery(source, context)
+      : this.analyzeLegacy(source, context);
   }
 }
 

@@ -63,4 +63,5 @@ The token guard is temporary and must be replaced with Firebase Authentication a
 - `GEMINI_XPRIZE_PHASE1_IMPLEMENTATION.md`
 - `GEMINI_XPRIZE_PHASE1_EVIDENCE.md`
 - `GEMINI_XPRIZE_PHASE4_1_FAILURE_RECOVERY.md`
+- `GEMINI_XPRIZE_PHASE4_2_BOUNDED_RECOVERY.md`
 - The five Phase 0 documents remain at the root.

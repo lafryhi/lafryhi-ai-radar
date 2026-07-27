@@ -2,7 +2,11 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import {
   GEMINI_MAX_OUTPUT_TOKENS,
+  GEMINI_MAX_CALLS,
+  GEMINI_MAX_IDENTICAL_RETRIES,
+  GEMINI_MAX_REGENERATIONS,
   GEMINI_RESPONSE_JSON_SCHEMA,
+  GEMINI_SCHEMA_VERSION,
   GEMINI_THINKING_BUDGET,
   parseGeminiJson,
   parseGeminiResponse,
@@ -10,6 +14,7 @@ import {
 } from "./ai";
 import { AnalysisResultSchema, GeminiAnalysisOutputSchema } from "@/domain/schemas";
 import { geminiAnalysisFixture, sourceFixture } from "@/test/fixtures";
+import { AnalysisFailure } from "./failure-recovery";
 
 const { clientConstructor, generateContent } = vi.hoisted(() => ({
   clientConstructor: vi.fn(),
@@ -272,14 +277,275 @@ describe("Gemini response parsing", () => {
 
     await expect(new VertexAiAnalyzer().analyze(sourceFixture))
       .rejects.toThrow("Gemini output failed schema validation.");
-    const event = JSON.parse(String(vi.mocked(console.info).mock.calls.at(-1)?.[0]));
+    const event = vi.mocked(console.info).mock.calls.map(([value]) => JSON.parse(String(value)))
+      .findLast(({ event }) => event === "gemini.recovery");
     expect(event).toMatchObject({
-      event: "ai.recovery",
-      recoveryType: "terminal_failure",
+      event: "gemini.recovery",
+      recoveryType: "recovery_exhausted",
       terminalFailureCategory: "schema_validation",
-      retryCount: 0,
-      regenerationCount: 0,
-      repairCount: 0,
+      retryCount: 1,
+      regenerationCount: 1,
     });
+  });
+});
+
+describe("Phase 4.2 bounded Gemini recovery", () => {
+  const validResponse = {
+    text: JSON.stringify(geminiAnalysisFixture),
+    candidates: [{ finishReason: "STOP", content: { parts: [{ text: "redacted" }] } }],
+    usageMetadata: { promptTokenCount: 10, candidatesTokenCount: 20, totalTokenCount: 30 },
+  };
+  const providerError = (status: number, retryAfter?: string) => Object.assign(new Error("provider detail must not be logged"), {
+    status,
+    response: retryAfter ? { headers: { get: () => retryAfter } } : undefined,
+  });
+  let sleep: ReturnType<typeof vi.fn<(milliseconds: number) => Promise<void>>>;
+
+  function analyzer() {
+    process.env.GOOGLE_CLOUD_PROJECT = "test-project";
+    process.env.AI_RECOVERY_ENABLED = "true";
+    sleep = vi.fn(async () => undefined);
+    return new VertexAiAnalyzer({ sleep, now: () => 1_000 });
+  }
+
+  function recoveryEvents(info: { mock: { calls: unknown[][] } }): Array<Record<string, unknown>> {
+    return info.mock.calls.map(([value]) => JSON.parse(String(value)) as Record<string, unknown>)
+      .filter((event) => event.event === "gemini.recovery");
+  }
+
+  afterEach(() => {
+    generateContent.mockReset();
+    clientConstructor.mockReset();
+    vi.restoreAllMocks();
+    delete process.env.GOOGLE_CLOUD_PROJECT;
+    delete process.env.AI_RECOVERY_ENABLED;
+  });
+
+  it("publishes the fixed recovery ceilings as constants", () => {
+    expect(GEMINI_MAX_IDENTICAL_RETRIES).toBe(2);
+    expect(GEMINI_MAX_REGENERATIONS).toBe(1);
+    expect(GEMINI_MAX_CALLS).toBe(4);
+    expect(GEMINI_SCHEMA_VERSION).toBe("gemini-analysis-v2");
+  });
+
+  it("retries a timeout identically and then succeeds", async () => {
+    const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
+    generateContent
+      .mockRejectedValueOnce(Object.assign(new Error("timeout detail"), { name: "TimeoutError" }))
+      .mockResolvedValueOnce(validResponse);
+    const result = await analyzer().analyze(sourceFixture);
+    expect(generateContent).toHaveBeenCalledTimes(2);
+    expect(generateContent.mock.calls[1][0]).toBe(generateContent.mock.calls[0][0]);
+    expect(sleep).toHaveBeenCalledWith(250);
+    expect(result).toMatchObject({ retryCount: 1, regenerationCount: 0 });
+    expect(recoveryEvents(info).map((event) => event.recoveryType)).toEqual([
+      "provider_retry_started", "provider_retry_completed", "recovery_succeeded",
+    ]);
+  });
+
+  it("respects Retry-After for HTTP 429 before succeeding", async () => {
+    generateContent.mockRejectedValueOnce(providerError(429, "2")).mockResolvedValueOnce(validResponse);
+    const result = await analyzer().analyze(sourceFixture);
+    expect(sleep).toHaveBeenCalledWith(2_000);
+    expect(result.retryCount).toBe(1);
+  });
+
+  it("exhausts two identical retries for HTTP 5xx", async () => {
+    const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
+    generateContent.mockRejectedValue(providerError(503));
+    const failure = await analyzer().analyze(sourceFixture).catch((error): AnalysisFailure => error);
+    expect(generateContent).toHaveBeenCalledTimes(3);
+    expect(sleep.mock.calls.map(([delay]) => delay)).toEqual([250, 500]);
+    expect(failure).toMatchObject({
+      category: "provider_transient", retryCount: 2, regenerationCount: 0,
+    });
+    expect(recoveryEvents(info).at(-1)).toMatchObject({
+      recoveryType: "recovery_exhausted",
+      attemptNumber: 3,
+      retryCount: 2,
+      terminalFailureCategory: "provider_transient",
+    });
+  });
+
+  it.each([401, 403])("does not retry authentication or authorization status %s", async (status) => {
+    generateContent.mockRejectedValue(providerError(status));
+    const failure = await analyzer().analyze(sourceFixture).catch((error): AnalysisFailure => error) as AnalysisFailure;
+    expect(generateContent).toHaveBeenCalledOnce();
+    expect(sleep).not.toHaveBeenCalled();
+    expect(failure.category).toBe("provider_permanent");
+  });
+
+  it.each([400, 404])("does not retry invalid configuration or model status %s", async (status) => {
+    generateContent.mockRejectedValue(providerError(status));
+    await expect(analyzer().analyze(sourceFixture)).rejects.toMatchObject({ category: "provider_permanent" });
+    expect(generateContent).toHaveBeenCalledOnce();
+  });
+
+  it("uses one compact regeneration after empty output", async () => {
+    generateContent
+      .mockResolvedValueOnce({ text: "", candidates: [{ finishReason: "STOP" }] })
+      .mockResolvedValueOnce(validResponse);
+    const result = await analyzer().analyze(sourceFixture);
+    expect(result).toMatchObject({ retryCount: 1, regenerationCount: 1 });
+    expect(generateContent).toHaveBeenCalledTimes(2);
+    expect(String(generateContent.mock.calls[1][0].contents)).toContain("Generate the complete replacement JSON object again");
+    expect(String(generateContent.mock.calls[1][0].contents)).toContain("Use concise values");
+    expect(generateContent.mock.calls[1][0]).toMatchObject({
+      model: generateContent.mock.calls[0][0].model,
+      config: generateContent.mock.calls[0][0].config,
+    });
+    expect(String(generateContent.mock.calls[1][0].contents)
+      .startsWith(String(generateContent.mock.calls[0][0].contents))).toBe(true);
+  });
+
+  it("never parses MAX_TOKENS output and uses one compact regeneration", async () => {
+    generateContent
+      .mockResolvedValueOnce({
+        text: "{\"unsafe\":\"partial raw output\"",
+        candidates: [{ finishReason: "MAX_TOKENS", content: { parts: [{ text: "not logged" }] } }],
+      })
+      .mockResolvedValueOnce(validResponse);
+    const result = await analyzer().analyze(sourceFixture);
+    expect(result.regenerationCount).toBe(1);
+    expect(generateContent).toHaveBeenCalledTimes(2);
+  });
+
+  it("uses correction regeneration for malformed JSON", async () => {
+    generateContent.mockResolvedValueOnce({
+      text: "{malformed secret output",
+      candidates: [{ finishReason: "STOP" }],
+    }).mockResolvedValueOnce(validResponse);
+    await analyzer().analyze(sourceFixture);
+    const correction = String(generateContent.mock.calls[1][0].contents);
+    expect(correction).toContain('"category":"response_envelope"');
+    expect(correction).not.toContain("malformed secret output");
+  });
+
+  it("uses correction regeneration for schema-invalid output with stable issues", async () => {
+    generateContent.mockResolvedValueOnce({
+      ...validResponse,
+      text: JSON.stringify({ ...geminiAnalysisFixture, importanceScore: 101 }),
+    }).mockResolvedValueOnce(validResponse);
+    await analyzer().analyze(sourceFixture);
+    const correction = String(generateContent.mock.calls[1][0].contents);
+    expect(correction).toContain('"category":"schema_validation"');
+    expect(correction).toContain('"path":"importanceScore"');
+    expect(correction).toContain('"code":"too_big"');
+  });
+
+  it("uses correction regeneration for evidence-integrity failure", async () => {
+    generateContent.mockResolvedValueOnce({
+      ...validResponse,
+      text: JSON.stringify({
+        ...geminiAnalysisFixture,
+        evidence: [{ quote: "Unsupported secret evidence quote", significance: "Not grounded." }],
+      }),
+    }).mockResolvedValueOnce(validResponse);
+    await analyzer().analyze(sourceFixture);
+    const correction = String(generateContent.mock.calls[1][0].contents);
+    expect(correction).toContain('"category":"evidence_integrity"');
+    expect(correction).toContain('"code":"quote_not_in_source"');
+    expect(correction).not.toContain("Unsupported secret evidence quote");
+  });
+
+  it("uses correction regeneration for duplicate-integrity failure", async () => {
+    const context = { previousArticles: [{
+      sourceRecordId: "previous",
+      title: "Previous title",
+      sourceUrl: "https://cloud.google.com/blog/previous",
+      publishedAt: "2026-07-23T00:00:00.000Z",
+      summary: "A valid previous summary long enough for deterministic context.",
+      keyPoints: ["Previous point"],
+      relatedTopics: ["AI"],
+      entities: [],
+    }] };
+    generateContent.mockResolvedValueOnce({
+      ...validResponse,
+      text: JSON.stringify({
+        ...geminiAnalysisFixture,
+        duplicateAnalysis: {
+          similarityScore: 80,
+          classification: "near_duplicate",
+          relatedPreviousArticles: [{
+            sourceRecordId: "invented",
+            title: "Invented reference",
+            sourceUrl: "https://example.com/invented",
+            relation: "near_duplicate",
+            reason: "This reference was not provided in the immutable context.",
+          }],
+          duplicateReason: "The generated reference is not part of the supplied context.",
+        },
+      }),
+    }).mockResolvedValueOnce(validResponse);
+    await analyzer().analyze(sourceFixture, context);
+    const correction = String(generateContent.mock.calls[1][0].contents);
+    expect(correction).toContain('"category":"duplicate_integrity"');
+    expect(correction).toContain('"code":"reference_not_in_context"');
+  });
+
+  it("makes a second invalid result terminal without another regeneration", async () => {
+    generateContent.mockResolvedValue({
+      ...validResponse,
+      text: "{invalid",
+    });
+    const failure = await analyzer().analyze(sourceFixture).catch((error): AnalysisFailure => error) as AnalysisFailure;
+    expect(generateContent).toHaveBeenCalledTimes(2);
+    expect(failure).toMatchObject({
+      category: "response_envelope", retryCount: 1, regenerationCount: 1,
+    });
+  });
+
+  it("never exceeds four calls across regeneration and provider retries", async () => {
+    generateContent
+      .mockResolvedValueOnce({ ...validResponse, text: "{invalid" })
+      .mockRejectedValueOnce(providerError(503))
+      .mockRejectedValueOnce(providerError(503))
+      .mockRejectedValueOnce(providerError(503))
+      .mockResolvedValueOnce(validResponse);
+    const failure = await analyzer().analyze(sourceFixture).catch((error): AnalysisFailure => error) as AnalysisFailure;
+    expect(generateContent).toHaveBeenCalledTimes(4);
+    expect(failure).toMatchObject({
+      category: "provider_transient", retryCount: 3, regenerationCount: 1,
+    });
+  });
+
+  it("keeps source, context, schema, and request identity immutable across retries", async () => {
+    const context = { previousArticles: [] };
+    generateContent.mockRejectedValueOnce(providerError(503)).mockResolvedValueOnce(validResponse);
+    await analyzer().analyze(sourceFixture, context);
+    const [first, second] = generateContent.mock.calls.map(([request]) => request);
+    expect(second).toBe(first);
+    expect(first.config).toMatchObject({
+      temperature: 0,
+      responseJsonSchema: GEMINI_RESPONSE_JSON_SCHEMA,
+    });
+    expect(sourceFixture.normalizedText).toBe("This is authoritative source text. ".repeat(20));
+    expect(context).toEqual({ previousArticles: [] });
+  });
+
+  it("keeps legacy provider failures single-call when recovery is disabled", async () => {
+    process.env.GOOGLE_CLOUD_PROJECT = "test-project";
+    process.env.AI_RECOVERY_ENABLED = "false";
+    generateContent.mockRejectedValue(providerError(503));
+    await expect(new VertexAiAnalyzer({ sleep: vi.fn() }).analyze(sourceFixture))
+      .rejects.toThrow("provider detail must not be logged");
+    expect(generateContent).toHaveBeenCalledOnce();
+  });
+
+  it("never includes raw output, article text, evidence, prompts, or provider prose in telemetry", async () => {
+    const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    generateContent.mockResolvedValue({
+      text: "raw invalid secret Gemini output",
+      candidates: [{ finishReason: "STOP" }],
+    });
+    await analyzer().analyze(sourceFixture).catch(() => undefined);
+    const serialized = JSON.stringify(recoveryEvents(info));
+    expect(serialized).not.toMatch(/raw invalid|authoritative source text|evidence|provider detail|prompt body|credential|token|secret/i);
+    expect(recoveryEvents(info).every((event) =>
+      event.model === "gemini-2.5-flash"
+      && event.promptVersion === "radar-decision-intelligence-v2"
+      && event.schemaVersion === GEMINI_SCHEMA_VERSION
+      && event.recoveryEnabled === true)).toBe(true);
   });
 });
