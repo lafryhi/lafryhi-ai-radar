@@ -6,7 +6,7 @@
 - Execution authorization: Future implementation authorized by `READY_WITH_NON_BLOCKING_LIMITATIONS`; no implementation has begun
 - Approved date: 2026-07-27
 - Baseline: `v1.0.0-rc1`
-- Implementation status: Not started
+- Implementation status: 5.1A complete; 5.1B not started
 - Deployment authorization: None
 
 This document defines the smallest safe future implementation scope. Governance authorization does not start implementation and does not authorize production behavior.
@@ -34,6 +34,8 @@ After the entry gate opens, the implementation scope is limited to:
 
 ### 5.1A — Pure Contracts Foundation
 
+Status: Complete.
+
 Allowed future implementation:
 
 - pure TypeScript types and schemas;
@@ -44,11 +46,13 @@ Allowed future implementation:
 - import-boundary and prohibited-capability tests;
 - initial synthetic development fixtures for contract validation.
 
-5.1A must not implement URL/source normalization or source fingerprints. Its isolation, compatibility, provenance, and privacy tests must pass before 5.1B.
+5.1A did not implement URL/source normalization or source fingerprints. Its isolation, compatibility, provenance, and privacy tests pass.
 
 ### 5.1B — Deterministic Source Utilities
 
-Allowed only after 5.1A passes:
+Status: Authorized for a separate future task; not started.
+
+Allowed because 5.1A passes:
 
 - conservative canonical URL normalization;
 - versioned deterministic source normalization;

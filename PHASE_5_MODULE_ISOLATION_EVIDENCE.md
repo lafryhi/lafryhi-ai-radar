@@ -2,13 +2,14 @@
 
 ## Classification
 
-- Classification: `ISOLATION_FEASIBLE_WITH_LIMITATIONS`
+- Original design classification: `ISOLATION_FEASIBLE_WITH_LIMITATIONS`
+- Implemented 5.1A classification: `ISOLATION_ENFORCED_FOR_5_1A`
 - Assessment date: 2026-07-27
 - Repository commit inspected: `79dd9067e37482a1b4684652c78f62361d1773a5`
-- Implementation status: Not started
-- Entry impact: Non-blocking for offline 5.1A when the documented boundary is mandatory
+- Implementation status: 5.1A pure boundary implemented; 5.1B not started
+- Entry impact: 5.1A complete; 5.1B authorized with continued enforcement
 
-Limitations are enforcement evidence that must be produced during implementation: no import-boundary lint/test exists yet, and the proposed directories/modules do not yet exist.
+The module directory and static import/capability tests now exist. The remaining limitation is that the 5.1B utilities and corpus harness do not exist and must pass the same boundary plus harness-specific network/filesystem tests.
 
 ## Repository-backed observations
 
@@ -68,20 +69,23 @@ Phase 5.1 cannot import review/publication services or repository interfaces.
 
 Tests are colocated as `*.test.ts` under `src/domain`, `src/services`, and `src/persistence`, with shared fixtures in `src/test/fixtures.ts`. Vitest runs 190 tests across 18 files at the inspected commit.
 
-## Proposed future locations
+## Implemented and future locations
 
-No directory is created by this evidence task.
+The production and colocated test boundary is implemented at:
 
 ### Pure implementation
 
 ```text
 src/domain/phase5/source-intelligence/
-  contracts.ts
   artifact-envelope.ts
+  identifiers.ts
+  index.ts
   provenance.ts
-  normalization.ts
-  canonical-url.ts
-  source-fingerprint.ts
+  utc-time.ts
+  validation-error.ts
+  normalization.ts        # future 5.1B
+  canonical-url.ts        # future 5.1B
+  source-fingerprint.ts   # future 5.1B
 ```
 
 ### Colocated tests
@@ -173,19 +177,30 @@ The offline corpus harness may read governed test fixtures and write bounded eph
 
 ## Future enforcement options
 
-Required during 5.1A:
+Implemented during 5.1A:
 
 1. Import-boundary test scanning the pure directory's static imports.
-2. TypeScript project/reference or lint restriction if justified without broad refactoring.
-3. Dependency-injection tests proving only pure inputs are accepted.
-4. Network and filesystem spies for harness qualification.
-5. Changed-file audit rejecting route/service/persistence/auth/provider edits.
-6. Bundle/dependency inspection proving no Google Cloud, Next.js, auth, repository, or event transport dependency.
+2. Production-module enumeration so unexpected files cannot bypass the scan.
+3. Static capability checks for clocks, randomness, secrets, logging, writes, processes, and mutable state.
+4. Strict contract tests proving only explicit pure inputs are accepted.
 
-No lint rule or test is added in Phase 5.0.1.
+Still required in 5.1B:
+
+1. Network and filesystem spies for harness qualification.
+2. Inclusion of every new utility module in static enumeration.
+3. Corpus harness separation from pure algorithms.
+4. Measured resource and privacy enforcement.
+
+Potential later enforcement:
+
+1. TypeScript project/reference or lint restriction if justified without broad refactoring.
+2. Changed-file audit rejecting route/service/persistence/auth/provider edits.
+3. Bundle/dependency inspection proving no Google Cloud, Next.js, auth, repository, or event transport dependency.
+
+No global lint rule or broad repository refactor was required.
 
 ## Feasibility conclusion
 
-Isolation is feasible because the repository already separates domain, services, persistence, routes, and authentication, and the proposed code can reside entirely under `src/domain/phase5/` with test-local harness I/O.
+Isolation is implemented for 5.1A because the new code resides entirely under `src/domain/phase5/`, all focused boundary tests pass, and no production entry point imports it.
 
-The missing import-boundary and capability tests are required during 5.1A, not before code can be written. Production integration remains prohibited, so the limitation does not block offline implementation entry.
+The future 5.1B corpus harness introduces test-local filesystem I/O outside pure modules and therefore requires an extended audit. Production integration remains prohibited.

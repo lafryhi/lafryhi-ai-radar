@@ -4,12 +4,12 @@
 
 - **State:** `READY_WITH_NON_BLOCKING_LIMITATIONS`
 - **Assessment date:** 2026-07-27
-- **Scope authorized for future implementation:** Offline 5.1A followed by conditional 5.1B
-- **Implementation status:** Not started
+- **Scope authorized:** Offline 5.1B after completed 5.1A
+- **Implementation status:** 5.1A complete; 5.1B not started
 - **Production authorization:** None
 - **External blockage:** None
 
-The gate authorizes only the future implementation scope in `PHASE_5_MILESTONE_5_1_SCOPE.md`. It does not begin implementation, authorize production behavior, or waive completion evidence.
+The gate records completed 5.1A evidence and authorizes a separate future 5.1B implementation task within `PHASE_5_MILESTONE_5_1_SCOPE.md`. It does not begin 5.1B, authorize production behavior, or waive completion evidence.
 
 ## Evidence-based rationale
 
@@ -25,7 +25,7 @@ Pre-implementation governance is complete:
 - all eight former entry-blocking P0 risks are reclassified `MITIGATED_NON_BLOCKING_FOR_OFFLINE_5_1` without being closed;
 - 5.1A and 5.1B are explicitly bounded and production-prohibited.
 
-Non-blocking limitations are implementation evidence that cannot logically exist before the modules exist: import/capability tests, corpus samples, golden vectors, actual latency/resource measurements, and qualification results.
+5.1A now supplies import/capability, artifact-envelope, provenance, privacy-safe error, and Phase 4 regression evidence. Remaining limitations belong to 5.1B or milestone completion: corpus samples, fingerprint/normalization golden vectors, actual utility latency/resource measurements, and qualification results.
 
 ## Item states
 
@@ -45,7 +45,7 @@ Non-blocking limitations are implementation evidence that cannot logically exist
 | Phase 4 behavior frozen | SATISFIED | COMP-P4/COMP-EVID; repeated 190/190 baseline tests |
 | Rollback reference retained | SATISFIED | Baseline tag and offline rollback boundary |
 | Compatibility invariants documented | SATISFIED | 41 COMP-* contracts |
-| Added automated compatibility tests | REQUIRED_DURING_IMPLEMENTATION | 5.1A output; blocks 5.1B/completion as applicable |
+| Added automated compatibility tests | SATISFIED | 19 focused tests plus 209/209 full regression suite |
 
 ## B. Governance
 
@@ -65,7 +65,7 @@ Non-blocking limitations are implementation evidence that cannot logically exist
 | Provenance contract | SATISFIED | COMP-DATA-003/004; P5-ADR-003 |
 | Story/Entity identity | NOT_APPLICABLE_TO_OFFLINE_5_1 | Deferred contracts; scope exclusion |
 | Retention/deletion/correction | SATISFIED | Compatibility, privacy, and corpus governance |
-| Artifact/provenance validation evidence | REQUIRED_DURING_IMPLEMENTATION | 5.1A tests |
+| Artifact/provenance validation evidence | SATISFIED | Strict envelope/provenance focused tests |
 
 ## D. Privacy and telemetry
 
@@ -75,7 +75,7 @@ Non-blocking limitations are implementation evidence that cannot logically exist
 | Redaction/rejection and access | SATISFIED | Privacy contract |
 | Offline retention | SATISFIED | RET-0/RET-1/RET-2 |
 | Raw prompt/model/source/evidence logging prohibited | SATISFIED | Privacy contract |
-| Offline privacy enforcement tests | REQUIRED_DURING_IMPLEMENTATION | 5.1A before diagnostics enter 5.1B |
+| Offline privacy enforcement tests | SATISFIED_WITH_LIMITATION | Safe-error and no-logging tests pass; 5.1B harness telemetry tests remain required |
 | Production telemetry | DEFERRED_BEFORE_PRODUCTION | No production emitter authorized |
 
 ## E. Evaluation and thresholds
@@ -85,7 +85,7 @@ Non-blocking limitations are implementation evidence that cannot logically exist
 | Measurement policy/environment baseline | SATISFIED | Measurement policy and baseline report |
 | Numeric corpus composition | SATISFIED | `p5-corpus-v0-planned`: 240 documents; 385 units |
 | Language cohort policy | SATISFIED_WITH_LIMITATION | English/French/Arabic planned; no evaluated claim until samples pass |
-| Corpus creation and initial labels | REQUIRED_DURING_IMPLEMENTATION | 5.1A development fixtures; 5.1B corpus |
+| Corpus creation and initial labels | REQUIRED_DURING_IMPLEMENTATION | Small synthetic contract fixtures exist; governed corpus remains a 5.1B output |
 | Full corpus | REQUIRED_BEFORE_MILESTONE_COMPLETION | Manifest, licensing, partitions, checksums |
 | False merge/split and deterministic thresholds | SATISFIED | Threshold register; empirical pass required before completion |
 | THR-LAT-001 | SATISFIED_WITH_LIMITATION | `APPROVED_PROVISIONAL`; unimplemented algorithms unmeasured |
@@ -96,7 +96,7 @@ Non-blocking limitations are implementation evidence that cannot logically exist
 
 | Item | State | Evidence |
 |---|---|---|
-| Offline-only execution boundary | SATISFIED_WITH_LIMITATION | `ISOLATION_FEASIBLE_WITH_LIMITATIONS`; enforcement tests during 5.1A |
+| Offline-only execution boundary | SATISFIED | Static import/capability tests pass for every 5.1A production module |
 | External paid-service ceiling | SATISFIED | USD 0.00; zero model/API/network paid calls |
 | Local/CI compute ceilings | SATISFIED_WITH_LIMITATION | 60 s corpus, 120 s CI increment, 25 MiB artifacts, 2 MiB logs, 512 MiB RSS |
 | Feature flags/shadow mode | NOT_APPLICABLE_TO_OFFLINE_5_1 | No production integration |
@@ -111,23 +111,23 @@ Non-blocking limitations are implementation evidence that cannot logically exist
 | Source content treated as untrusted | SATISFIED | Corpus/privacy/normalization contracts |
 | No model calls | SATISFIED | Scope and zero-cost threshold |
 | No Firestore/production writes | SATISFIED | Scope and module dependency policy |
-| Pure module-boundary design | SATISFIED_WITH_LIMITATION | Repository-backed isolation evidence |
-| Import/network/filesystem capability tests | REQUIRED_DURING_IMPLEMENTATION | 5.1A output; blocks 5.1B |
+| Pure module-boundary design | SATISFIED | Repository-backed design plus implemented module tree |
+| Import/network/filesystem capability tests | SATISFIED | Static enumeration/import/capability focused tests |
 | Production replay endpoint | NOT_APPLICABLE_TO_OFFLINE_5_1 | Explicitly prohibited |
 
 ## H. Risk and scope authorization
 
 | Item | State | Evidence |
 |---|---|---|
-| Eight former P0 entry risks reviewed | SATISFIED_WITH_LIMITATION | All mitigated non-blocking; none closed |
-| 5.1A scope | SATISFIED | Pure contracts foundation explicitly authorized for future work |
-| 5.1B scope | SATISFIED_WITH_LIMITATION | May begin only after 5.1A tests pass |
+| Eight former P0 entry risks reviewed | SATISFIED_WITH_LIMITATION | Four closed for 5.1A entry; four deferred/mitigated for 5.1B; none globally erased |
+| 5.1A scope | SATISFIED | Complete; implementation report records evidence |
+| 5.1B scope | SATISFIED_WITH_LIMITATION | Authorized for a separate future task; corpus/qualification evidence still required |
 | No deployment default | SATISFIED | Scope prohibition |
 | Separate production authorization | SATISFIED | Ownership and timing matrix |
 
 ## Risk status
 
-The following remain open but do not block offline implementation entry:
+The following remain open for 5.1B or milestone completion but do not block the next offline sub-slice:
 
 - P5-RISK-001
 - P5-RISK-002
@@ -138,7 +138,7 @@ The following remain open but do not block offline implementation entry:
 - P5-RISK-029
 - P5-RISK-034
 
-Each is `MITIGATED_NON_BLOCKING_FOR_OFFLINE_5_1`. Exit evidence remains mandatory at the sub-slice or milestone-completion timing in `PHASE_5_1_GATE_TIMING_MATRIX.md`.
+P5-RISK-001, P5-RISK-003, P5-RISK-029, and the 5.1A portion of P5-RISK-034 are `CLOSED_FOR_ENTRY` by implemented evidence, not closed globally. P5-RISK-002 is mitigated and P5-RISK-006, P5-RISK-010, and P5-RISK-011 move to 5.1B. Exit evidence remains mandatory at the timing in `PHASE_5_1_GATE_TIMING_MATRIX.md`.
 
 ## Gate-state definitions
 
@@ -160,11 +160,10 @@ An external dependency or authority prevents completing required governance.
 
 ## Authorization boundary
 
-This gate permits a future implementation task to begin 5.1A only. It does not:
+This gate permits a separate future implementation task to begin 5.1B only. It does not:
 
-- implement anything in this task;
-- automatically begin 5.1A;
-- permit 5.1B before 5.1A passes;
+- automatically begin 5.1B;
+- permit expansion beyond deterministic source utilities and the offline harness;
 - authorize production imports, data, writes, routes, telemetry, models, flags, deployment, or traffic;
 - authorize Source Intelligence reputation, clustering, language detection, near-duplicate classification, or suppression;
 - authorize approval or publication.
