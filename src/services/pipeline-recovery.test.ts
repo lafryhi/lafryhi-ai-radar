@@ -67,4 +67,16 @@ describe("pipeline recovery validation", () => {
     expect(serialized).toContain('"event":"pipeline.completed"');
     expect(serialized).not.toMatch(/operatorToken|authorization|credential|secret|rawPrompt|normalizedText/i);
   });
+
+  it("routes a valid stale reconciliation request without invoking rerun", async () => {
+    const rerun = vi.fn(async () => undefined);
+    const reconcileStale = vi.fn(async () => undefined);
+    const result = await handlePipelineRecovery(
+      { action: "reconcile_stale" },
+      { rerun, reconcileStale },
+    );
+    expect(result).toEqual({ ok: true, status: 200, kind: "stale_reconciliation" });
+    expect(reconcileStale).toHaveBeenCalledOnce();
+    expect(rerun).not.toHaveBeenCalled();
+  });
 });

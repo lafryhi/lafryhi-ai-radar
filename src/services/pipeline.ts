@@ -4,11 +4,22 @@ import type { RadarRepository } from "@/persistence/repository";
 import type { AiAnalyzer, PreviousArticleContext } from "./ai";
 import { PROMPT_VERSION } from "./ai";
 import { aiRecoveryEnabled, AnalysisFailure } from "./failure-recovery";
+import {
+  atomicAnalysisFinalizationEnabled,
+  finalizeAnalysisWithRetry,
+} from "./analysis-finalization";
 import { ingestSource, validateRegisteredSource, validateSourceUrl } from "./ingestion";
 import { logAnalysisCreated, logPendingReviewCreated, logPipelineCompleted, logPipelineStarted } from "./pipeline-events";
 
 interface PipelineContext {
   candidateId?: string;
+}
+
+function failedValidationOutcome(error: unknown) {
+  if (!atomicAnalysisFinalizationEnabled()) return "failed" as const;
+  if (!(error instanceof AnalysisFailure)) return "not_run" as const;
+  return ["response_envelope", "schema_validation", "evidence_integrity", "duplicate_integrity", "empty_output", "response_truncated"]
+    .includes(error.category) ? "failed" as const : "not_run" as const;
 }
 
 async function getPreviousCoverage(repository: RadarRepository): Promise<PreviousArticleContext[]> {
@@ -48,24 +59,37 @@ export async function runPipeline(url: string, repository: RadarRepository, anal
     await repository.saveRun(run);
     logPipelineStarted({ processingRunId: run.id, candidateId: context.candidateId, sourceId: source.id });
     const output = await analyzer.analyze(source, { previousArticles: await getPreviousCoverage(repository) });
-    run = ProcessingRunSchema.parse({ ...run, retryCount: output.retryCount ?? run.retryCount });
+    const atomicFinalization = atomicAnalysisFinalizationEnabled();
+    run = ProcessingRunSchema.parse({
+      ...run,
+      retryCount: output.retryCount ?? run.retryCount,
+      ...(atomicFinalization ? { model: output.model, tokenUsage: output.tokenUsage } : {}),
+    });
+    const analysisId = atomicFinalization ? `analysis-${run.id}` : randomUUID();
     const analysis = StoredAnalysisSchema.parse({
-      ...output.result, id: randomUUID(), sourceRecordId: source.id,
+      ...output.result, id: analysisId, sourceRecordId: source.id,
       processingRunId: run.id, createdAt: new Date().toISOString(),
     });
-    await repository.saveAnalysis(analysis);
-    logAnalysisCreated({ analysisId: analysis.id, processingRunId: run.id, candidateId: context.candidateId, model: output.model });
     const review = ReviewDecisionSchema.parse({
-      id: randomUUID(), analysisResultId: analysis.id, status: "pending", reviewerNote: "", reviewedAt: null,
+      id: atomicFinalization ? `review-${analysis.id}` : randomUUID(),
+      analysisResultId: analysis.id, status: "pending", reviewerNote: "", reviewedAt: null,
     });
-    await repository.saveReview(review);
-    logPendingReviewCreated({ reviewId: review.id, analysisId: analysis.id, status: "pending" });
     const completed = ProcessingRunSchema.parse({
       ...run, status: "pending_review", model: output.model, completedAt: new Date().toISOString(),
       latencyMs: Date.now() - started, tokenUsage: output.tokenUsage,
       validationOutcome: "passed",
     });
-    await repository.saveRun(completed);
+    if (atomicFinalization) {
+      await finalizeAnalysisWithRetry(repository, { processingRun: completed, analysis, pendingReview: review });
+      logAnalysisCreated({ analysisId: analysis.id, processingRunId: run.id, candidateId: context.candidateId, model: output.model });
+      logPendingReviewCreated({ reviewId: review.id, analysisId: analysis.id, status: "pending" });
+    } else {
+      await repository.saveAnalysis(analysis);
+      logAnalysisCreated({ analysisId: analysis.id, processingRunId: run.id, candidateId: context.candidateId, model: output.model });
+      await repository.saveReview(review);
+      logPendingReviewCreated({ reviewId: review.id, analysisId: analysis.id, status: "pending" });
+      await repository.saveRun(completed);
+    }
     logPipelineCompleted({
       executionKind: "production",
       sourceId: source.id,
@@ -81,7 +105,7 @@ export async function runPipeline(url: string, repository: RadarRepository, anal
     return { source, run: completed, analysis };
   } catch (error) {
     if (run) {
-      const failed = ProcessingRunSchema.parse({ ...run, status: "failed", completedAt: new Date().toISOString(), latencyMs: Date.now() - started, validationOutcome: "failed", errorDetails: error instanceof Error ? error.message.slice(0, 2000) : "Unknown processing error", retryCount: error instanceof AnalysisFailure ? error.retryCount : run.retryCount });
+      const failed = ProcessingRunSchema.parse({ ...run, status: "failed", completedAt: new Date().toISOString(), latencyMs: Date.now() - started, validationOutcome: failedValidationOutcome(error), errorDetails: error instanceof Error ? error.message.slice(0, 2000) : "Unknown processing error", retryCount: error instanceof AnalysisFailure ? error.retryCount : run.retryCount });
       await repository.saveRun(failed);
       console.error(JSON.stringify({ event: "pipeline.failed", runId: run.id, error: failed.errorDetails }));
     }
@@ -105,15 +129,26 @@ export async function rerunPipeline(sourceRecordId: string, repository: RadarRep
   logPipelineStarted({ processingRunId: run.id, sourceId: source.id });
   try {
     const output = await analyzer.analyze(source, { previousArticles: await getPreviousCoverage(repository) });
-    run = ProcessingRunSchema.parse({ ...run, retryCount: output.retryCount ?? run.retryCount });
-    const analysis = StoredAnalysisSchema.parse({ ...output.result, id: randomUUID(), sourceRecordId, processingRunId: run.id, createdAt: new Date().toISOString() });
-    await repository.saveAnalysis(analysis);
-    logAnalysisCreated({ analysisId: analysis.id, processingRunId: run.id, model: output.model });
-    const review = ReviewDecisionSchema.parse({ id: randomUUID(), analysisResultId: analysis.id, status: "pending", reviewerNote: "", reviewedAt: null });
-    await repository.saveReview(review);
-    logPendingReviewCreated({ reviewId: review.id, analysisId: analysis.id, status: "pending" });
+    const atomicFinalization = atomicAnalysisFinalizationEnabled();
+    run = ProcessingRunSchema.parse({
+      ...run,
+      retryCount: output.retryCount ?? run.retryCount,
+      ...(atomicFinalization ? { model: output.model, tokenUsage: output.tokenUsage } : {}),
+    });
+    const analysis = StoredAnalysisSchema.parse({ ...output.result, id: atomicFinalization ? `analysis-${run.id}` : randomUUID(), sourceRecordId, processingRunId: run.id, createdAt: new Date().toISOString() });
+    const review = ReviewDecisionSchema.parse({ id: atomicFinalization ? `review-${analysis.id}` : randomUUID(), analysisResultId: analysis.id, status: "pending", reviewerNote: "", reviewedAt: null });
     run = ProcessingRunSchema.parse({ ...run, status: "pending_review", model: output.model, completedAt: new Date().toISOString(), latencyMs: Date.now() - started, tokenUsage: output.tokenUsage, validationOutcome: "passed" });
-    await repository.saveRun(run);
+    if (atomicFinalization) {
+      await finalizeAnalysisWithRetry(repository, { processingRun: run, analysis, pendingReview: review });
+      logAnalysisCreated({ analysisId: analysis.id, processingRunId: run.id, model: output.model });
+      logPendingReviewCreated({ reviewId: review.id, analysisId: analysis.id, status: "pending" });
+    } else {
+      await repository.saveAnalysis(analysis);
+      logAnalysisCreated({ analysisId: analysis.id, processingRunId: run.id, model: output.model });
+      await repository.saveReview(review);
+      logPendingReviewCreated({ reviewId: review.id, analysisId: analysis.id, status: "pending" });
+      await repository.saveRun(run);
+    }
     logPipelineCompleted({
       executionKind: "production",
       sourceId: source.id,
@@ -128,7 +163,7 @@ export async function rerunPipeline(sourceRecordId: string, repository: RadarRep
     });
     return { source, run, analysis };
   } catch (error) {
-    run = ProcessingRunSchema.parse({ ...run, status: "failed", completedAt: new Date().toISOString(), latencyMs: Date.now() - started, validationOutcome: "failed", errorDetails: error instanceof Error ? error.message.slice(0, 2000) : "Unknown processing error", retryCount: error instanceof AnalysisFailure ? error.retryCount : run.retryCount });
+    run = ProcessingRunSchema.parse({ ...run, status: "failed", completedAt: new Date().toISOString(), latencyMs: Date.now() - started, validationOutcome: failedValidationOutcome(error), errorDetails: error instanceof Error ? error.message.slice(0, 2000) : "Unknown processing error", retryCount: error instanceof AnalysisFailure ? error.retryCount : run.retryCount });
     await repository.saveRun(run);
     throw error;
   }

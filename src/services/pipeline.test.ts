@@ -4,6 +4,7 @@ import { MemoryRepository } from "@/persistence/memory";
 import { parseGeminiResponse, type AiAnalyzer } from "./ai";
 import { rerunPipeline, runPipeline } from "./pipeline";
 import { reviewAnalysis } from "./review";
+import { AnalysisFailure } from "./failure-recovery";
 import { analysisFixture, geminiAnalysisFixture, sourceDefinitionFixture, sourceFixture } from "@/test/fixtures";
 
 const html = `<html><head><title>Official announcement</title><meta property="article:published_time" content="2026-07-24T00:00:00Z"></head><body>${"Authoritative details about a product announcement. ".repeat(20)}</body></html>`;
@@ -12,7 +13,10 @@ const mock: AiAnalyzer = { async analyze() { return { result: analysisFixture, m
 async function repositoryFor(domain = "cloud.google.com") { const repository = new MemoryRepository(); await repository.saveSourceDefinition(sourceDefinitionFixture(domain, `definition-${domain}`)); return repository; }
 
 describe("pipeline and approval gate", () => {
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.restoreAllMocks();
+    delete process.env.ATOMIC_ANALYSIS_FINALIZATION_ENABLED;
+  });
 
   it("emits a safe structured completion event for initial processing", async () => {
     const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
@@ -139,6 +143,73 @@ describe("pipeline and approval gate", () => {
     expect(await repo.listReviews()).toHaveLength(1);
     expect((await repo.listReviews())[0].status).toBe("pending");
     expect(await repo.listPublishedItems()).toHaveLength(0);
+  });
+  it("atomically finalizes deterministic analysis and review IDs behind the feature flag", async () => {
+    process.env.ATOMIC_ANALYSIS_FINALIZATION_ENABLED = "true";
+    const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
+    const repo = await repositoryFor();
+    const result = await runPipeline("https://cloud.google.com/blog/atomic-ready", repo, mock, fetcher as typeof fetch);
+    const review = await repo.getReviewForAnalysis(result.analysis.id);
+    expect(result.analysis.id).toBe(`analysis-${result.run.id}`);
+    expect(review?.id).toBe(`review-${result.analysis.id}`);
+    expect(result.run).toMatchObject({ status: "pending_review", validationOutcome: "passed" });
+    expect(review?.status).toBe("pending");
+    expect(await repo.listPublishedItems()).toHaveLength(0);
+    const persistenceEvents = info.mock.calls.map(([value]) => JSON.parse(String(value)))
+      .filter(({ event }) => event === "analysis.persistence");
+    expect(persistenceEvents.map(({ action }) => action)).toEqual([
+      "finalization_started", "finalization_committed",
+    ]);
+  });
+
+  it("preserves legacy separate persistence when atomic finalization is disabled", async () => {
+    process.env.ATOMIC_ANALYSIS_FINALIZATION_ENABLED = "false";
+    const repo = await repositoryFor();
+    const finalize = vi.spyOn(repo, "finalizeAnalysisForReview");
+    const result = await runPipeline("https://cloud.google.com/blog/legacy-finalization", repo, mock, fetcher as typeof fetch);
+    expect(finalize).not.toHaveBeenCalled();
+    expect(result.analysis.id).not.toBe(`analysis-${result.run.id}`);
+    expect((await repo.getReviewForAnalysis(result.analysis.id))?.status).toBe("pending");
+  });
+
+  it("records accurate validation outcomes for validation and provider failures", async () => {
+    process.env.ATOMIC_ANALYSIS_FINALIZATION_ENABLED = "true";
+    const validationRepo = await repositoryFor();
+    const validationFailure = new AnalysisFailure("Schema invalid.", "schema_validation");
+    await expect(runPipeline(
+      "https://cloud.google.com/blog/validation-failure",
+      validationRepo,
+      { analyze: async () => { throw validationFailure; } },
+      fetcher as typeof fetch,
+    )).rejects.toThrow("Schema invalid.");
+    expect((await validationRepo.listRuns())[0].validationOutcome).toBe("failed");
+
+    const providerRepo = await repositoryFor();
+    const providerFailure = new AnalysisFailure("Provider unavailable.", "provider_transient");
+    await expect(runPipeline(
+      "https://cloud.google.com/blog/provider-failure",
+      providerRepo,
+      { analyze: async () => { throw providerFailure; } },
+      fetcher as typeof fetch,
+    )).rejects.toThrow("Provider unavailable.");
+    expect((await providerRepo.listRuns())[0].validationOutcome).toBe("not_run");
+  });
+
+  it("records persistence failure as not_run rather than failed validation", async () => {
+    process.env.ATOMIC_ANALYSIS_FINALIZATION_ENABLED = "true";
+    const repo = await repositoryFor();
+    vi.spyOn(repo, "finalizeAnalysisForReview")
+      .mockRejectedValue(Object.assign(new Error("permanent persistence failure"), { status: 400 }));
+    await expect(runPipeline(
+      "https://cloud.google.com/blog/persistence-failure",
+      repo,
+      mock,
+      fetcher as typeof fetch,
+    )).rejects.toThrow("Analysis persistence failed permanently.");
+    expect((await repo.listRuns())[0]).toMatchObject({
+      status: "failed",
+      validationOutcome: "not_run",
+    });
   });
   it("provides bounded previous coverage to Gemini before duplicate recommendation", async () => {
     vi.spyOn(console, "info").mockImplementation(() => undefined);

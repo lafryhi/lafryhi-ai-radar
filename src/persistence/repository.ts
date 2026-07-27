@@ -1,6 +1,62 @@
-import { RadarItemSchema, ReviewDecisionSchema, type ProcessingRun, type RadarItem, type ReviewDecision, type RssCandidate, type RssDiscoveryRun, type SourceDefinition, type SourceRecord, type StoredAnalysis } from "@/domain/schemas";
+import { ProcessingRunSchema, RadarItemSchema, ReviewDecisionSchema, StoredAnalysisSchema, type ProcessingRun, type RadarItem, type ReviewDecision, type RssCandidate, type RssDiscoveryRun, type SourceDefinition, type SourceRecord, type StoredAnalysis } from "@/domain/schemas";
 
 export class ApprovalIntegrityError extends Error {}
+export class AnalysisFinalizationIntegrityError extends Error {}
+
+export interface AnalysisFinalizationInput {
+  processingRun: ProcessingRun;
+  analysis: StoredAnalysis;
+  pendingReview: ReviewDecision;
+}
+
+export interface AnalysisFinalizationResult extends AnalysisFinalizationInput {
+  idempotent: boolean;
+  reconciled: boolean;
+}
+
+function canonical(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
+  if (value && typeof value === "object") {
+    return `{${Object.entries(value as Record<string, unknown>)
+      .filter(([, entry]) => entry !== undefined)
+      .sort(([left], [right]) => left < right ? -1 : left > right ? 1 : 0)
+      .map(([key, entry]) => `${JSON.stringify(key)}:${canonical(entry)}`)
+      .join(",")}}`;
+  }
+  return JSON.stringify(value) ?? "undefined";
+}
+
+export function finalizationRecordsEqual(left: unknown, right: unknown) {
+  return canonical(left) === canonical(right);
+}
+
+export function parseAnalysisFinalizationInput(input: AnalysisFinalizationInput): AnalysisFinalizationInput {
+  const processingRun = ProcessingRunSchema.parse(input.processingRun);
+  const analysis = StoredAnalysisSchema.parse(input.analysis);
+  const pendingReview = ReviewDecisionSchema.parse(input.pendingReview);
+  const expectedAnalysisId = `analysis-${processingRun.id}`;
+  const expectedReviewId = `review-${expectedAnalysisId}`;
+  if (processingRun.status !== "pending_review"
+    || processingRun.validationOutcome !== "passed"
+    || !processingRun.completedAt
+    || processingRun.errorDetails !== null
+    || processingRun.model === "pending") {
+    throw new AnalysisFinalizationIntegrityError("Analysis finalization requires a completed pending-review run.");
+  }
+  if (analysis.id !== expectedAnalysisId
+    || analysis.processingRunId !== processingRun.id
+    || analysis.sourceRecordId !== processingRun.sourceRecordId) {
+    throw new AnalysisFinalizationIntegrityError("Analysis finalization linkage is invalid.");
+  }
+  if (pendingReview.id !== expectedReviewId
+    || pendingReview.analysisResultId !== analysis.id
+    || pendingReview.status !== "pending"
+    || pendingReview.reviewerNote !== ""
+    || pendingReview.reviewedAt !== null) {
+    throw new AnalysisFinalizationIntegrityError("Pending review finalization linkage is invalid.");
+  }
+  return { processingRun, analysis, pendingReview };
+}
 
 export interface AtomicApprovalResult {
   decision: ReviewDecision;
@@ -75,6 +131,7 @@ export interface RadarRepository {
   getReviewForAnalysis(id: string): Promise<ReviewDecision | null>;
   listReviews(limit?: number): Promise<ReviewDecision[]>;
   saveRadarItem(value: RadarItem): Promise<void>;
+  finalizeAnalysisForReview(value: AnalysisFinalizationInput): Promise<AnalysisFinalizationResult>;
   findRadarItemByAnalysis(id: string): Promise<RadarItem | null>;
   approveReviewAndPublish(analysisId: string, note: string, reviewedAt: string): Promise<AtomicApprovalResult>;
   listPublishedItems(limit?: number): Promise<RadarItem[]>;

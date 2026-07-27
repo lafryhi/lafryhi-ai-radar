@@ -1,5 +1,15 @@
 import { ProcessingRunSchema, RadarItemSchema, ReviewDecisionSchema, RssCandidateSchema, RssDiscoveryRunSchema, SourceDefinitionSchema, SourceRecordSchema, StoredAnalysisSchema, type ProcessingRun, type RadarItem, type ReviewDecision, type RssCandidate, type RssDiscoveryRun, type SourceDefinition, type SourceRecord, type StoredAnalysis } from "@/domain/schemas";
-import { ApprovalIntegrityError, buildApprovalRecords, type AtomicApprovalResult, type RadarRepository } from "./repository";
+import {
+  AnalysisFinalizationIntegrityError,
+  ApprovalIntegrityError,
+  buildApprovalRecords,
+  finalizationRecordsEqual,
+  parseAnalysisFinalizationInput,
+  type AnalysisFinalizationInput,
+  type AnalysisFinalizationResult,
+  type AtomicApprovalResult,
+  type RadarRepository,
+} from "./repository";
 
 export class MemoryRepository implements RadarRepository {
   protected sourceDefinitions = new Map<string, SourceDefinition>();
@@ -39,6 +49,55 @@ export class MemoryRepository implements RadarRepository {
   async listReviews(limit = 100) { return [...this.reviews.values()].sort((a, b) => (b.reviewedAt ?? "").localeCompare(a.reviewedAt ?? "")).slice(0, limit); }
   async saveRadarItem(value: RadarItem) { const parsed = RadarItemSchema.parse(value); this.items.set(parsed.id, parsed); }
   async findRadarItemByAnalysis(id: string) { return [...this.items.values()].find((x) => x.analysisResultId === id) ?? null; }
+  protected analysisFinalizationCheckpoint(stage: "before_writes" | "between_writes" | "before_commit"): void | Promise<void> { void stage; }
+  protected async commitAnalysisFinalization(value: AnalysisFinalizationInput) {
+    const nextAnalyses = new Map(this.analyses);
+    const nextReviews = new Map(this.reviews);
+    const nextRuns = new Map(this.runs);
+    const beforeWrites = this.analysisFinalizationCheckpoint("before_writes");
+    if (beforeWrites) await beforeWrites;
+    nextAnalyses.set(value.analysis.id, value.analysis);
+    const betweenWrites = this.analysisFinalizationCheckpoint("between_writes");
+    if (betweenWrites) await betweenWrites;
+    nextReviews.set(value.pendingReview.id, value.pendingReview);
+    nextRuns.set(value.processingRun.id, value.processingRun);
+    const beforeCommit = this.analysisFinalizationCheckpoint("before_commit");
+    if (beforeCommit) await beforeCommit;
+    this.analyses = nextAnalyses;
+    this.reviews = nextReviews;
+    this.runs = nextRuns;
+  }
+  async finalizeAnalysisForReview(value: AnalysisFinalizationInput): Promise<AnalysisFinalizationResult> {
+    const input = parseAnalysisFinalizationInput(value);
+    const currentRun = this.runs.get(input.processingRun.id);
+    if (!currentRun) throw new AnalysisFinalizationIntegrityError("Analysis finalization run was not found.");
+    if (!this.sources.has(input.processingRun.sourceRecordId)) {
+      throw new AnalysisFinalizationIntegrityError("Analysis finalization source was not found.");
+    }
+    const analyses = [...this.analyses.values()].filter((analysis) =>
+      analysis.id === input.analysis.id || analysis.processingRunId === input.processingRun.id);
+    const reviews = [...this.reviews.values()].filter((review) =>
+      review.id === input.pendingReview.id || review.analysisResultId === input.analysis.id);
+    const exactAnalysis = analyses.length === 1 && finalizationRecordsEqual(analyses[0], input.analysis);
+    const exactReview = reviews.length === 1 && finalizationRecordsEqual(reviews[0], input.pendingReview);
+
+    if (currentRun.status === "pending_review") {
+      if (finalizationRecordsEqual(currentRun, input.processingRun) && exactAnalysis && exactReview) {
+        return { ...input, idempotent: true, reconciled: false };
+      }
+      throw new AnalysisFinalizationIntegrityError("Analysis finalization conflicts with existing completed records.");
+    }
+    if (currentRun.status !== "processing") {
+      throw new AnalysisFinalizationIntegrityError("Analysis finalization run is not processing.");
+    }
+    const noFinalRecords = analyses.length === 0 && reviews.length === 0;
+    const exactPartialPair = exactAnalysis && exactReview;
+    if (!noFinalRecords && !exactPartialPair) {
+      throw new AnalysisFinalizationIntegrityError("Analysis finalization conflicts with partial records.");
+    }
+    await this.commitAnalysisFinalization(input);
+    return { ...input, idempotent: false, reconciled: exactPartialPair };
+  }
   protected async commitApproval(decision: ReviewDecision, item: RadarItem) {
     this.reviews.set(decision.id, decision);
     this.items.set(item.id, item);

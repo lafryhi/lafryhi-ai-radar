@@ -10,14 +10,18 @@ const RecoveryRequestSchema = z.discriminatedUnion("action", [
     action: z.literal("validate_completion_log"),
     processingMode: z.literal("rerun"),
   }).strict(),
+  z.object({
+    action: z.literal("reconcile_stale"),
+  }).strict(),
 ]);
 
 export interface PipelineRecoveryDependencies {
   rerun(sourceRecordId: string): Promise<void>;
+  reconcileStale?(): Promise<void>;
 }
 
 export type PipelineRecoveryResult =
-  | { ok: true; status: 200; kind: "rerun_started" | "synthetic_validation" }
+  | { ok: true; status: 200; kind: "rerun_started" | "synthetic_validation" | "stale_reconciliation" }
   | { ok: false; status: 400; error: "Invalid recovery request." };
 
 export async function handlePipelineRecovery(
@@ -44,6 +48,12 @@ export async function handlePipelineRecovery(
       totalLatencyMs: 0,
     });
     return { ok: true, status: 200, kind: "synthetic_validation" };
+  }
+
+  if (parsed.data.action === "reconcile_stale") {
+    if (!dependencies.reconcileStale) throw new Error("Stale reconciliation dependency is unavailable.");
+    await dependencies.reconcileStale();
+    return { ok: true, status: 200, kind: "stale_reconciliation" };
   }
 
   await dependencies.rerun(parsed.data.sourceRecordId);

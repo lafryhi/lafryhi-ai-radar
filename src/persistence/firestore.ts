@@ -1,6 +1,14 @@
 import { Firestore } from "@google-cloud/firestore";
 import { ProcessingRunSchema, RadarItemSchema, ReviewDecisionSchema, RssCandidateSchema, RssDiscoveryRunSchema, SourceDefinitionSchema, SourceRecordSchema, StoredAnalysisSchema, type ProcessingRun, type RadarItem, type ReviewDecision, type RssCandidate, type RssDiscoveryRun, type SourceDefinition, type SourceRecord, type StoredAnalysis } from "@/domain/schemas";
-import { ApprovalIntegrityError, buildApprovalRecords, type RadarRepository } from "./repository";
+import {
+  AnalysisFinalizationIntegrityError,
+  ApprovalIntegrityError,
+  buildApprovalRecords,
+  finalizationRecordsEqual,
+  parseAnalysisFinalizationInput,
+  type AnalysisFinalizationInput,
+  type RadarRepository,
+} from "./repository";
 
 export class FirestoreRepository implements RadarRepository {
   private db = new Firestore({ databaseId: process.env.FIRESTORE_DATABASE_ID || "(default)" });
@@ -39,6 +47,67 @@ export class FirestoreRepository implements RadarRepository {
   async listReviews(limit = 100) { return (await this.col("reviewDecisions").limit(limit).get()).docs.map((d) => ReviewDecisionSchema.parse(d.data())); }
   async saveRadarItem(v: RadarItem) { const x = RadarItemSchema.parse(v); await this.col("radarItems").doc(x.id).set(x); }
   async findRadarItemByAnalysis(id: string) { const s = await this.col("radarItems").where("analysisResultId", "==", id).limit(1).get(); return s.empty ? null : RadarItemSchema.parse(s.docs[0].data()); }
+  async finalizeAnalysisForReview(value: AnalysisFinalizationInput) {
+    const input = parseAnalysisFinalizationInput(value);
+    return this.db.runTransaction(async (transaction) => {
+      const runRef = this.col("processingRuns").doc(input.processingRun.id);
+      const sourceRef = this.col("sourceRecords").doc(input.processingRun.sourceRecordId);
+      const analysisRef = this.col("analysisResults").doc(input.analysis.id);
+      const reviewRef = this.col("reviewDecisions").doc(input.pendingReview.id);
+      const analysisQuery = this.col("analysisResults").where("processingRunId", "==", input.processingRun.id);
+      const reviewQuery = this.col("reviewDecisions").where("analysisResultId", "==", input.analysis.id);
+
+      const [runSnapshot, sourceSnapshot, analysisSnapshot, analysisMatches, reviewSnapshot, reviewMatches] = await Promise.all([
+        transaction.get(runRef),
+        transaction.get(sourceRef),
+        transaction.get(analysisRef),
+        transaction.get(analysisQuery),
+        transaction.get(reviewRef),
+        transaction.get(reviewQuery),
+      ]);
+      if (!runSnapshot.exists) throw new AnalysisFinalizationIntegrityError("Analysis finalization run was not found.");
+      if (!sourceSnapshot.exists) throw new AnalysisFinalizationIntegrityError("Analysis finalization source was not found.");
+      const currentRun = ProcessingRunSchema.parse(runSnapshot.data());
+      const currentSource = SourceRecordSchema.parse(sourceSnapshot.data());
+      if (currentRun.id !== input.processingRun.id
+        || currentRun.sourceRecordId !== input.processingRun.sourceRecordId
+        || currentSource.id !== input.processingRun.sourceRecordId) {
+        throw new AnalysisFinalizationIntegrityError("Analysis finalization source/run linkage is invalid.");
+      }
+
+      const analysisDocuments = new Map<string, FirebaseFirestore.QueryDocumentSnapshot | FirebaseFirestore.DocumentSnapshot>();
+      if (analysisSnapshot.exists) analysisDocuments.set(analysisSnapshot.id, analysisSnapshot);
+      analysisMatches.docs.forEach((document) => analysisDocuments.set(document.id, document));
+      const analyses = [...analysisDocuments.values()].map((document) => StoredAnalysisSchema.parse(document.data()));
+      const reviewDocuments = new Map<string, FirebaseFirestore.QueryDocumentSnapshot | FirebaseFirestore.DocumentSnapshot>();
+      if (reviewSnapshot.exists) reviewDocuments.set(reviewSnapshot.id, reviewSnapshot);
+      reviewMatches.docs.forEach((document) => reviewDocuments.set(document.id, document));
+      const reviews = [...reviewDocuments.values()].map((document) => ReviewDecisionSchema.parse(document.data()));
+      const exactAnalysis = analyses.length === 1 && finalizationRecordsEqual(analyses[0], input.analysis);
+      const exactReview = reviews.length === 1 && finalizationRecordsEqual(reviews[0], input.pendingReview);
+
+      if (currentRun.status === "pending_review") {
+        if (finalizationRecordsEqual(currentRun, input.processingRun) && exactAnalysis && exactReview) {
+          return { ...input, idempotent: true, reconciled: false };
+        }
+        throw new AnalysisFinalizationIntegrityError("Analysis finalization conflicts with existing completed records.");
+      }
+      if (currentRun.status !== "processing") {
+        throw new AnalysisFinalizationIntegrityError("Analysis finalization run is not processing.");
+      }
+      const noFinalRecords = analyses.length === 0 && reviews.length === 0;
+      const exactPartialPair = exactAnalysis && exactReview;
+      if (!noFinalRecords && !exactPartialPair) {
+        throw new AnalysisFinalizationIntegrityError("Analysis finalization conflicts with partial records.");
+      }
+      if (noFinalRecords) {
+        transaction.set(analysisRef, input.analysis);
+        transaction.set(reviewRef, input.pendingReview);
+      }
+      transaction.set(runRef, input.processingRun);
+      return { ...input, idempotent: false, reconciled: exactPartialPair };
+    }, { maxAttempts: 1 });
+  }
   async approveReviewAndPublish(analysisId: string, note: string, reviewedAt: string) {
     return this.db.runTransaction(async (transaction) => {
       const analysisRef = this.col("analysisResults").doc(analysisId);

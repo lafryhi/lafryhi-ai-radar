@@ -1,7 +1,8 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { z } from "zod";
-import { ProcessingRunSchema, RadarItemSchema, ReviewDecisionSchema, RssCandidateSchema, RssDiscoveryRunSchema, SourceDefinitionSchema, SourceRecordSchema, StoredAnalysisSchema } from "@/domain/schemas";
+import { ProcessingRunSchema, RadarItemSchema, ReviewDecisionSchema, RssCandidateSchema, RssDiscoveryRunSchema, SourceDefinitionSchema, SourceRecordSchema, StoredAnalysisSchema, type ProcessingRun, type ReviewDecision, type StoredAnalysis } from "@/domain/schemas";
+import type { AnalysisFinalizationInput } from "./repository";
 import { MemoryRepository } from "./memory";
 
 const LocalDataSchema = z.object({
@@ -37,18 +38,25 @@ export class LocalFileRepository extends MemoryRepository {
     this.loaded = true;
   }
 
-  private async flush() {
+  private async writeState(
+    analyses: Map<string, StoredAnalysis>,
+    reviews: Map<string, ReviewDecision>,
+    runs: Map<string, ProcessingRun>,
+  ) {
     await mkdir(dirname(this.path), { recursive: true });
     const temp = `${this.path}.${process.pid}.tmp`;
     await writeFile(temp, JSON.stringify({
       sourceDefinitions: [...this.sourceDefinitions.values()],
       rssCandidates: [...this.rssCandidates.values()],
       rssDiscoveryRuns: [...this.rssDiscoveryRuns.values()],
-      sources: [...this.sources.values()], runs: [...this.runs.values()],
-      analyses: [...this.analyses.values()], reviews: [...this.reviews.values()],
+      sources: [...this.sources.values()], runs: [...runs.values()],
+      analyses: [...analyses.values()], reviews: [...reviews.values()],
       items: [...this.items.values()],
     }, null, 2));
     await rename(temp, this.path);
+  }
+  protected async flush() {
+    await this.writeState(this.analyses, this.reviews, this.runs);
   }
 
   override async getSourceDefinition(id: string) { await this.load(); return super.getSourceDefinition(id); }
@@ -79,6 +87,22 @@ export class LocalFileRepository extends MemoryRepository {
   override async listReviews(limit?: number) { await this.load(); return super.listReviews(limit); }
   override async saveRadarItem(v: Parameters<MemoryRepository["saveRadarItem"]>[0]) { await this.load(); await super.saveRadarItem(v); await this.flush(); }
   override async findRadarItemByAnalysis(id: string) { await this.load(); return super.findRadarItemByAnalysis(id); }
+  protected override async commitAnalysisFinalization(value: AnalysisFinalizationInput) {
+    const nextAnalyses = new Map(this.analyses);
+    const nextReviews = new Map(this.reviews);
+    const nextRuns = new Map(this.runs);
+    nextAnalyses.set(value.analysis.id, value.analysis);
+    nextReviews.set(value.pendingReview.id, value.pendingReview);
+    nextRuns.set(value.processingRun.id, value.processingRun);
+    await this.writeState(nextAnalyses, nextReviews, nextRuns);
+    this.analyses = nextAnalyses;
+    this.reviews = nextReviews;
+    this.runs = nextRuns;
+  }
+  override async finalizeAnalysisForReview(value: Parameters<MemoryRepository["finalizeAnalysisForReview"]>[0]) {
+    await this.load();
+    return super.finalizeAnalysisForReview(value);
+  }
   override async approveReviewAndPublish(analysisId: string, note: string, reviewedAt: string) {
     await this.load();
     const result = await super.approveReviewAndPublish(analysisId, note, reviewedAt);

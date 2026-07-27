@@ -171,3 +171,37 @@ export function logGeminiRecovery(event: Omit<z.infer<typeof GeminiRecoveryEvent
     timestamp: new Date().toISOString(),
   });
 }
+
+export const AnalysisPersistenceEventSchema = z.object({
+  event: z.literal("analysis.persistence"),
+  action: z.enum([
+    "finalization_started",
+    "finalization_committed",
+    "finalization_idempotent",
+    "finalization_conflict",
+    "persistence_retry_started",
+    "persistence_retry_completed",
+    "stale_run_detected",
+    "stale_run_reconciled",
+    "stale_run_recovery_eligible",
+    "partial_state_integrity_failure",
+    "recovery_exhausted",
+  ]),
+  runId: z.string().min(1).max(200),
+  analysisId: z.string().min(1).max(220).nullable(),
+  reviewId: z.string().min(1).max(240).nullable(),
+  attemptNumber: z.number().int().min(1).max(3),
+  persistenceRetryCount: z.number().int().min(0).max(2),
+  elapsedMs: z.number().int().nonnegative(),
+  atomicFinalizationEnabled: z.boolean(),
+  failureCategory: z.enum(["persistence_transient", "persistence_permanent", "persistence_integrity"]).nullable(),
+  timestamp,
+}).strict();
+
+export function logAnalysisPersistence(event: Omit<z.infer<typeof AnalysisPersistenceEventSchema>, "event" | "timestamp">) {
+  return emit(AnalysisPersistenceEventSchema, {
+    event: "analysis.persistence",
+    ...event,
+    timestamp: new Date().toISOString(),
+  });
+}

@@ -26,6 +26,13 @@ export async function POST(request: NextRequest) {
       ]);
       await rerunPipeline(sourceRecordId, await getRepository(), await getAnalyzer());
     },
+    async reconcileStale() {
+      const [{ getRepository }, { reconcileStaleProcessingRuns }] = await Promise.all([
+        import("@/persistence"),
+        import("@/services/analysis-finalization"),
+      ]);
+      await reconcileStaleProcessingRuns(await getRepository());
+    },
   });
 
   if (!result.ok) {
