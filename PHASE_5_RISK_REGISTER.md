@@ -59,17 +59,17 @@ Owner labels in the original register are implementation-domain roles. For Phase
 
 | Risk ID | Canonical risk name | Phase 5.1 classification | Governance owner |
 |---|---|---|---|
-| P5-RISK-001 | Derived artifact platform | blocking | Architecture Owner |
-| P5-RISK-002 | Deterministic identities | blocking | Architecture Owner |
-| P5-RISK-003 | Provenance graph | blocking | Architecture Owner |
+| P5-RISK-001 | Derived artifact platform | mitigated non-blocking for offline 5.1; completion evidence required | Architecture Owner |
+| P5-RISK-002 | Deterministic identities | mitigated non-blocking for offline 5.1; completion evidence required | Architecture Owner |
+| P5-RISK-003 | Provenance graph | mitigated non-blocking for offline 5.1; completion evidence required | Architecture Owner |
 | P5-RISK-004 | Publisher reputation | non-blocking; implementation excluded | Product and Editorial Owner |
 | P5-RISK-005 | Reliability history | deferred outside milestone | Data Governance Owner |
-| P5-RISK-006 | Exact duplicate detection | blocking | Architecture Owner |
+| P5-RISK-006 | Exact duplicate detection | mitigated non-blocking for offline 5.1; completion evidence required | Architecture Owner |
 | P5-RISK-007 | Near-duplicate detection | deferred outside milestone | Evaluation Owner |
 | P5-RISK-008 | Language detection | deferred outside milestone | Evaluation Owner |
 | P5-RISK-009 | Publisher clustering | deferred outside milestone | Data Governance Owner |
-| P5-RISK-010 | Source fingerprinting | blocking | Security and Privacy Owner |
-| P5-RISK-011 | URL canonicalization | blocking | Architecture Owner |
+| P5-RISK-010 | Source fingerprinting | mitigated non-blocking for offline 5.1; completion evidence required | Security and Privacy Owner |
+| P5-RISK-011 | URL canonicalization | mitigated non-blocking for offline 5.1; completion evidence required | Architecture Owner |
 | P5-RISK-012 | Conflict detection | deferred outside milestone | Evaluation Owner |
 | P5-RISK-013 | Cross-source validation | deferred outside milestone | Architecture Owner |
 | P5-RISK-014 | Event extraction | deferred outside milestone | Architecture Owner |
@@ -87,12 +87,12 @@ Owner labels in the original register are implementation-domain roles. For Phase
 | P5-RISK-026 | AI Radar summaries | deferred outside milestone | Product and Editorial Owner |
 | P5-RISK-027 | Digest and weekly report | deferred outside milestone | Product and Editorial Owner |
 | P5-RISK-028 | Story lifecycle | deferred outside milestone | Product and Editorial Owner |
-| P5-RISK-029 | Operational telemetry | blocking | Security and Privacy Owner |
+| P5-RISK-029 | Operational telemetry | mitigated non-blocking for test-local diagnostics; completion evidence required | Security and Privacy Owner |
 | P5-RISK-030 | Gemini usage/cost dashboard | deferred outside milestone | Operations Owner |
 | P5-RISK-031 | Pipeline/queue dashboards | deferred outside milestone | Operations Owner |
 | P5-RISK-032 | Operator-action metrics | deferred outside milestone | Security and Privacy Owner |
 | P5-RISK-033 | Trend monitoring | deferred outside milestone | Operations Owner |
-| P5-RISK-034 | Replay simulator | blocking | Reliability Owner |
+| P5-RISK-034 | Replay simulator | mitigated non-blocking for offline harness; enforcement evidence required during 5.1A | Reliability Owner |
 | P5-RISK-035 | Fault injection | deferred outside milestone | Reliability Owner |
 | P5-RISK-036 | Synthetic canaries | deferred outside milestone | Reliability Owner |
 | P5-RISK-037 | Load testing | deferred outside milestone | Reliability Owner |
@@ -102,22 +102,22 @@ Owner labels in the original register are implementation-domain roles. For Phase
 | P5-RISK-041 | Disaster recovery | deferred outside milestone | Reliability Owner |
 | P5-RISK-042 | Feature controls | non-blocking because no feature flag or production activation is authorized | Operations Owner |
 
-## Milestone 5.1 Blocking Risks
+## Milestone 5.1 Entry Risk Review
 
-These risks remain open. They are not resolved merely because contracts exist.
+These risks remain open but no longer block writing isolated offline code. Their exit evidence is logically produced during 5.1A/5.1B and remains blocking for sub-slice progression or milestone completion as specified in `PHASE_5_1_GATE_TIMING_MATRIX.md`.
 
-| Risk ID | Why blocking | Owner | Required exit evidence | Current evidence |
+| Risk ID | Entry classification | Owner | Required exit evidence | Evidence now |
 |---|---|---|---|---|
-| P5-RISK-001 | A derived envelope could mutate or collide with frozen records. | Architecture Owner | Contract/dependency tests proving Phase 4 records and namespaces are untouched | Contract documented; tests not implemented |
-| P5-RISK-002 | Unstable framing could create duplicate or inconsistent identities. | Architecture Owner | Cross-runtime golden vectors and version/namespace separation tests | Encoding documented; tests not implemented |
-| P5-RISK-003 | Missing provenance would make derived intelligence unauditable. | Architecture Owner | 100% provenance validation with missing/unknown negative fixtures | Validator contract documented; tests not implemented |
-| P5-RISK-006 | Exact-equivalence logic could merge distinct records. | Architecture Owner | Approved corpus with 100% precision and zero critical false merges | Corpus not collected; classifier not implemented |
-| P5-RISK-010 | Fingerprints could be nondeterministic, collide in evaluated data, or leak protected inputs. | Security and Privacy Owner | Golden vectors, zero observed collisions, input/privacy audit | Contract documented; evidence absent |
-| P5-RISK-011 | Canonical URL rules could collapse distinct resources. | Architecture Owner | 100% approved-rule correctness and zero false equivalence on adversarial corpus | Corpus and implementation absent |
-| P5-RISK-029 | Test diagnostics could contain protected content. | Security and Privacy Owner | Allowlist/denylist adversarial tests with zero prohibited fields | Privacy contract approved; tests absent |
-| P5-RISK-034 | Evaluation harness could contact production or become a replay path. | Reliability Owner | Capability tests proving no network, production credentials, adapters, writes, or endpoints | Isolation contract approved; harness absent |
+| P5-RISK-001 | MITIGATED_NON_BLOCKING_FOR_OFFLINE_5_1 | Architecture Owner | Contract/dependency tests proving Phase 4 records and namespaces are untouched | Compatibility and module-isolation design |
+| P5-RISK-002 | MITIGATED_NON_BLOCKING_FOR_OFFLINE_5_1 | Architecture Owner | Cross-runtime golden vectors and version/namespace separation tests | Encoding and benchmark policy |
+| P5-RISK-003 | MITIGATED_NON_BLOCKING_FOR_OFFLINE_5_1 | Architecture Owner | 100% provenance validation with negative fixtures | Provenance contract and 5.1A boundary |
+| P5-RISK-006 | MITIGATED_NON_BLOCKING_FOR_OFFLINE_5_1 | Architecture Owner | 100% precision and zero critical false merges | Approved numeric corpus composition; corpus absent |
+| P5-RISK-010 | MITIGATED_NON_BLOCKING_FOR_OFFLINE_5_1 | Security and Privacy Owner | Golden vectors, zero observed collisions, input/privacy audit | Fingerprint/privacy/isolation contracts |
+| P5-RISK-011 | MITIGATED_NON_BLOCKING_FOR_OFFLINE_5_1 | Architecture Owner | 100% rule correctness and zero false equivalence | Approved URL corpus composition; corpus absent |
+| P5-RISK-029 | MITIGATED_NON_BLOCKING_FOR_OFFLINE_5_1 | Security and Privacy Owner | Zero prohibited fields in adversarial serialization tests | Offline allowlist and size/retention budgets |
+| P5-RISK-034 | MITIGATED_NON_BLOCKING_FOR_OFFLINE_5_1 | Reliability Owner | No-network/provider/repository/auth/import capability tests | Repository-backed `ISOLATION_FEASIBLE_WITH_LIMITATIONS` |
 
-Because all eight lack actual exit evidence, the implementation entry gate remains `NOT_READY`.
+No risk is closed. Detailed residual uncertainty and timing are recorded in `PHASE_5_ENTRY_RISK_RESOLUTION.md`.
 
 ## Review cadence
 

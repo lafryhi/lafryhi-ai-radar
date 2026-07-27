@@ -8,6 +8,7 @@
 - Responsible owner: Evaluation Owner
 - Review roles: Security and Privacy Owner; Architecture Owner
 - Corpus collection status: Not started
+- Approved planned composition: `p5-corpus-v0-planned`
 - Implementation status: Not started
 
 This document authorizes creation of an offline governed corpus harness and approved samples during Phase 5.1. It does not authorize production data extraction, model training, production writes, or deployment.
@@ -181,7 +182,7 @@ Checksums are integrity tools, not authorization and not unrestricted diagnostic
 
 ## Minimum planned composition
 
-The first corpus version must plan at least the following families. Numeric sample minima remain unresolved until licensing and language cohorts are approved; absence of a justified count is documented in `PHASE_5_ACCEPTANCE_THRESHOLDS.md`.
+The first corpus version must include the following families. Exact numeric minima and counting rules are approved in `PHASE_5_INITIAL_CORPUS_COMPOSITION.md`.
 
 | Category | Required planned coverage |
 |---|---|
@@ -207,8 +208,8 @@ The first corpus version must plan at least the following families. Numeric samp
 
 The Phase 5.1 implementation may begin with corpus schema/harness and synthetic development fixtures. Before evaluating milestone completion:
 
-- corpus v1 composition counts must be approved;
-- supported language cohort must be approved;
+- the approved `p5-corpus-v0-planned` composition must remain unchanged or be superseded through governance;
+- English, French, and Arabic cohort policy must remain approved;
 - validation and holdout partitions must exist;
 - every fixture must pass license/provenance/privacy validation;
 - manifest/checksum reproducibility must pass;
@@ -217,5 +218,7 @@ The Phase 5.1 implementation may begin with corpus schema/harness and synthetic 
 ## Accepted limitations
 
 - Corpus content is not collected in Phase 5.0.
-- Minimum numeric composition and language cohorts are unresolved.
-- This is non-blocking for building the offline corpus harness and pure contract tests, but blocking for claiming metric validation or completing Phase 5.1.
+- Numeric composition is approved at 240 unique documents and 385 relationship units.
+- Planned evaluated cohorts are English, French, and Arabic with 30 monolingual documents each.
+- Corpus creation, labels, partitions, and threshold results remain required during implementation/before completion.
+- No evaluated-language or metric-validation claim exists yet.

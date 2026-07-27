@@ -8,7 +8,8 @@
 - Baseline commit: `1ea50f5f01a8cd08481578cadc85ffff08eecf26`
 - Baseline tag: `v1.0.0-rc1`
 - Implementation status: Not started
-- Current implementation entry gate: `NOT_READY`
+- Current implementation entry gate: `READY_WITH_NON_BLOCKING_LIMITATIONS`
+- Implementation authorization: Future offline 5.1A only; 5.1B is conditional on 5.1A evidence
 - Architecture decisions: Individually reviewed; 4 Accepted, 5 Accepted with documented limitations, 6 Deferred
 
 This index governs the Phase 5 engineering blueprint. Adoption authorizes planning and controlled decision-making only; it is not a production release and does not authorize implementation, deployment, migration, or activation.
@@ -29,6 +30,13 @@ This index governs the Phase 5 engineering blueprint. Adoption authorizes planni
 | [Phase 5 Evaluation Corpus Governance](PHASE_5_EVALUATION_CORPUS_GOVERNANCE.md) | Corpus licensing, provenance, annotations, partitions, integrity, privacy, and change control. |
 | [Phase 5.1 Acceptance Thresholds](PHASE_5_ACCEPTANCE_THRESHOLDS.md) | Proposed correctness, compatibility, privacy, cost, latency, and regression thresholds. |
 | [Phase 5.1 Scope](PHASE_5_MILESTONE_5_1_SCOPE.md) | Smallest deterministic offline scope, prohibitions, prerequisites, tests, and rollback. |
+| [Entry Measurement Policy](PHASE_5_ENTRY_MEASUREMENT_POLICY.md) | Repetition, environment, timing, statistics, failure, and reproducibility rules. |
+| [Entry Baseline Measurements](PHASE_5_ENTRY_BASELINE_MEASUREMENTS.md) | Measured local test/lint/typecheck/build baseline and limitations. |
+| [Initial Corpus Composition](PHASE_5_INITIAL_CORPUS_COMPOSITION.md) | Approved numeric `p5-corpus-v0-planned` qualification composition; corpus not created. |
+| [Language Cohort Policy](PHASE_5_LANGUAGE_COHORT_POLICY.md) | English/French/Arabic initial cohort rules and unevaluated-language handling. |
+| [Module Isolation Evidence](PHASE_5_MODULE_ISOLATION_EVIDENCE.md) | Repository-backed dependency boundary and feasibility assessment. |
+| [Entry Risk Resolution](PHASE_5_ENTRY_RISK_RESOLUTION.md) | Evidence and timing classification for the eight former entry-blocking P0 risks. |
+| [5.1 Gate Timing Matrix](PHASE_5_1_GATE_TIMING_MATRIX.md) | Separates entry, implementation, completion, shadow, and production requirements. |
 | [Phase 5 Risk Register](PHASE_5_RISK_REGISTER.md) | Feature-level risks, likelihood, impact, mitigation, accountable role, priority, and exit evidence. |
 | [Source Intelligence Specification](SOURCE_INTELLIGENCE_SPEC.md) | Architecture for source identity, reliability observations, normalization, duplication, language, clustering, and corroboration. |
 | [Analysis Intelligence Specification](ANALYSIS_INTELLIGENCE_SPEC.md) | Architecture for grounded events, entities, claims, timelines, contradictions, Stories, novelty, coverage, and confidence. |
@@ -51,13 +59,20 @@ This index governs the Phase 5 engineering blueprint. Adoption authorizes planni
 10. [PHASE_5_EVALUATION_CORPUS_GOVERNANCE.md](PHASE_5_EVALUATION_CORPUS_GOVERNANCE.md)
 11. [PHASE_5_ACCEPTANCE_THRESHOLDS.md](PHASE_5_ACCEPTANCE_THRESHOLDS.md)
 12. [PHASE_5_MILESTONE_5_1_SCOPE.md](PHASE_5_MILESTONE_5_1_SCOPE.md)
-13. [PHASE_5_RISK_REGISTER.md](PHASE_5_RISK_REGISTER.md)
-14. [SOURCE_INTELLIGENCE_SPEC.md](SOURCE_INTELLIGENCE_SPEC.md)
-15. [ANALYSIS_INTELLIGENCE_SPEC.md](ANALYSIS_INTELLIGENCE_SPEC.md)
-16. [EDITORIAL_ENGINE_SPEC.md](EDITORIAL_ENGINE_SPEC.md)
-17. [OPERATIONAL_INTELLIGENCE_SPEC.md](OPERATIONAL_INTELLIGENCE_SPEC.md)
-18. [RELIABILITY_EVOLUTION_SPEC.md](RELIABILITY_EVOLUTION_SPEC.md)
-19. [PHASE_5_ENTRY_GATE.md](PHASE_5_ENTRY_GATE.md)
+13. [PHASE_5_ENTRY_MEASUREMENT_POLICY.md](PHASE_5_ENTRY_MEASUREMENT_POLICY.md)
+14. [PHASE_5_ENTRY_BASELINE_MEASUREMENTS.md](PHASE_5_ENTRY_BASELINE_MEASUREMENTS.md)
+15. [PHASE_5_INITIAL_CORPUS_COMPOSITION.md](PHASE_5_INITIAL_CORPUS_COMPOSITION.md)
+16. [PHASE_5_LANGUAGE_COHORT_POLICY.md](PHASE_5_LANGUAGE_COHORT_POLICY.md)
+17. [PHASE_5_MODULE_ISOLATION_EVIDENCE.md](PHASE_5_MODULE_ISOLATION_EVIDENCE.md)
+18. [PHASE_5_ENTRY_RISK_RESOLUTION.md](PHASE_5_ENTRY_RISK_RESOLUTION.md)
+19. [PHASE_5_1_GATE_TIMING_MATRIX.md](PHASE_5_1_GATE_TIMING_MATRIX.md)
+20. [PHASE_5_RISK_REGISTER.md](PHASE_5_RISK_REGISTER.md)
+21. [SOURCE_INTELLIGENCE_SPEC.md](SOURCE_INTELLIGENCE_SPEC.md)
+22. [ANALYSIS_INTELLIGENCE_SPEC.md](ANALYSIS_INTELLIGENCE_SPEC.md)
+23. [EDITORIAL_ENGINE_SPEC.md](EDITORIAL_ENGINE_SPEC.md)
+24. [OPERATIONAL_INTELLIGENCE_SPEC.md](OPERATIONAL_INTELLIGENCE_SPEC.md)
+25. [RELIABILITY_EVOLUTION_SPEC.md](RELIABILITY_EVOLUTION_SPEC.md)
+26. [PHASE_5_ENTRY_GATE.md](PHASE_5_ENTRY_GATE.md)
 
 ## Governance rules
 
@@ -138,6 +153,6 @@ Additional requirements include an approved milestone and scope, reproducibility
 
 ## Current governance conclusion
 
-The blueprint and minimum Phase 5.1 governance contracts are adopted, but implementation is not ready to begin. The current gate is `NOT_READY` because latency and local/CI cost thresholds are unresolved, corpus composition is not numerically approved, eight relevant P0 risks lack exit evidence, and pure-module dependency isolation has not been reviewed.
+The entry gate is `READY_WITH_NON_BLOCKING_LIMITATIONS`. A future implementation task may begin 5.1A only; this evidence-resolution task did not start implementation. 5.1B remains conditional on 5.1A isolation, compatibility, provenance, and privacy tests.
 
-This is an expected governance state, not an implementation failure.
+Remaining limitations include an uncreated corpus, unmeasured Phase 5.1 performance/resource use, absent import/capability tests, provisional CI budgets, and no independent reviewer. They are timed during implementation, before milestone completion, or before production and do not authorize production behavior.

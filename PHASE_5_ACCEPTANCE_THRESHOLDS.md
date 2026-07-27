@@ -2,7 +2,7 @@
 
 ## Status
 
-- Threshold status: Proposed for gate review
+- Threshold status: Proposed for gate review; entry budgets approved provisionally
 - Review date: 2026-07-27
 - Empirical validation status: Not started
 - Accountable owner: Evaluation Owner
@@ -28,7 +28,7 @@ These thresholds are initial contract targets, not measured results. A target be
 | THR-DUP-004 | Near-duplicate recall | Detected near duplicates divided by all labeled near duplicates | Deferred; no near-duplicate classifier is authorized | Future labeled evaluation | Near duplicates and false split traps | DEFERRED | Outside Phase 5.1 | Evaluation Owner |
 | THR-MERGE-001 | False merge rate | Distinct records incorrectly given exact-equivalent identity divided by distinct evaluated pairs | 0 observed critical false merges; any occurrence fails | Negative pair corpus and adversarial property tests | Unrelated, updated, common-event, false merge traps | COMPLETION_BLOCKING | A false merge can hide distinct information | Architecture Owner + Evaluation Owner |
 | THR-SPLIT-001 | False split rate | Supported exact-equivalent variants incorrectly separated divided by eligible equivalent pairs | 0 within approved deterministic equivalence rules | Positive transformation corpus | Exact duplicates, URL/tracking variants, false split traps | COMPLETION_BLOCKING | Supported pure transformations must be deterministic | Evaluation Owner |
-| THR-LANG-001 | Language-detection accuracy | Correct supported-language labels divided by labeled samples | Threshold unresolved — blocking before language detection enters scope | Stratified per-language evaluation | Multilingual and mixed-language corpus; cohorts/counts unresolved | DEFERRED for Phase 5.1; blocks later language scope | No detector or approved language cohort exists | Product and Editorial Owner + Evaluation Owner |
+| THR-LANG-001 | Language-detection accuracy | Correct supported-language labels divided by labeled samples | Threshold unresolved — blocking before language detection enters a later scope | Stratified per-language evaluation | English/French/Arabic cohort composition approved; samples absent | DEFERRED for Phase 5.1; blocks later language-detection scope | No detector exists and Phase 5.1 authorizes no language detection | Product and Editorial Owner + Evaluation Owner |
 | THR-URL-001 | Canonical URL rule correctness | Expected canonical result produced for each approved rule fixture | 100% on approved deterministic rule corpus | Table-driven golden fixtures and idempotence properties | Canonical URL and tracking-parameter variants | COMPLETION_BLOCKING | Pure allowlisted transformations must match the contract exactly | Architecture Owner |
 | THR-URL-002 | Canonical URL false equivalence | Distinct-resource fixtures collapsed to one canonical URL | 0 observed | Adversarial meaningful-query/path/domain fixtures | False merge traps and canonical variants | COMPLETION_BLOCKING | Conservative URL behavior protects identity | Architecture Owner + Evaluation Owner |
 | THR-FP-001 | Fingerprint determinism | Identical framed byte inputs yielding identical fingerprint across runs/runtimes | 100% | Golden vectors across supported Node runtimes and repeated runs | Synthetic canonical payload fixtures | COMPLETION_BLOCKING | Deterministic identity is the purpose of the fingerprint | Architecture Owner |
@@ -36,10 +36,10 @@ These thresholds are initial contract targets, not measured results. A target be
 | THR-REP-001 | Full deterministic reproducibility | Same corpus, versions, logical clock, and inputs produce byte-identical result manifest | 100% across at least two clean runs | Manifest/checksum comparison | Released corpus manifest | COMPLETION_BLOCKING | Reproducibility is foundational | Evaluation Owner + Reliability Owner |
 | THR-COMP-001 | Backward read compatibility | v1.0.0-rc1 fixtures read with unchanged authoritative values and behavior | 100%; zero regression | Frozen fixture/contract suite | Phase 4 baseline fixtures | COMPLETION_BLOCKING | Baseline compatibility is absolute | Architecture Owner |
 | THR-PROV-001 | Provenance completeness | Accepted derived artifacts with every required immutable input/version reference | 100% | Schema/validator tests including missing/unknown references | Synthetic artifact fixtures | COMPLETION_BLOCKING | Untraceable intelligence cannot be accepted | Data Governance Owner |
-| THR-LAT-001 | Normalization/canonicalization/fingerprint latency | Processing duration by input-size cohort on a pinned reference environment | Threshold unresolved — blocking | Establish baseline and propose p95/p99 budget before implementation authorization | Corpus size/HTML/text distribution unresolved | ENTRY_BLOCKING | No implementation or representative corpus exists; a numeric claim would be fabricated | Architecture Owner + Operations Owner |
+| THR-LAT-001 | Deterministic Phase 5.1 latency | Warm pure-operation latency by input band; full approved corpus wall clock; incremental CI wall clock | APPROVED_PROVISIONAL: pure p95 ≤2 ms (≤4 KiB), ≤10 ms (>4–256 KiB), ≤50 ms (>256 KiB–2 MiB); local corpus ≤60 s; incremental CI ≤120 s | Per measurement policy: ≥1,000 operations/band in each of 5 processes; 5 corpus runs; first CI run recalibration | `p5-corpus-v0-planned`; content not yet created | ENTRY_BLOCKING budget satisfied; measured pass COMPLETION_BLOCKING | Existing validation medians are 4.228 s test, 7.835 s lint, 2.966 s typecheck, 36.590 s build; offline pure work must not add excessive CI time | Architecture Owner + Operations Owner |
 | THR-MODEL-001 | Model-call ceiling | External model calls made by Phase 5.1 | 0 | Network/provider spy and dependency audit | None | ENTRY_BLOCKING and COMPLETION_BLOCKING | Phase 5.1 is deterministic and offline | Architecture Owner |
 | THR-COST-001 | External model/API cost | Billable external model/API usage attributable to Phase 5.1 evaluation | 0 | Dependency/network audit and billing-source absence | None | ENTRY_BLOCKING and COMPLETION_BLOCKING | No external service is authorized | Operations Owner |
-| THR-COST-002 | Local/CI compute budget | Maximum runtime/resource cost for full corpus evaluation | Threshold unresolved — blocking | Approve corpus composition and measure a baseline job before implementation authorization | Corpus counts unresolved | ENTRY_BLOCKING | No representative job exists; a number would be unsupported | Operations Owner |
+| THR-COST-002 | Local/CI compute budget | Runtime and bounded artifacts for offline qualification | APPROVED_PROVISIONAL: local corpus ≤60 s; generated artifacts ≤25 MiB; diagnostic logs ≤2 MiB; observed peak RSS ≤512 MiB; incremental CI ≤120 s with artifacts ≤25 MiB and retained logs ≤2 MiB | Stopwatch, byte counts, CI timestamps, and reliable peak-RSS observation; recalibrate after first implementation/CI run | `p5-corpus-v0-planned` | ENTRY_BLOCKING budget satisfied; measured pass COMPLETION_BLOCKING | Values are enforceable resource ceilings without inventing CI pricing | Operations Owner |
 | THR-TEL-001 | Telemetry compliance | Serialized evaluation events containing a prohibited field or value | 0 | Adversarial denylist/allowlist scanner | Synthetic privacy fixtures | COMPLETION_BLOCKING | Protected data leakage is unacceptable | Security and Privacy Owner |
 | THR-SEC-001 | Security violations | Unauthorized network, credential, production adapter, filesystem, or write capability observed | 0 | Isolation and capability tests | Synthetic harness fixtures | COMPLETION_BLOCKING | Offline boundary is absolute | Security and Privacy Owner |
 | THR-P4-001 | Phase 4 regression tolerance | Failed existing tests or changed frozen contract behavior | 0 failures; 190/190 baseline tests and all added compatibility tests pass | Full baseline and compatibility suite | Phase 4 fixtures | ENTRY_BLOCKING baseline and COMPLETION_BLOCKING | Phase 4 is frozen | Architecture Owner |
@@ -66,13 +66,65 @@ The following have zero tolerance:
 
 ## Corpus composition dependency
 
-Numeric minimum sample counts and supported language cohorts are not yet approved. This prevents empirical validation claims but does not itself replace the explicit entry blockers above. It must be resolved before the corpus is released and before Phase 5.1 completion evaluation.
+Numeric composition is approved in `PHASE_5_INITIAL_CORPUS_COMPOSITION.md`: 240 unique documents and 385 pair/group/variant-set units. Planned evaluated cohorts contain 30 English, 30 French, and 30 Arabic documents. The corpus is not created, so no empirical validation claim exists.
 
 ## Current threshold conclusion
 
-The threshold set is not ready for implementation entry:
+Entry budget states:
 
-- `THR-LAT-001`: Threshold unresolved — blocking.
-- `THR-COST-002`: Threshold unresolved — blocking.
+- `THR-LAT-001`: `APPROVED_PROVISIONAL`.
+- `THR-COST-002`: `APPROVED_PROVISIONAL`.
+- `THR-COST-001`: External paid model/API cost ceiling remains exactly USD 0.00.
 
-All other Phase 5.1 entry invariants have explicit zero-tolerance or structural thresholds. No metric is described as empirically validated.
+These are reference-environment budgets, not measured Phase 5.1 performance. The first implementation and CI measurements may tighten or relax them only through documented review. All other entry invariants retain zero-tolerance or structural thresholds.
+
+## THR-LAT-001 measurement contract
+
+### Pure operations
+
+Input-size bands use exact UTF-8 byte length of the primary input:
+
+- small: up to 4 KiB;
+- medium: greater than 4 KiB through 256 KiB;
+- large: greater than 256 KiB through 2 MiB.
+
+Each operation/size band requires at least 1,000 warm observations in each of five separate process runs. Nearest-rank p95 must remain within the provisional ceiling. A run also fails on nondeterministic output, non-zero exit, or prohibited side effect.
+
+Regression rule: after an implementation baseline is accepted, a later version fails if its p95 exceeds the absolute ceiling or regresses by more than 25% in two repeated reference runs, unless an approved evidence-based budget revision exists.
+
+### Corpus evaluation
+
+The complete `p5-corpus-v0-planned` qualification run must finish within 60 seconds locally on the captured reference environment after one setup/warm-up pass. Five measured runs are required. Corpus creation and results remain completion requirements.
+
+### CI increment
+
+Phase 5.1 tests may add no more than 120 seconds to the established CI validation sequence. This is provisional until the first CI run captures runner specifications and actual incremental timing.
+
+## THR-COST-002 measurement contract
+
+### External monetary cost
+
+- Gemini calls: 0.
+- Vertex AI calls: 0.
+- Paid external API calls: 0.
+- Firestore writes: 0.
+- Cloud Run deployments: 0.
+- Authorized external paid-service cost: **USD 0.00**.
+
+Any non-zero paid-service use is a scope violation requiring separate authorization.
+
+### Local compute
+
+- Complete corpus run: at most 60 seconds.
+- Generated result/artifact directory, excluding governed source fixtures: at most 25 MiB.
+- Diagnostic logs/reports: at most 2 MiB.
+- Peak process RSS: observe reliably during implementation; provisional ceiling 512 MiB.
+- Cleanup: ephemeral run directories are removed after results/checksums are recorded; governed corpus and release evidence follow retention policy.
+
+### CI compute
+
+- Incremental wall-clock: at most 120 seconds.
+- Generated retained artifacts: at most 25 MiB.
+- Retained diagnostic logs: at most 2 MiB.
+- Paid network calls and secret requirements: zero.
+- Monetary CI value: not stated because verified runner billing information is unavailable.

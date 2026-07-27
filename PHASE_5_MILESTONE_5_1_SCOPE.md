@@ -3,13 +3,13 @@
 ## Authorization status
 
 - Scope boundary: Approved
-- Execution authorization: Withheld while `PHASE_5_ENTRY_GATE.md` is `NOT_READY`
+- Execution authorization: Future implementation authorized by `READY_WITH_NON_BLOCKING_LIMITATIONS`; no implementation has begun
 - Approved date: 2026-07-27
 - Baseline: `v1.0.0-rc1`
 - Implementation status: Not started
 - Deployment authorization: None
 
-This document defines the smallest safe implementation scope that may be authorized after the entry blockers are resolved. It does not itself authorize implementation or production behavior.
+This document defines the smallest safe future implementation scope. Governance authorization does not start implementation and does not authorize production behavior.
 
 ## Purpose
 
@@ -29,6 +29,35 @@ After the entry gate opens, the implementation scope is limited to:
 - test-local bounded diagnostics under the privacy/telemetry allowlist;
 - Phase 4 compatibility regression tests;
 - documentation generated from or validating the contracts where appropriate.
+
+## Implementation sub-slices
+
+### 5.1A — Pure Contracts Foundation
+
+Allowed future implementation:
+
+- pure TypeScript types and schemas;
+- pure value objects;
+- versioned artifact envelopes;
+- provenance contracts and validators;
+- deterministic logical-clock/version fields;
+- import-boundary and prohibited-capability tests;
+- initial synthetic development fixtures for contract validation.
+
+5.1A must not implement URL/source normalization or source fingerprints. Its isolation, compatibility, provenance, and privacy tests must pass before 5.1B.
+
+### 5.1B — Deterministic Source Utilities
+
+Allowed only after 5.1A passes:
+
+- conservative canonical URL normalization;
+- versioned deterministic source normalization;
+- source fingerprint generation under COMP-ID-007;
+- governed offline corpus harness;
+- test-local qualification metrics and bounded reports;
+- latency, compute, determinism, false-merge/split, and compatibility measurement.
+
+Both sub-slices remain offline, pure/test-local, and non-production.
 
 ## OUT_OF_SCOPE
 
@@ -70,13 +99,14 @@ Requires a later gate and any deferred ADR acceptance:
 ## Entry prerequisites
 
 - Repository remains on the authorized implementation branch descended from the blueprint/gate commits.
-- `PHASE_5_ENTRY_GATE.md` is reassessed to `READY_FOR_IMPLEMENTATION` or `READY_WITH_NON_BLOCKING_LIMITATIONS`.
+- `PHASE_5_ENTRY_GATE.md` remains `READY_FOR_IMPLEMENTATION` or `READY_WITH_NON_BLOCKING_LIMITATIONS`.
 - P5-ADR-001, 002, 003, 005, 006, 010, 012, and 013 retain accepted status within their limitations.
 - Owners remain assigned by role.
 - Compatibility and privacy contracts remain approved.
-- `THR-LAT-001` and `THR-COST-002` are resolved with justified entry budgets.
-- P5-RISK-001, P5-RISK-002, P5-RISK-003, P5-RISK-006, P5-RISK-010, P5-RISK-011, P5-RISK-029, and P5-RISK-034 have approved entry evidence or are explicitly reclassified with evidence.
-- Implementation plan identifies pure-module boundaries and proves no production repository dependency.
+- `THR-LAT-001` and `THR-COST-002` remain `APPROVED_PROVISIONAL`.
+- `p5-corpus-v0-planned` composition and the English/French/Arabic cohort policy remain approved.
+- P5-RISK-001, P5-RISK-002, P5-RISK-003, P5-RISK-006, P5-RISK-010, P5-RISK-011, P5-RISK-029, and P5-RISK-034 retain documented non-blocking entry timing without weakened exit criteria.
+- 5.1A follows the pure-module boundary in `PHASE_5_MODULE_ISOLATION_EVIDENCE.md`.
 
 ## Implementation outputs
 
@@ -106,6 +136,8 @@ These outputs are planned, not currently implemented.
 - allowlist/denylist telemetry;
 - no network, model, Firestore, approval, publication, or production adapter capability;
 - full Phase 4 regression suite.
+
+5.1A specifically owns import-boundary, compatibility, artifact-envelope, provenance, and privacy contract tests. 5.1B owns deterministic utility, corpus, qualification, and benchmark tests.
 
 ## Evaluation method
 

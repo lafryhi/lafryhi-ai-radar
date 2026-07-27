@@ -110,6 +110,16 @@ The output uses lower-case hexadecimal SHA-256. No locale-sensitive conversion i
 | COMP-FAIL-004 | Invalid derived output is retained only under approved diagnostic policy and never promoted. | Evaluation harness | Invalid-result state tests | High | Remove from accepted output view, not source corpus |
 | COMP-FAIL-005 | A contract violation is terminal for that derived artifact and cannot be repaired by destructive mutation. | Validator/decision table | Mutation-absence tests | Critical | Recompute only under a new version after correction |
 
+## G. Language and Unicode compatibility
+
+| Contract ID | Invariant | Enforcement point | Validation strategy | Severity | Rollback expectation |
+|---|---|---|---|---|---|
+| COMP-LANG-001 | Generic deterministic logic must preserve unevaluated Unicode languages under the approved transformation set without making accuracy claims. | Pure normalization boundary | Multiscript property fixtures | High | Disable the normalization version |
+| COMP-LANG-002 | English, French, and Arabic are planned evaluated cohorts only after their labeled samples pass thresholds. | Corpus manifest/reporting | Cohort-count and label audit | High | Remove evaluated-support claim |
+| COMP-LANG-003 | Case folding, diacritic removal, punctuation substitution, transliteration, tatweel removal, and presentation-form compatibility collapse are prohibited for exact identity. | Normalization validator | Language-specific negative fixtures | Critical | Reject artifact/version |
+| COMP-LANG-004 | Phase 5 normalization cannot rewrite Phase 4 source text or accepted evidence. | Artifact/reference boundary | Immutability/evidence regression tests | Critical | Reject derived artifact |
+| COMP-LANG-005 | Mixed/unevaluated languages are processed only as `UNEVALUATED_ALLOWED_WITHOUT_CLAIMS`. | Evaluation reporter | Claim/status fixtures | High | Remove unsupported claim |
+
 ## Compatibility validation gate
 
 Phase 5.1 completion requires:

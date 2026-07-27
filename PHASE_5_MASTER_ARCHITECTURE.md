@@ -21,7 +21,7 @@
 
 Blueprint adoption is a documentation-governance decision, not a production release or approval to begin a milestone.
 
-The Phase 5.1 implementation entry gate remains `NOT_READY`. Accepted governance contracts do not override unresolved entry thresholds or open blocking risks.
+The Phase 5.1 implementation entry gate is `READY_WITH_NON_BLOCKING_LIMITATIONS`. This authorizes only a future offline 5.1A implementation task followed by conditional 5.1B; no implementation has begun and no production behavior is authorized.
 
 ## Vision
 
