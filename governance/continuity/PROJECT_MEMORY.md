@@ -8,6 +8,8 @@ This file preserves durable, repository-supported engineering knowledge. Keep tr
 - Treat implementation, development qualification, milestone qualification, production authorization, and deployment as distinct outcomes.
 - Keep recovery lossless and bounded. Do not truncate semantic content, clamp scores, invent values, or silently discard conflicts.
 - Preserve historical execution reports; add a later assessment rather than rewriting the original record.
+- A `NOT_AUTHORIZED` handoff is a successful safety result: convert it to `READY` only through an explicit bounded scope grounded in existing entry, timing, and acceptance records.
+- Separate deterministic corpus-control tooling from corpus content approval and milestone qualification so tooling capability cannot be mistaken for evidence.
 
 ## Architectural Decisions
 
@@ -22,7 +24,8 @@ This file preserves durable, repository-supported engineering knowledge. Keep tr
 - Internal finalization replay is intentionally not exposed in production; structural production evidence and tests support it under `NOT_EXECUTABLE_BY_DESIGN`.
 - Phase 5.1A/5.1B pure source-intelligence modules remain isolated from routes, services, persistence, network, model, approval, and publication capabilities.
 - Exact-duplicate results are advisory and cannot suppress, mutate, or delete records.
-- No authoritative governance document currently defines or authorizes a Phase 5.1C slice.
+- Before the 2026-07-27 authorization checkpoint, no authoritative document defined Phase 5.1C; the continuity engine correctly blocked implementation.
+- Phase 5.1C now authorizes governed corpus manifest tooling only. Corpus assembly, qualification, review, and milestone closure remain separately gated.
 
 ## Rejected Designs
 

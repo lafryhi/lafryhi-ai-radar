@@ -2,116 +2,127 @@
 
 ## Package Status
 
-`NOT_AUTHORIZED`
+`READY`
 
-No authoritative document defines or authorizes a Phase 5.1C slice. The phrase “Phase 5.1C” appears only as an example in [`PROMPT_MINIMIZATION_GUIDE.md`](../execution/PROMPT_MINIMIZATION_GUIDE.md), which grants no implementation authority. Do not execute it until an approved bounded scope and entry decision exist.
+The current user instruction and [`PHASE_5_1C_CORPUS_MANIFEST_TOOLING_SCOPE.md`](../../PHASE_5_1C_CORPUS_MANIFEST_TOOLING_SCOPE.md) authorize one immediate offline slice. Authorization covers tooling only.
 
 ## Project Snapshot
 
 | Field | Value |
 |---|---|
 | Branch | `phase-5/source-intelligence-foundation` |
-| State baseline commit | `5e71d93a1214aa9293a62a3b2b2ecb4aeb48f1b8` |
+| State baseline commit | `fadac2e90b8f41d82eff683ed70583b3bfd2db27` |
 | Frozen production tag | `v1.0.0-rc1` |
 | Frozen production commit | `1ea50f5f01a8cd08481578cadc85ffff08eecf26` |
 | Current milestone | Phase 5.1 — Source Intelligence |
 | Production authorization | None for Phase 5 |
 
-The resulting continuity-engine commit must be verified from Git at the next session because a commit cannot embed its own hash.
+Verify the resulting authorization commit from Git at session start because a commit cannot embed its own hash.
 
 ## Current Progress
 
-- Frozen Phase 4 production baseline: complete.
-- Phase 5 architecture, governance, and entry evidence: adopted/resolved for the authorized offline scope.
-- Phase 5.1A: complete.
-- Phase 5.1B: complete with non-blocking limitations; development qualification only.
-- Full Phase 5.1 milestone qualification: pending.
-- Remaining planned milestones: Phase 5.1 completion, then Phases 5.2 through 5.5 subject to separate authorization.
+- Phase 4 production baseline is frozen.
+- Phase 5 architecture, governance, and entry evidence are adopted.
+- Phase 5.1A and 5.1B are complete within their recorded limitations.
+- Phase 5.1C tooling is authorized and not started.
+- Full Phase 5.1 qualification and Phases 5.2–5.5 remain pending and separately gated.
 
 ## Immediate Next Phase
 
-None authorized.
+Phase 5.1C — Governed Corpus Manifest Tooling.
 
-The next candidate work is a newly approved bounded offline Phase 5.1 completion slice addressing governed corpus/manifest requirements. Governance must name and authorize that slice before implementation. Phase 5.2 remains unauthorized.
+Execute no other phase.
 
 ## Entry Criteria
 
-Before a next package can become `READY`:
+At session start, verify:
 
-- approve a bounded slice and its explicit name;
-- map it to the remaining Phase 5.1 scope and implementation-order steps;
-- identify approved corpus inputs, licensing, privacy, provenance, annotation, checksum, and partition evidence;
-- preserve module isolation and all Phase 4 compatibility constraints;
-- resolve required ownership/review or record an accepted exception;
-- define applicable thresholds, measurement environment, rollback, deliverables, and commit message; and
-- obtain explicit user implementation authority.
+- the branch and authorization commit match the handoff;
+- the worktree is clean and `v1.0.0-rc1` remains at `1ea50f5…`;
+- the Phase 5.1 entry gate remains `READY_WITH_NON_BLOCKING_LIMITATIONS`;
+- Phase 5.1A/5.1B and full baseline validations pass;
+- the accepted offline ADRs, composition, language policy, compatibility, privacy, and isolation boundaries are unchanged; and
+- no production, external-data, reviewer, or later-phase authority is inferred.
 
 ## Required Governance Documents
 
-Consult, at minimum:
+Read:
 
 - [`SESSION_START.md`](../execution/SESSION_START.md)
 - [`EXECUTION_MANUAL.md`](../execution/EXECUTION_MANUAL.md)
 - [`PROJECT_STATE.md`](../execution/PROJECT_STATE.md)
-- [`PHASE_5_BLUEPRINT_INDEX.md`](../../PHASE_5_BLUEPRINT_INDEX.md)
+- [`PHASE_5_1C_CORPUS_MANIFEST_TOOLING_SCOPE.md`](../../PHASE_5_1C_CORPUS_MANIFEST_TOOLING_SCOPE.md)
 - [`PHASE_5_MILESTONE_5_1_SCOPE.md`](../../PHASE_5_MILESTONE_5_1_SCOPE.md)
-- [`PHASE_5_IMPLEMENTATION_ORDER.md`](../../PHASE_5_IMPLEMENTATION_ORDER.md)
-- [`PHASE_5_ENTRY_GATE.md`](../../PHASE_5_ENTRY_GATE.md)
-- [`PHASE_5_1_GATE_TIMING_MATRIX.md`](../../PHASE_5_1_GATE_TIMING_MATRIX.md)
-- [`PHASE_5_ACCEPTANCE_THRESHOLDS.md`](../../PHASE_5_ACCEPTANCE_THRESHOLDS.md)
 - [`PHASE_5_EVALUATION_CORPUS_GOVERNANCE.md`](../../PHASE_5_EVALUATION_CORPUS_GOVERNANCE.md)
 - [`PHASE_5_INITIAL_CORPUS_COMPOSITION.md`](../../PHASE_5_INITIAL_CORPUS_COMPOSITION.md)
 - [`PHASE_5_LANGUAGE_COHORT_POLICY.md`](../../PHASE_5_LANGUAGE_COHORT_POLICY.md)
+- [`PHASE_5_ACCEPTANCE_THRESHOLDS.md`](../../PHASE_5_ACCEPTANCE_THRESHOLDS.md)
+- [`PHASE_5_ENTRY_MEASUREMENT_POLICY.md`](../../PHASE_5_ENTRY_MEASUREMENT_POLICY.md)
+- [`PHASE_5_1_GATE_TIMING_MATRIX.md`](../../PHASE_5_1_GATE_TIMING_MATRIX.md)
+- [`PHASE_5_ADR_ACCEPTANCE_RECORD.md`](../../PHASE_5_ADR_ACCEPTANCE_RECORD.md)
+- [`PHASE_5_OWNERSHIP_MATRIX.md`](../../PHASE_5_OWNERSHIP_MATRIX.md)
 - [`PHASE_5_1B_IMPLEMENTATION_REPORT.md`](../../PHASE_5_1B_IMPLEMENTATION_REPORT.md)
 
 ## Implementation Goals
 
-No implementation goal is authorized. First establish and record the bounded next-slice authority without changing production or completed Phase 5 implementation.
+Implement pure, versioned, deterministic contracts and tooling for corpus manifests, canonical serialization, SHA-256 integrity, governance metadata, partitions, family leakage, sealing, and composition accounting under the existing Phase 5 source-intelligence boundary.
 
 ## Expected Deliverables
 
-Not defined until the bounded slice is approved. Do not infer deliverables from the list of remaining milestone requirements.
+- Manifest/corpus-control contracts and validators.
+- Canonical serialization and integrity utilities.
+- Partition, seal, family, composition, and governance-metadata validation.
+- Privacy-safe bounded diagnostics.
+- Synthetic tooling fixtures and focused tests only.
+- `PHASE_5_1C_IMPLEMENTATION_REPORT.md`.
+- Updated execution and continuity records.
 
 ## Validation Gates
 
-Any later authorized slice must run focused tests plus the complete test, lint, typecheck, and production-build suite; compatibility, privacy, isolation, corpus, determinism, and documentation gates apply according to scope.
+Run focused Phase 5.1C and prior Phase 5.1 regression tests, the complete suite, lint, typecheck, production build, boundary/capability/privacy audits, deterministic repeat runs, golden vectors, negative integrity/partition/seal tests, Markdown validation, internal-link validation, and `git diff --check`.
 
 ## Performance Checks
 
-Do not claim completion performance yet. Existing governance requires corpus-run latency, CI/resource recalibration, reproducibility, and threshold evidence under [`PHASE_5_ENTRY_MEASUREMENT_POLICY.md`](../../PHASE_5_ENTRY_MEASUREMENT_POLICY.md).
+Follow [`PHASE_5_ENTRY_MEASUREMENT_POLICY.md`](../../PHASE_5_ENTRY_MEASUREMENT_POLICY.md). Measure repeated tooling/manifest runs, report every attempt and median/min/max, enforce applicable local `THR-LAT-001` and `THR-COST-002` limits, report unavailable memory honestly, and do not manufacture p95 or CI claims.
 
 ## Documentation Updates
 
-Any completed future slice must update its implementation evidence, [`PROJECT_STATE.md`](../execution/PROJECT_STATE.md), [`PROJECT_MEMORY.md`](PROJECT_MEMORY.md) when durable knowledge changes, [`EVOLUTION_HISTORY.md`](EVOLUTION_HISTORY.md), and this package.
+Create `PHASE_5_1C_IMPLEMENTATION_REPORT.md`; update [`PROJECT_STATE.md`](../execution/PROJECT_STATE.md), [`PROJECT_MEMORY.md`](PROJECT_MEMORY.md) when durable knowledge changes, [`EVOLUTION_HISTORY.md`](EVOLUTION_HISTORY.md), and this package.
 
 ## Acceptance Criteria
 
-Current package acceptance is limited to accurate `NOT_AUTHORIZED` classification. Future implementation acceptance must come from an approved scope and the applicable Phase 5.1 thresholds; it cannot be created by this package.
+Meet every criterion in the Phase 5.1C scope, including byte-identical deterministic output, 100% seeded validator outcomes, zero seeded partition/seal escapes, zero prohibited diagnostics, zero regressions, preserved isolation, bounded artifacts/logs, and full validation.
+
+Do not claim the 240/385 corpus, language cohorts, milestone review, or Phase 5.1 completion.
 
 ## Known Risks
 
-- Mistaking the prompt-guide example for authorization.
-- Treating 41 synthetic fixtures as the complete governed corpus.
-- Claiming language support before cohort qualification.
-- Using unapproved, unlicensed, private, or untraceable corpus material.
-- Fabricating independent review or silently waiving it.
-- Conflating development qualification with milestone or production qualification.
+- Canonical serialization drift across runtimes.
+- Ambiguous byte/newline/checksum boundaries.
+- Cross-partition leakage through related families.
+- Treating seal metadata as content authorization.
+- Leaking fixture content through diagnostics or hashes.
+- Confusing composition-accounting capability with corpus completion.
+- Scope creep into corpus collection, language detection, or Phase 5.2.
 
 ## Do Not
 
-- Do not implement “Phase 5.1C” without new accepted scope and authority.
-- Do not begin Phase 5.2.
+- Do not collect or release the full corpus.
+- Do not claim any real cohort, partition, reviewer, threshold, or milestone completion.
 - Do not modify Phase 4 or completed Phase 5.1A/5.1B behavior.
-- Do not deploy, push, merge, move tags, enable production features, or touch production data.
-- Do not invent corpus evidence, reviewers, thresholds, requirements, or acceptance.
+- Do not add production dependencies, reads/writes, routes, flags, telemetry transports, model calls, UI, approval, or publication behavior.
+- Do not begin Phase 5.2.
+- Do not deploy, push, merge, move tags, or change production.
 
 ## Expected Commit
 
-Not defined. The authorizing request must provide or approve the bounded slice's commit message.
+`feat: add governed Phase 5.1 corpus manifest tooling`
 
 ## Expected Completion Classification
 
-`NOT_AUTHORIZED` until a bounded next slice passes entry verification.
+- Slice: `PHASE_5_1C_TOOLING_COMPLETE`
+- Milestone: `PHASE_5_1_QUALIFICATION_PENDING`
+- Production authorization: None
 
 ## Ready-to-run Codex CLI Prompt
 
@@ -121,8 +132,9 @@ Read governance/execution/SESSION_START.md.
 Read governance/execution/EXECUTION_MANUAL.md.
 Resume from governance/execution/PROJECT_STATE.md.
 Read governance/continuity/NEXT_TASK_PACKAGE.md.
-Verify whether repository governance and the current user request now authorize one immediate bounded Phase 5.1 completion slice.
-If authorization or any entry criterion is absent, stop and report the exact blocker.
-Execute only the authorized immediate phase. Do not begin a later phase.
+Read PHASE_5_1C_CORPUS_MANIFEST_TOOLING_SCOPE.md and its required governance.
+Implement Phase 5.1C — Governed Corpus Manifest Tooling only.
+Run every required validation and complete the execution/continuity handoff.
+Do not collect the full corpus, close Phase 5.1, begin Phase 5.2, deploy, push, merge, or move tags.
 
 ----- END NEXT TASK -----

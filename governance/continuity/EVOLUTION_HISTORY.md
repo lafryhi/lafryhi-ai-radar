@@ -73,9 +73,19 @@ Chronological entries preserve verified outcomes. A commit recorded as a startin
 
 ## 2026-07-27 — Development Continuity Engine
 
-- **Commit:** starting commit `5e71d93a1214aa9293a62a3b2b2ecb4aeb48f1b8`; resulting commit must be recorded by the next continuity update.
+- **Commit:** `fadac2e90b8f41d82eff683ed70583b3bfd2db27`
 - **Branch:** `phase-5/source-intelligence-foundation`
 - **Objective:** preserve project memory and evolution and produce a governed immediate-task handoff.
 - **Major outcome:** added continuity architecture, next-task policy/package, durable project memory, and evolution history; integrated continuity into phase completion and session startup.
 - **Qualification status:** PASS — Markdown structure, internal links, diff check, 22 test files/231 tests, lint, typecheck, and production build passed.
 - **Next authorized step:** none; obtain an accepted bounded Phase 5.1 completion-slice definition and explicit implementation authority.
+
+## 2026-07-27 — Phase 5.1C authorization
+
+- **Commit:** starting commit `fadac2e90b8f41d82eff683ed70583b3bfd2db27`; resulting authorization commit must be recorded by the next continuity update.
+- **Branch:** `phase-5/source-intelligence-foundation`
+- **Objective:** use the execution and continuity framework to resolve the blocked next-task state without bypassing governance.
+- **Major outcome:** verified that existing Phase 5.1 authority supports a smallest offline slice and defined Phase 5.1C — Governed Corpus Manifest Tooling; corpus assembly, qualification, independent milestone review, closure, production, and Phase 5.2 remain excluded.
+- **Qualification status:** PASS — Markdown structure, 111-file internal-link scan, diff check, 22 test files/231 tests, lint, typecheck, and production build passed.
+- **Framework validation:** the framework detected the correct branch/tag/milestone and stale starting-commit metadata, preserved safety constraints, correctly blocked the formerly undefined task, exposed sufficient authoritative references, supported a bounded authorization-only path, and produced a fresh-session-ready handoff.
+- **Next authorized step:** implement Phase 5.1C only after fresh-session entry verification.

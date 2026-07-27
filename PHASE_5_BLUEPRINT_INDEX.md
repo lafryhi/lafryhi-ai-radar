@@ -7,7 +7,7 @@
 - Compatibility baseline: v1.0.0-rc1
 - Baseline commit: `1ea50f5f01a8cd08481578cadc85ffff08eecf26`
 - Baseline tag: `v1.0.0-rc1`
-- Implementation status: Phase 5.1A complete; Phase 5.1B complete with non-blocking limitations
+- Implementation status: Phase 5.1A complete; Phase 5.1B complete with non-blocking limitations; Phase 5.1C tooling authorized, not started
 - Current implementation entry gate: `READY_WITH_NON_BLOCKING_LIMITATIONS`
 - Implementation authorization: Offline 5.1A/5.1B implemented; no production or Phase 5.2 authorization
 - Architecture decisions: Individually reviewed; 4 Accepted, 5 Accepted with documented limitations, 6 Deferred
@@ -39,6 +39,7 @@ This index governs the Phase 5 engineering blueprint. Adoption authorizes planni
 | [5.1 Gate Timing Matrix](PHASE_5_1_GATE_TIMING_MATRIX.md) | Separates entry, implementation, completion, shadow, and production requirements. |
 | [Phase 5.1A Implementation Report](PHASE_5_1A_IMPLEMENTATION_REPORT.md) | Implemented pure contracts, tests, measurements, isolation evidence, and remaining 5.1B work. |
 | [Phase 5.1B Implementation Report](PHASE_5_1B_IMPLEMENTATION_REPORT.md) | Deterministic source utilities, development qualification, measurements, and milestone limitations. |
+| [Phase 5.1C Corpus Manifest Tooling Scope](PHASE_5_1C_CORPUS_MANIFEST_TOOLING_SCOPE.md) | Authorized bounded scope for deterministic offline corpus manifest, integrity, partition, seal, and composition tooling. |
 | [Phase 5 Risk Register](PHASE_5_RISK_REGISTER.md) | Feature-level risks, likelihood, impact, mitigation, accountable role, priority, and exit evidence. |
 | [Source Intelligence Specification](SOURCE_INTELLIGENCE_SPEC.md) | Architecture for source identity, reliability observations, normalization, duplication, language, clustering, and corroboration. |
 | [Analysis Intelligence Specification](ANALYSIS_INTELLIGENCE_SPEC.md) | Architecture for grounded events, entities, claims, timelines, contradictions, Stories, novelty, coverage, and confidence. |
@@ -157,6 +158,6 @@ Additional requirements include an approved milestone and scope, reproducibility
 
 ## Current governance conclusion
 
-The entry gate remains `READY_WITH_NON_BLOCKING_LIMITATIONS`. Phase 5.1A and the authorized offline 5.1B slice are implemented. The 5.1B development qualification is not complete Phase 5.1 milestone qualification.
+The entry gate remains `READY_WITH_NON_BLOCKING_LIMITATIONS`. Phase 5.1A and the authorized offline 5.1B slice are implemented. Phase 5.1C governed corpus manifest tooling is authorized but not started. The 5.1B development qualification and future 5.1C tooling completion do not by themselves complete Phase 5.1 milestone qualification.
 
 Remaining limitations include the unassembled full corpus, unvalidated real-world language cohorts, provisional CI budgets, and no independent reviewer. They are timed before milestone completion or production and do not authorize production behavior.

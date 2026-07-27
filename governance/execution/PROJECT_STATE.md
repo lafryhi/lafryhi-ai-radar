@@ -10,12 +10,12 @@
 |---|---|
 | State recorded | 2026-07-27 |
 | Current branch | `phase-5/source-intelligence-foundation` |
-| State baseline commit | `5e71d93a1214aa9293a62a3b2b2ecb4aeb48f1b8` |
+| State baseline commit | `fadac2e90b8f41d82eff683ed70583b3bfd2db27` |
 | Frozen production tag | `v1.0.0-rc1` |
 | Frozen production commit | `1ea50f5f01a8cd08481578cadc85ffff08eecf26` |
 | Production baseline | Phase 4 release candidate |
 | Current program milestone | Phase 5.1 — Source Intelligence |
-| Current milestone status | 5.1A complete; 5.1B complete with non-blocking limitations; full 5.1 qualification pending |
+| Current milestone status | 5.1A/5.1B complete; Phase 5.1C manifest tooling authorized but not started; full 5.1 qualification pending |
 | Current gate | `READY_WITH_NON_BLOCKING_LIMITATIONS` |
 | Production integration authority | None for Phase 5 |
 | Phase 5.2 authority | None |
@@ -30,7 +30,7 @@ The Development Continuity Engine is a mandatory phase-completion and fresh-sess
 - [`PROJECT_MEMORY.md`](../continuity/PROJECT_MEMORY.md)
 - [`EVOLUTION_HISTORY.md`](../continuity/EVOLUTION_HISTORY.md)
 
-The next-task package currently records no authorized post-5.1B slice. Full Phase 5.1 qualification remains pending.
+The next-task package authorizes only Phase 5.1C — Governed Corpus Manifest Tooling. Full Phase 5.1 qualification remains pending.
 
 ## Completed work
 
@@ -41,10 +41,13 @@ The next-task package currently records no authorized post-5.1B slice. Full Phas
 - Phase 5 governance and entry evidence are adopted.
 - Phase 5.1A pure contracts foundation is complete.
 - Phase 5.1B deterministic source utilities are complete with non-blocking limitations and development qualification only.
+- Phase 5.1C governed corpus manifest tooling is authorized but not implemented.
 
 ## Current milestone
 
 Phase 5.1 still requires the governed corpus, sealed partitions, language-cohort evidence, manifest tooling, completion measurements, and milestone gate evidence described by [`PHASE_5_MILESTONE_5_1_SCOPE.md`](../../PHASE_5_MILESTONE_5_1_SCOPE.md), [`PHASE_5_ACCEPTANCE_THRESHOLDS.md`](../../PHASE_5_ACCEPTANCE_THRESHOLDS.md), and [`PHASE_5_1B_IMPLEMENTATION_REPORT.md`](../../PHASE_5_1B_IMPLEMENTATION_REPORT.md).
+
+The immediate authorized slice is defined by [`PHASE_5_1C_CORPUS_MANIFEST_TOOLING_SCOPE.md`](../../PHASE_5_1C_CORPUS_MANIFEST_TOOLING_SCOPE.md). It authorizes tooling only, not corpus assembly or milestone closure.
 
 Completion of the implemented 5.1A/5.1B slices does not qualify the whole milestone, authorize production behavior, or authorize Phase 5.2.
 
@@ -62,7 +65,7 @@ Exact ordering and overlap are governed by [`PHASE_5_ROADMAP.md`](../../PHASE_5_
 
 | Field | Value |
 |---|---|
-| Scope | Development Continuity Engine |
+| Scope | Phase 5.1C authorization checkpoint |
 | Commands | `npm.cmd test`; `npm.cmd run lint`; `npm.cmd run typecheck`; `npm.cmd run build` |
 | Result | PASS — 22 test files / 231 tests; lint, typecheck, and production build passed |
 | Limitations | PowerShell policy blocks the `npm.ps1` wrapper; equivalent `npm.cmd` commands executed successfully |
