@@ -4,10 +4,11 @@
 
 - Original design classification: `ISOLATION_FEASIBLE_WITH_LIMITATIONS`
 - Implemented 5.1A classification: `ISOLATION_ENFORCED_FOR_5_1A`
+- Implemented 5.1B classification: `ISOLATION_ENFORCED_FOR_OFFLINE_5_1B`
 - Assessment date: 2026-07-27
 - Repository commit inspected: `79dd9067e37482a1b4684652c78f62361d1773a5`
-- Implementation status: 5.1A pure boundary implemented; 5.1B not started
-- Entry impact: 5.1A complete; 5.1B authorized with continued enforcement
+- Implementation status: 5.1A and offline 5.1B boundaries implemented
+- Entry impact: Offline utilities complete with non-blocking limitations; production remains prohibited
 
 The module directory and static import/capability tests now exist. The remaining limitation is that the 5.1B utilities and corpus harness do not exist and must pass the same boundary plus harness-specific network/filesystem tests.
 
@@ -184,12 +185,18 @@ Implemented during 5.1A:
 3. Static capability checks for clocks, randomness, secrets, logging, writes, processes, and mutable state.
 4. Strict contract tests proving only explicit pure inputs are accepted.
 
-Still required in 5.1B:
+Implemented during 5.1B:
 
-1. Network and filesystem spies for harness qualification.
-2. Inclusion of every new utility module in static enumeration.
-3. Corpus harness separation from pure algorithms.
-4. Measured resource and privacy enforcement.
+1. Every new production utility is included in static enumeration.
+2. The in-memory harness remains separate from fixtures and production adapters.
+3. Static network, cloud, repository, filesystem-write, environment, logging, clock, and randomness prohibitions pass.
+4. Bounded report, privacy, determinism, latency, and resource tests pass locally.
+
+Still required before milestone completion:
+
+1. Full governed corpus and sealed-partition isolation.
+2. First-CI dependency and resource recalibration.
+3. Reliable peak-RSS measurement if the completion gate retains that requirement.
 
 Potential later enforcement:
 
@@ -201,6 +208,6 @@ No global lint rule or broad repository refactor was required.
 
 ## Feasibility conclusion
 
-Isolation is implemented for 5.1A because the new code resides entirely under `src/domain/phase5/`, all focused boundary tests pass, and no production entry point imports it.
+Isolation is implemented for 5.1A and offline 5.1B because the code resides entirely under `src/domain/phase5/` with fixtures under `src/test/phase5/`, all focused boundary tests pass, and no production entry point imports it.
 
-The future 5.1B corpus harness introduces test-local filesystem I/O outside pure modules and therefore requires an extended audit. Production integration remains prohibited.
+The 5.1B harness is in-memory and introduces no filesystem writes. Full-corpus loading remains a future test-local concern requiring renewed audit. Production integration remains prohibited.

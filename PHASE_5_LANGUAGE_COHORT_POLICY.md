@@ -4,7 +4,7 @@
 
 - Policy status: Approved for initial deterministic evaluation
 - Approval date: 2026-07-27
-- Algorithmic implementation: Not started
+- Algorithmic implementation: Generic deterministic normalization implemented in Phase 5.1B
 - Evaluated-support claims: Not yet available
 - Baseline evidence contract: Unchanged
 
@@ -98,7 +98,8 @@ State: `UNEVALUATED_ALLOWED_WITHOUT_CLAIMS`.
 
 ## Acceptance limitations
 
-- Cohort policy and numeric minima are approved; samples do not yet exist.
+- Cohort policy and numeric minima are approved; full cohort samples do not yet exist.
+- Small synthetic English, French, Arabic, and mixed-script development fixtures pass preservation tests; they are not the approved cohorts.
 - No language detector is authorized in 5.1A or 5.1B.
 - No evaluated-support claim is available until the full cohort passes applicable deterministic thresholds.
 - Evidence matching behavior is not changed by this policy.

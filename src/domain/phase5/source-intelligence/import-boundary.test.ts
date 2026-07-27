@@ -33,9 +33,14 @@ describe("Phase 5.1A pure-module boundary", () => {
   it("contains only the approved production module set", () => {
     expect(productionFiles).toEqual([
       "artifact-envelope.ts",
+      "canonical-url.ts",
+      "exact-duplicate.ts",
       "identifiers.ts",
       "index.ts",
       "provenance.ts",
+      "qualification.ts",
+      "source-fingerprint.ts",
+      "source-normalization.ts",
       "utc-time.ts",
       "validation-error.ts",
     ]);

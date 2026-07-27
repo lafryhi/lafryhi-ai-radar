@@ -6,13 +6,13 @@
 - Baseline: LAFRYHI AI Radar v1.0.0-rc1
 - Baseline verification: `PASS_WITH_VERIFICATION_LIMITATION`
 - Blueprint status: Adopted for implementation planning
-- Implementation status: Not started
+- Implementation status: Offline Phase 5.1A and 5.1B implemented; complete milestone qualification pending
 - Governing rule: Everything delivered in Phase 4 is frozen
 
 ## Governance status
 
 - **Blueprint status:** Adopted for implementation planning
-- **Implementation status:** Not started
+- **Implementation status:** Offline Phase 5.1A and 5.1B implemented; no production integration
 - **Architecture decision status:** Individually reviewed for Phase 5.1. Four ADRs are Accepted, five are Accepted with documented limitations, and six are Deferred. `PHASE_5_ADR_ACCEPTANCE_RECORD.md` is authoritative.
 - **Baseline:** v1.0.0-rc1
 - **Blueprint adoption date:** 2026-07-27

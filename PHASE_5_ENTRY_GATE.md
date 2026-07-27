@@ -4,12 +4,12 @@
 
 - **State:** `READY_WITH_NON_BLOCKING_LIMITATIONS`
 - **Assessment date:** 2026-07-27
-- **Scope authorized:** Offline 5.1B after completed 5.1A
-- **Implementation status:** 5.1A complete; 5.1B not started
+- **Scope authorized:** Completed offline 5.1A and 5.1B only
+- **Implementation status:** 5.1B complete with non-blocking limitations; milestone qualification pending
 - **Production authorization:** None
 - **External blockage:** None
 
-The gate records completed 5.1A evidence and authorizes a separate future 5.1B implementation task within `PHASE_5_MILESTONE_5_1_SCOPE.md`. It does not begin 5.1B, authorize production behavior, or waive completion evidence.
+The gate records completed 5.1A and 5.1B evidence. It does not qualify the complete milestone, authorize production behavior, or waive full-corpus completion evidence.
 
 ## Evidence-based rationale
 
@@ -25,7 +25,7 @@ Pre-implementation governance is complete:
 - all eight former entry-blocking P0 risks are reclassified `MITIGATED_NON_BLOCKING_FOR_OFFLINE_5_1` without being closed;
 - 5.1A and 5.1B are explicitly bounded and production-prohibited.
 
-5.1A now supplies import/capability, artifact-envelope, provenance, privacy-safe error, and Phase 4 regression evidence. Remaining limitations belong to 5.1B or milestone completion: corpus samples, fingerprint/normalization golden vectors, actual utility latency/resource measurements, and qualification results.
+5.1A supplies contract/isolation evidence. 5.1B supplies development fixtures, deterministic utility tests, bounded qualification, and local measurements. Remaining limitations belong to milestone completion: the full governed corpus, sealed partitions, language cohorts, independent review, and CI recalibration.
 
 ## Item states
 
@@ -85,12 +85,12 @@ Pre-implementation governance is complete:
 | Measurement policy/environment baseline | SATISFIED | Measurement policy and baseline report |
 | Numeric corpus composition | SATISFIED | `p5-corpus-v0-planned`: 240 documents; 385 units |
 | Language cohort policy | SATISFIED_WITH_LIMITATION | English/French/Arabic planned; no evaluated claim until samples pass |
-| Corpus creation and initial labels | REQUIRED_DURING_IMPLEMENTATION | Small synthetic contract fixtures exist; governed corpus remains a 5.1B output |
+| Corpus creation and initial labels | SATISFIED_WITH_LIMITATION | 41 synthetic development fixtures exist; full governed corpus remains incomplete |
 | Full corpus | REQUIRED_BEFORE_MILESTONE_COMPLETION | Manifest, licensing, partitions, checksums |
 | False merge/split and deterministic thresholds | SATISFIED | Threshold register; empirical pass required before completion |
 | THR-LAT-001 | SATISFIED_WITH_LIMITATION | `APPROVED_PROVISIONAL`; unimplemented algorithms unmeasured |
 | THR-COST-002 | SATISFIED_WITH_LIMITATION | `APPROVED_PROVISIONAL`; first local/CI runs must recalibrate |
-| Measured Phase 5.1 latency/resource use | REQUIRED_BEFORE_MILESTONE_COMPLETION | Benchmark and artifact/log/RSS evidence |
+| Measured Phase 5.1 latency/resource use | SATISFIED_WITH_LIMITATION | Local p95 and run ceilings pass; peak RSS unavailable and CI recalibration remains |
 
 ## F. Operations
 
@@ -121,7 +121,7 @@ Pre-implementation governance is complete:
 |---|---|---|
 | Eight former P0 entry risks reviewed | SATISFIED_WITH_LIMITATION | Four closed for 5.1A entry; four deferred/mitigated for 5.1B; none globally erased |
 | 5.1A scope | SATISFIED | Complete; implementation report records evidence |
-| 5.1B scope | SATISFIED_WITH_LIMITATION | Authorized for a separate future task; corpus/qualification evidence still required |
+| 5.1B scope | SATISFIED_WITH_LIMITATION | Implemented and development-qualified; full-corpus milestone evidence remains required |
 | No deployment default | SATISFIED | Scope prohibition |
 | Separate production authorization | SATISFIED | Ownership and timing matrix |
 
@@ -160,10 +160,10 @@ An external dependency or authority prevents completing required governance.
 
 ## Authorization boundary
 
-This gate permits a separate future implementation task to begin 5.1B only. It does not:
+This gate records the completed offline implementation slices. It does not:
 
-- automatically begin 5.1B;
-- permit expansion beyond deterministic source utilities and the offline harness;
+- qualify Phase 5.1 as a complete milestone;
+- permit expansion beyond the implemented deterministic source utilities and offline harness;
 - authorize production imports, data, writes, routes, telemetry, models, flags, deployment, or traffic;
 - authorize Source Intelligence reputation, clustering, language detection, near-duplicate classification, or suppression;
 - authorize approval or publication.

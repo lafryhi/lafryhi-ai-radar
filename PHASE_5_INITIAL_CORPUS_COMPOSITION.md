@@ -4,7 +4,7 @@
 
 - Corpus version: `p5-corpus-v0-planned`
 - Composition status: Approved for implementation planning
-- Corpus availability: Not created
+- Corpus availability: Full corpus not created; 41-fixture synthetic development subset implemented
 - Approval date: 2026-07-27
 - Accountable owner: Data Governance Owner
 - Responsible owner: Evaluation Owner
@@ -90,3 +90,7 @@ Phase 5.1 cannot claim completion until:
 - every completion-blocking threshold is measured against the exact corpus version.
 
 Composition approval does not mean the corpus exists or validates any threshold.
+
+## Development subset evidence
+
+Phase 5.1B adds 41 test-local synthetic fixtures: 18 URL, 12 source-normalization, and 11 duplicate-classification fixtures. They exercise representative approved categories but do not count as the released 240-document/385-unit corpus, do not create validation or holdout partitions, and do not support statistical or real-world language claims.

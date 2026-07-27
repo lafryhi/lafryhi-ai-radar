@@ -76,6 +76,18 @@ Entry budget states:
 - `THR-COST-002`: `APPROVED_PROVISIONAL`.
 - `THR-COST-001`: External paid model/API cost ceiling remains exactly USD 0.00.
 
+Phase 5.1B development evidence:
+
+- `THR-URL-001`: 18/18 development URL outcomes and 12/12 accepted URL idempotence checks pass.
+- `THR-URL-002`: zero false equivalence in the synthetic development fixtures; full-corpus evidence remains.
+- `THR-FP-001`: 11/11 repeated development fingerprints match; five-process latency tests also repeat deterministic outputs.
+- `THR-FP-002`: zero observed development collisions across tested domain/boundary/mutation cases; theoretical collision risk remains.
+- `THR-LAT-001`: five-process p95 measurements pass all three reference bands; full-corpus and first-CI recalibration remain.
+- `THR-COST-002`: focused median 16.429 seconds, qualification median 1.522 seconds, zero persistent artifacts/logs; peak RSS was not reliably measurable.
+- `THR-TEL-001`, `THR-SEC-001`, `THR-MODEL-001`, and `THR-FS-001`: development audits report zero violations.
+
+These results are `DEVELOPMENT QUALIFICATION ONLY`. Completion-blocking thresholds remain open until the approved corpus and holdout evidence exist.
+
 These are reference-environment budgets, not measured Phase 5.1 performance. The first implementation and CI measurements may tighten or relax them only through documented review. All other entry invariants retain zero-tolerance or structural thresholds.
 
 ## THR-LAT-001 measurement contract

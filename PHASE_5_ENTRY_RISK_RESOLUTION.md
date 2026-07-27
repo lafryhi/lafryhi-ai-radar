@@ -8,7 +8,7 @@
 - Risks closed globally: 0
 - Risks closed for 5.1A entry: 4
 - Risks remaining blocking implementation entry: 0
-- Risks mitigated non-blocking for offline implementation: 8
+- Risks with implemented 5.1A/5.1B evidence: 8
 
 No risk is described as resolved. Policy and design evidence permits safe offline implementation to produce the exit tests; completion remains blocked until those tests pass.
 
@@ -17,13 +17,13 @@ No risk is described as resolved. Policy and design evidence permits safe offlin
 | Risk ID | Final milestone classification | Entry effect | Completion effect |
 |---|---|---|---|
 | P5-RISK-001 | CLOSED_FOR_ENTRY | 5.1A evidence complete | Reassess before persistence/production |
-| P5-RISK-002 | MITIGATED_NON_BLOCKING_FOR_OFFLINE_5_1 | Does not block 5.1A | Golden vectors required |
+| P5-RISK-002 | MITIGATED_NON_BLOCKING_FOR_MILESTONE | Development vectors pass | Cross-runtime/full-corpus vectors required |
 | P5-RISK-003 | CLOSED_FOR_ENTRY | 5.1A provenance evidence complete | Reassess for graph/persistence |
-| P5-RISK-006 | DEFERRED_OUTSIDE_5_1A | Moves to 5.1B qualification | Corpus precision evidence required |
-| P5-RISK-010 | DEFERRED_OUTSIDE_5_1A | Moves to 5.1B fingerprint generation | Determinism/collision/privacy evidence required |
-| P5-RISK-011 | DEFERRED_OUTSIDE_5_1A | Moves to 5.1B URL normalization | URL corpus evidence required |
-| P5-RISK-029 | CLOSED_FOR_ENTRY | Safe contract errors and no logging proven | Harness telemetry tests remain for 5.1B |
-| P5-RISK-034 | CLOSED_FOR_ENTRY | Pure-module imports/capabilities proven | Harness isolation retested in 5.1B |
+| P5-RISK-006 | MITIGATED_NON_BLOCKING_FOR_MILESTONE | Development exact classifier passes | Full-corpus precision evidence required |
+| P5-RISK-010 | MITIGATED_NON_BLOCKING_FOR_MILESTONE | Framed fingerprints and privacy tests pass | Cross-runtime/full-corpus evidence required |
+| P5-RISK-011 | MITIGATED_NON_BLOCKING_FOR_MILESTONE | Conservative URL development suite passes | Full URL corpus evidence required |
+| P5-RISK-029 | CLOSED_FOR_OFFLINE_5_1B | Bounded harness privacy tests pass | Reassess before any production telemetry |
+| P5-RISK-034 | CLOSED_FOR_OFFLINE_5_1B | In-memory harness isolation passes | Reassess before any replay/product capability |
 
 ## Individual reviews
 
@@ -50,10 +50,10 @@ No risk is described as resolved. Policy and design evidence permits safe offlin
 - **Impact:** High.
 - **Mitigation evidence:** Versioned domain-separated length framing; deterministic-clock/order contracts.
 - **Exit evidence requirement:** Cross-runtime golden vectors, namespace/version separation, and upgrade behavior.
-- **Evidence produced now:** COMP-ID-007 plus measurement/reproducibility policy.
-- **Residual uncertainty:** Implementation bytes and runtime results unmeasured.
-- **Final classification:** MITIGATED_NON_BLOCKING_FOR_OFFLINE_5_1.
-- **Justification:** Contract is sufficient to implement offline; evidence is completion-blocking.
+- **Evidence produced now:** Versioned SHA-256 domain separation, UTF-8 length framing, mutation tests, 11/11 repeatability, and five-process measurements.
+- **Residual uncertainty:** Full-corpus and cross-runtime golden-vector evidence remains.
+- **Final classification:** MITIGATED_NON_BLOCKING_FOR_MILESTONE.
+- **Justification:** Development implementation evidence passes; broader completion evidence remains.
 
 ### P5-RISK-003 — Provenance graph
 
@@ -78,10 +78,10 @@ No risk is described as resolved. Policy and design evidence permits safe offlin
 - **Impact:** High.
 - **Mitigation evidence:** Conservative contracts; 40 exact pairs, 130 false-merge-oriented pairs, and zero-tolerance thresholds approved.
 - **Exit evidence requirement:** 100% precision and zero critical false merge on the governed corpus.
-- **Evidence produced now:** Numeric composition and threshold contracts; corpus does not yet exist.
-- **Residual uncertainty:** Actual rules and results unavailable.
-- **Final classification:** DEFERRED_OUTSIDE_5_1A.
-- **Justification:** Exact duplicate qualification belongs to 5.1B; 5.1A added no classifier or suppression.
+- **Evidence produced now:** Advisory exact classifier, conflict-first rules, 6/6 development precision/recall, and zero false merges/splits.
+- **Residual uncertainty:** The full governed corpus and holdout do not exist.
+- **Final classification:** MITIGATED_NON_BLOCKING_FOR_MILESTONE.
+- **Justification:** Offline development evidence passes without suppression; corpus precision remains completion-blocking.
 
 ### P5-RISK-010 — Source fingerprinting
 
@@ -92,10 +92,10 @@ No risk is described as resolved. Policy and design evidence permits safe offlin
 - **Impact:** High.
 - **Mitigation evidence:** Input/privacy prohibitions, SHA-256 framing contract, no telemetry default.
 - **Exit evidence requirement:** Golden vectors, zero observed collisions, mutation tests, privacy/input audit.
-- **Evidence produced now:** COMP-ID-007, privacy contract, isolation evidence.
-- **Residual uncertainty:** No implementation or vectors.
-- **Final classification:** DEFERRED_OUTSIDE_5_1A.
-- **Justification:** Fingerprint generation is explicitly a 5.1B utility; only its ID validation contract exists.
+- **Evidence produced now:** Implemented framed SHA-256 types, domain separation, determinism/mutation tests, bounded reports that omit fingerprints, and zero telemetry findings.
+- **Residual uncertainty:** Cross-runtime/full-corpus collision observations and access policy remain.
+- **Final classification:** MITIGATED_NON_BLOCKING_FOR_MILESTONE.
+- **Justification:** Offline fingerprints pass development evidence and remain absent from production/report telemetry.
 
 ### P5-RISK-011 — URL canonicalization
 
@@ -106,10 +106,10 @@ No risk is described as resolved. Policy and design evidence permits safe offlin
 - **Impact:** High.
 - **Mitigation evidence:** Conservative allowlist contract; 30 URL sets, 25 tracking sets, false-merge traps, and privacy denylist approved.
 - **Exit evidence requirement:** 100% rule correctness and zero false equivalence on approved fixtures.
-- **Evidence produced now:** Numeric corpus design and threshold contract.
-- **Residual uncertainty:** Corpus and algorithm do not exist.
-- **Final classification:** DEFERRED_OUTSIDE_5_1A.
-- **Justification:** URL normalization is explicitly a 5.1B utility and was not implemented.
+- **Evidence produced now:** Implemented allowlisted normalizer; 18/18 outcomes, 12/12 idempotence, credential/privacy rejection, and zero development false equivalence.
+- **Residual uncertainty:** Full 30 URL/25 tracking sets and holdout are absent.
+- **Final classification:** MITIGATED_NON_BLOCKING_FOR_MILESTONE.
+- **Justification:** Conservative development evidence passes; full-corpus evidence remains.
 
 ### P5-RISK-029 — Operational telemetry
 
@@ -121,9 +121,9 @@ No risk is described as resolved. Policy and design evidence permits safe offlin
 - **Mitigation evidence:** Approved field allowlist/denylist, RET-0 boundary, 2 MiB log ceiling, no production emitter.
 - **Exit evidence requirement:** Adversarial serialization tests with zero prohibited fields.
 - **Evidence produced now:** Bounded safe validation-error adapter, secret-marker redaction test, and static prohibition of console/production telemetry imports.
-- **Residual uncertainty:** 5.1B harness diagnostics remain unimplemented.
-- **Final classification:** CLOSED_FOR_ENTRY.
-- **Justification:** 5.1A error reporting is privacy-safe; 5.1B must add its own harness tests.
+- **Residual uncertainty:** Production telemetry remains unaudited and unauthorized.
+- **Final classification:** CLOSED_FOR_OFFLINE_5_1B.
+- **Justification:** The bounded in-memory report and protected-marker scans pass with zero prohibited telemetry.
 
 ### P5-RISK-034 — Replay simulator
 
@@ -135,10 +135,10 @@ No risk is described as resolved. Policy and design evidence permits safe offlin
 - **Mitigation evidence:** Repository-backed isolation feasibility, no network/Firestore/provider/auth imports, synthetic/open fixtures.
 - **Exit evidence requirement:** Tests proving production network, credentials, adapters, writes, and endpoints are unreachable.
 - **Evidence produced now:** Static production-file enumeration and prohibited import/capability tests pass; no route, service, repository, provider, auth, network, write, clock, randomness, logging, or mutable state is used.
-- **Residual uncertainty:** The 5.1B corpus harness does not yet exist and must be re-audited.
-- **Final classification:** CLOSED_FOR_ENTRY.
-- **Justification:** 5.1A isolation is implemented and tested; no replay endpoint exists.
+- **Residual uncertainty:** Full-corpus file loading and any later replay product require renewed isolation review.
+- **Final classification:** CLOSED_FOR_OFFLINE_5_1B.
+- **Justification:** The in-memory harness is implemented and its dependency/capability tests pass; no replay endpoint exists.
 
 ## Conclusion
 
-No risk is erased globally. Four are closed for the completed 5.1A entry boundary, one remains mitigated pending 5.1B golden vectors, and three are deferred to the 5.1B utilities they govern.
+No risk is erased globally. Offline development evidence closes P5-RISK-029 and P5-RISK-034 for 5.1B and mitigates identity, exact-duplicate, fingerprint, and URL risks pending the full corpus/cross-runtime evidence. Production variants remain deferred.

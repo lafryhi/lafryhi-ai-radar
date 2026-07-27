@@ -5,7 +5,7 @@
 - Review date: 2026-07-27
 - Scope: Phase 5.0 governance and entry evaluation for the deterministic offline Phase 5.1 foundation
 - Baseline: `v1.0.0-rc1`
-- Implementation status: Not started
+- Implementation status: Offline Phase 5.1A and 5.1B implemented under the accepted decisions; production remains unauthorized
 - Decision authority: Role-based project governance
 - Independent reviewer: Not currently assigned
 

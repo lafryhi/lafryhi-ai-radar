@@ -3,13 +3,13 @@
 ## Authorization status
 
 - Scope boundary: Approved
-- Execution authorization: Future implementation authorized by `READY_WITH_NON_BLOCKING_LIMITATIONS`; no implementation has begun
+- Execution authorization: 5.1A and 5.1B implemented offline under `READY_WITH_NON_BLOCKING_LIMITATIONS`
 - Approved date: 2026-07-27
 - Baseline: `v1.0.0-rc1`
-- Implementation status: 5.1A complete; 5.1B not started
+- Implementation status: 5.1A complete; 5.1B complete with non-blocking limitations; milestone qualification pending
 - Deployment authorization: None
 
-This document defines the smallest safe future implementation scope. Governance authorization does not start implementation and does not authorize production behavior.
+This document defines the smallest safe offline implementation scope. Completed implementation does not authorize production behavior.
 
 ## Purpose
 
@@ -17,7 +17,7 @@ Create deterministic offline foundations for later Source Intelligence without a
 
 ## IN_SCOPE
 
-After the entry gate opens, the implementation scope is limited to:
+The implemented and remaining milestone scope is limited to:
 
 - source normalization contract tests over synthetic or approved corpus fixtures;
 - a pure, versioned normalization library that does not alter existing Phase 4 normalization;
@@ -36,7 +36,7 @@ After the entry gate opens, the implementation scope is limited to:
 
 Status: Complete.
 
-Allowed future implementation:
+Implemented:
 
 - pure TypeScript types and schemas;
 - pure value objects;
@@ -50,7 +50,7 @@ Allowed future implementation:
 
 ### 5.1B — Deterministic Source Utilities
 
-Status: Authorized for a separate future task; not started.
+Status: Complete with non-blocking limitations.
 
 Allowed because 5.1A passes:
 
@@ -61,7 +61,7 @@ Allowed because 5.1A passes:
 - test-local qualification metrics and bounded reports;
 - latency, compute, determinism, false-merge/split, and compatibility measurement.
 
-Both sub-slices remain offline, pure/test-local, and non-production.
+Both implemented sub-slices remain offline, pure/test-local, and non-production. The complete Phase 5.1 milestone is not qualified until the full corpus and completion evidence exist.
 
 ## OUT_OF_SCOPE
 
@@ -122,7 +122,7 @@ Requires a later gate and any deferred ADR acceptance:
 - Bounded test-local evaluation report.
 - Updated gate evidence for milestone completion.
 
-These outputs are planned, not currently implemented.
+The pure utilities, development fixtures, harness, and development measurements are implemented. The complete governed corpus, sealed partitions, manifest tooling, and milestone qualification evidence remain outstanding.
 
 ## Expected tests
 

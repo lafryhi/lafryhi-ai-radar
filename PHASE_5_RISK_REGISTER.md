@@ -60,16 +60,16 @@ Owner labels in the original register are implementation-domain roles. For Phase
 | Risk ID | Canonical risk name | Phase 5.1 classification | Governance owner |
 |---|---|---|---|
 | P5-RISK-001 | Derived artifact platform | closed for 5.1A entry; later persistence review required | Architecture Owner |
-| P5-RISK-002 | Deterministic identities | mitigated non-blocking for offline 5.1; completion evidence required | Architecture Owner |
+| P5-RISK-002 | Deterministic identities | development vectors pass; cross-runtime/full-corpus evidence required | Architecture Owner |
 | P5-RISK-003 | Provenance graph | closed for 5.1A entry; graph/persistence deferred | Architecture Owner |
 | P5-RISK-004 | Publisher reputation | non-blocking; implementation excluded | Product and Editorial Owner |
 | P5-RISK-005 | Reliability history | deferred outside milestone | Data Governance Owner |
-| P5-RISK-006 | Exact duplicate detection | deferred outside 5.1A; 5.1B completion evidence required | Architecture Owner |
+| P5-RISK-006 | Exact duplicate detection | development qualification passes; full-corpus precision remains | Architecture Owner |
 | P5-RISK-007 | Near-duplicate detection | deferred outside milestone | Evaluation Owner |
 | P5-RISK-008 | Language detection | deferred outside milestone | Evaluation Owner |
 | P5-RISK-009 | Publisher clustering | deferred outside milestone | Data Governance Owner |
-| P5-RISK-010 | Source fingerprinting | deferred outside 5.1A; 5.1B evidence required | Security and Privacy Owner |
-| P5-RISK-011 | URL canonicalization | deferred outside 5.1A; 5.1B evidence required | Architecture Owner |
+| P5-RISK-010 | Source fingerprinting | offline framed implementation passes; cross-runtime/privacy review remains | Security and Privacy Owner |
+| P5-RISK-011 | URL canonicalization | conservative development suite passes; full URL corpus remains | Architecture Owner |
 | P5-RISK-012 | Conflict detection | deferred outside milestone | Evaluation Owner |
 | P5-RISK-013 | Cross-source validation | deferred outside milestone | Architecture Owner |
 | P5-RISK-014 | Event extraction | deferred outside milestone | Architecture Owner |
@@ -87,12 +87,12 @@ Owner labels in the original register are implementation-domain roles. For Phase
 | P5-RISK-026 | AI Radar summaries | deferred outside milestone | Product and Editorial Owner |
 | P5-RISK-027 | Digest and weekly report | deferred outside milestone | Product and Editorial Owner |
 | P5-RISK-028 | Story lifecycle | deferred outside milestone | Product and Editorial Owner |
-| P5-RISK-029 | Operational telemetry | closed for 5.1A entry; 5.1B harness diagnostics require review | Security and Privacy Owner |
+| P5-RISK-029 | Operational telemetry | closed for bounded offline 5.1B report; production review deferred | Security and Privacy Owner |
 | P5-RISK-030 | Gemini usage/cost dashboard | deferred outside milestone | Operations Owner |
 | P5-RISK-031 | Pipeline/queue dashboards | deferred outside milestone | Operations Owner |
 | P5-RISK-032 | Operator-action metrics | deferred outside milestone | Security and Privacy Owner |
 | P5-RISK-033 | Trend monitoring | deferred outside milestone | Operations Owner |
-| P5-RISK-034 | Replay simulator | closed for 5.1A entry; 5.1B harness isolation must be retested | Reliability Owner |
+| P5-RISK-034 | Replay simulator | closed for in-memory offline 5.1B harness; any replay product deferred | Reliability Owner |
 | P5-RISK-035 | Fault injection | deferred outside milestone | Reliability Owner |
 | P5-RISK-036 | Synthetic canaries | deferred outside milestone | Reliability Owner |
 | P5-RISK-037 | Load testing | deferred outside milestone | Reliability Owner |

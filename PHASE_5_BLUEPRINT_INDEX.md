@@ -7,9 +7,9 @@
 - Compatibility baseline: v1.0.0-rc1
 - Baseline commit: `1ea50f5f01a8cd08481578cadc85ffff08eecf26`
 - Baseline tag: `v1.0.0-rc1`
-- Implementation status: Phase 5.1A complete; Phase 5.1B not started
+- Implementation status: Phase 5.1A complete; Phase 5.1B complete with non-blocking limitations
 - Current implementation entry gate: `READY_WITH_NON_BLOCKING_LIMITATIONS`
-- Implementation authorization: Future offline 5.1A only; 5.1B is conditional on 5.1A evidence
+- Implementation authorization: Offline 5.1A/5.1B implemented; no production or Phase 5.2 authorization
 - Architecture decisions: Individually reviewed; 4 Accepted, 5 Accepted with documented limitations, 6 Deferred
 
 This index governs the Phase 5 engineering blueprint. Adoption authorizes planning and controlled decision-making only; it is not a production release and does not authorize implementation, deployment, migration, or activation.
@@ -38,6 +38,7 @@ This index governs the Phase 5 engineering blueprint. Adoption authorizes planni
 | [Entry Risk Resolution](PHASE_5_ENTRY_RISK_RESOLUTION.md) | Evidence and timing classification for the eight former entry-blocking P0 risks. |
 | [5.1 Gate Timing Matrix](PHASE_5_1_GATE_TIMING_MATRIX.md) | Separates entry, implementation, completion, shadow, and production requirements. |
 | [Phase 5.1A Implementation Report](PHASE_5_1A_IMPLEMENTATION_REPORT.md) | Implemented pure contracts, tests, measurements, isolation evidence, and remaining 5.1B work. |
+| [Phase 5.1B Implementation Report](PHASE_5_1B_IMPLEMENTATION_REPORT.md) | Deterministic source utilities, development qualification, measurements, and milestone limitations. |
 | [Phase 5 Risk Register](PHASE_5_RISK_REGISTER.md) | Feature-level risks, likelihood, impact, mitigation, accountable role, priority, and exit evidence. |
 | [Source Intelligence Specification](SOURCE_INTELLIGENCE_SPEC.md) | Architecture for source identity, reliability observations, normalization, duplication, language, clustering, and corroboration. |
 | [Analysis Intelligence Specification](ANALYSIS_INTELLIGENCE_SPEC.md) | Architecture for grounded events, entities, claims, timelines, contradictions, Stories, novelty, coverage, and confidence. |
@@ -68,13 +69,14 @@ This index governs the Phase 5 engineering blueprint. Adoption authorizes planni
 18. [PHASE_5_ENTRY_RISK_RESOLUTION.md](PHASE_5_ENTRY_RISK_RESOLUTION.md)
 19. [PHASE_5_1_GATE_TIMING_MATRIX.md](PHASE_5_1_GATE_TIMING_MATRIX.md)
 20. [PHASE_5_1A_IMPLEMENTATION_REPORT.md](PHASE_5_1A_IMPLEMENTATION_REPORT.md)
-21. [PHASE_5_RISK_REGISTER.md](PHASE_5_RISK_REGISTER.md)
-22. [SOURCE_INTELLIGENCE_SPEC.md](SOURCE_INTELLIGENCE_SPEC.md)
-23. [ANALYSIS_INTELLIGENCE_SPEC.md](ANALYSIS_INTELLIGENCE_SPEC.md)
-24. [EDITORIAL_ENGINE_SPEC.md](EDITORIAL_ENGINE_SPEC.md)
-25. [OPERATIONAL_INTELLIGENCE_SPEC.md](OPERATIONAL_INTELLIGENCE_SPEC.md)
-26. [RELIABILITY_EVOLUTION_SPEC.md](RELIABILITY_EVOLUTION_SPEC.md)
-27. [PHASE_5_ENTRY_GATE.md](PHASE_5_ENTRY_GATE.md)
+21. [PHASE_5_1B_IMPLEMENTATION_REPORT.md](PHASE_5_1B_IMPLEMENTATION_REPORT.md)
+22. [PHASE_5_RISK_REGISTER.md](PHASE_5_RISK_REGISTER.md)
+23. [SOURCE_INTELLIGENCE_SPEC.md](SOURCE_INTELLIGENCE_SPEC.md)
+24. [ANALYSIS_INTELLIGENCE_SPEC.md](ANALYSIS_INTELLIGENCE_SPEC.md)
+25. [EDITORIAL_ENGINE_SPEC.md](EDITORIAL_ENGINE_SPEC.md)
+26. [OPERATIONAL_INTELLIGENCE_SPEC.md](OPERATIONAL_INTELLIGENCE_SPEC.md)
+27. [RELIABILITY_EVOLUTION_SPEC.md](RELIABILITY_EVOLUTION_SPEC.md)
+28. [PHASE_5_ENTRY_GATE.md](PHASE_5_ENTRY_GATE.md)
 
 ## Governance rules
 
@@ -155,6 +157,6 @@ Additional requirements include an approved milestone and scope, reproducibility
 
 ## Current governance conclusion
 
-The entry gate is `READY_WITH_NON_BLOCKING_LIMITATIONS`. Phase 5.1A is complete with 19 focused pure-contract tests and an unchanged Phase 4 regression suite. A separate future task may begin 5.1B; this task did not implement it.
+The entry gate remains `READY_WITH_NON_BLOCKING_LIMITATIONS`. Phase 5.1A and the authorized offline 5.1B slice are implemented. The 5.1B development qualification is not complete Phase 5.1 milestone qualification.
 
-Remaining limitations include an uncreated corpus, unmeasured 5.1B utility performance/resource use, provisional CI budgets, and no independent reviewer. They are timed during 5.1B, before milestone completion, or before production and do not authorize production behavior.
+Remaining limitations include the unassembled full corpus, unvalidated real-world language cohorts, provisional CI budgets, and no independent reviewer. They are timed before milestone completion or production and do not authorize production behavior.

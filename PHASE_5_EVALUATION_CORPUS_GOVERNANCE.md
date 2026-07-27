@@ -7,9 +7,9 @@
 - Accountable owner: Data Governance Owner
 - Responsible owner: Evaluation Owner
 - Review roles: Security and Privacy Owner; Architecture Owner
-- Corpus collection status: Not started
+- Corpus collection status: Full governed corpus not started; synthetic development subset exists
 - Approved planned composition: `p5-corpus-v0-planned`
-- Implementation status: Not started
+- Implementation status: In-memory development harness implemented; full manifest/corpus tooling incomplete
 
 This document authorizes creation of an offline governed corpus harness and approved samples during Phase 5.1. It does not authorize production data extraction, model training, production writes, or deployment.
 
