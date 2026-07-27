@@ -63,6 +63,12 @@ Use every applicable item. A checked box means evidence exists, not merely that 
 
 ## Commit and handoff
 
+- [ ] `PROJECT_STATE.md` updated.
+- [ ] `PROJECT_MEMORY.md` updated when durable knowledge changed.
+- [ ] `EVOLUTION_HISTORY.md` updated.
+- [ ] `NEXT_TASK_PACKAGE.md` updated.
+- [ ] Immediate next-phase authorization verified.
+- [ ] Fresh-session handoff ready.
 - [ ] Stage only authorized files.
 - [ ] Inspect the staged diff.
 - [ ] Use the exact requested commit message, or one repository-conforming commit if none is specified.

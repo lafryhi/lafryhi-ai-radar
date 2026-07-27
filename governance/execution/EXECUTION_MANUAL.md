@@ -6,6 +6,8 @@ This manual is the primary authority for executing future repository phases. It 
 
 Begin every new Codex session with the mandatory procedure in [SESSION_START.md](SESSION_START.md).
 
+Complete every successful phase with the mandatory handoff process in the [Development Continuity Engine](../continuity/CONTINUITY_ENGINE.md).
+
 When instructions conflict, apply this precedence:
 
 1. explicit current user instruction;
@@ -46,7 +48,8 @@ Every phase or sub-phase must be handled as a bounded unit:
 9. **Qualify the gate.** Use [QUALITY_GATES.md](QUALITY_GATES.md) and milestone-specific thresholds. A sub-slice pass is not a milestone pass.
 10. **Commit once authorized.** Commit only the intended files with the requested or repository-conforming message. Never push or deploy unless separately and explicitly authorized.
 11. **Update state.** After a completed phase, update [PROJECT_STATE.md](PROJECT_STATE.md) in the same phase commit when practical. Record the completed scope, baseline commit, branch, milestone, next authorized work, limitations, and validation.
-12. **Report.** Return PASS/FAIL, scope completed, files changed, documents consulted, validation evidence, commit, branch, worktree status, limitations, and next gate.
+12. **Complete continuity.** Update durable memory, evolution history, and the immediate next-task package under [`CONTINUITY_ENGINE.md`](../continuity/CONTINUITY_ENGINE.md).
+13. **Report.** Return PASS/FAIL, scope completed, files changed, documents consulted, validation evidence, commit, branch, worktree status, limitations, and next gate.
 
 ## Scope control
 

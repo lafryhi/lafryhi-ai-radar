@@ -12,6 +12,14 @@ Implement Phase X.Y only.
 
 This is sufficient when the repository already contains an approved, unambiguous scope and the phase has entry authority. Codex must discover the controlling documents, verify the repository, apply all gates, update project state, validate, and report under the manual.
 
+For the standard continuity handoff, use:
+
+```text
+Read governance/execution/SESSION_START.md.
+Resume from governance/continuity/NEXT_TASK_PACKAGE.md.
+Execute only the authorized phase.
+```
+
 ## Add only necessary intent
 
 Include extra text only for information the repository cannot supply, such as:

@@ -1,6 +1,6 @@
 # Project State
 
-> Update this file after every completed phase or sub-phase. Keep it factual, compact, and synchronized with accepted implementation reports. The commit below is the state baseline from which this execution-framework commit was created; a commit cannot embed its own final hash.
+> Update this file after every completed phase or sub-phase. Keep it factual, compact, and synchronized with accepted implementation reports. The commit below is the state baseline from which the current governance commit was created; a commit cannot embed its own final hash.
 >
 > [SESSION_START.md](SESSION_START.md) is part of the mandatory execution framework for every new Codex session.
 
@@ -10,7 +10,7 @@
 |---|---|
 | State recorded | 2026-07-27 |
 | Current branch | `phase-5/source-intelligence-foundation` |
-| State baseline commit | `9256569ea53e75b1b9ec1db4fa0b2f17359bfdef` |
+| State baseline commit | `5e71d93a1214aa9293a62a3b2b2ecb4aeb48f1b8` |
 | Frozen production tag | `v1.0.0-rc1` |
 | Frozen production commit | `1ea50f5f01a8cd08481578cadc85ffff08eecf26` |
 | Production baseline | Phase 4 release candidate |
@@ -19,6 +19,18 @@
 | Current gate | `READY_WITH_NON_BLOCKING_LIMITATIONS` |
 | Production integration authority | None for Phase 5 |
 | Phase 5.2 authority | None |
+
+## Continuity framework
+
+The Development Continuity Engine is a mandatory phase-completion and fresh-session handoff capability:
+
+- [`CONTINUITY_ENGINE.md`](../continuity/CONTINUITY_ENGINE.md)
+- [`NEXT_TASK_POLICY.md`](../continuity/NEXT_TASK_POLICY.md)
+- [`NEXT_TASK_PACKAGE.md`](../continuity/NEXT_TASK_PACKAGE.md)
+- [`PROJECT_MEMORY.md`](../continuity/PROJECT_MEMORY.md)
+- [`EVOLUTION_HISTORY.md`](../continuity/EVOLUTION_HISTORY.md)
+
+The next-task package currently records no authorized post-5.1B slice. Full Phase 5.1 qualification remains pending.
 
 ## Completed work
 
@@ -50,7 +62,7 @@ Exact ordering and overlap are governed by [`PHASE_5_ROADMAP.md`](../../PHASE_5_
 
 | Field | Value |
 |---|---|
-| Scope | Permanent execution framework |
+| Scope | Development Continuity Engine |
 | Commands | `npm.cmd test`; `npm.cmd run lint`; `npm.cmd run typecheck`; `npm.cmd run build` |
 | Result | PASS — 22 test files / 231 tests; lint, typecheck, and production build passed |
 | Limitations | PowerShell policy blocks the `npm.ps1` wrapper; equivalent `npm.cmd` commands executed successfully |
