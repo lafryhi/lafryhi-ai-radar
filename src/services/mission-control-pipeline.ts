@@ -1,6 +1,8 @@
 import { rankIntelligenceItems, type IntelligenceItem, type MissionControlRequest, type MissionControlResponse, type PipelineLogEntry, type PipelineStageName, type PipelineStageResult, WeeklyIntelligenceReportSchema, VideoProductionPackageSchema } from "@/domain/mission-control";
 import { getDemoIntelligenceItems, isDemoModeEnabled } from "@/services/mission-control-demo";
 import { collectLiveIntelligenceItems } from "@/services/mission-control-live";
+import { analyzeLiveIntelligenceItems } from "@/services/live-analysis";
+import { VertexAiAnalyzer } from "@/services/ai";
 import type { RadarRepository } from "@/persistence/repository";
 
 export class MissionControlConflictError extends Error {}
@@ -37,14 +39,22 @@ export async function runMissionControl(request: MissionControlRequest, now = ()
       const collectionStarted = Date.now();
       if (!repository) {
         const completedAt = new Date(start.getTime() + 1).toISOString();
-        return { runId: `mission-live-${start.getTime()}`, mode: "live", status: "error", startedAt, completedAt, elapsedMs: 1, stages: [stage("collect", "error", startedAt, 1, 0, 0, "Live collection requires the server repository.", "LIVE_REPOSITORY_UNAVAILABLE"), ...stageOrder.slice(1).map((name) => stage(name, "warning", completedAt, 0, 0, 0, "Deferred until live collection succeeds.", "LIVE_ANALYSIS_DEFERRED"))], logs: [log("collect", "error", "Live collection could not start safely.", startedAt, 0)], summary: { collected: 0, qualified: 0, verified: 0, highImpact: 0, editorialCandidates: 0, approved: 0, reportStatus: "not_created", videoPackageStatus: "not_created" }, items: [], report: null, videoPackage: null };
+        return { runId: `mission-live-${start.getTime()}`, mode: "live", status: "error", startedAt, completedAt, elapsedMs: 1, stages: [stage("collect", "error", startedAt, 1, 0, 0, "Live collection requires the server repository.", "LIVE_REPOSITORY_UNAVAILABLE"), ...stageOrder.slice(1).map((name) => stage(name, "warning", completedAt, 0, 0, 0, "Deferred until live collection succeeds.", "LIVE_ANALYSIS_DEFERRED"))], logs: [log("collect", "error", "Live collection could not start safely.", startedAt, 0)], summary: { collected: 0, qualified: 0, verified: 0, highImpact: 0, editorialCandidates: 0, approved: 0, reportStatus: "not_created", videoPackageStatus: "not_created" }, items: [], report: null, videoPackage: null, liveAnalysis: { attemptedItems: 0, analyzedItems: 0, skippedItems: 0, failedItems: 0, durationMs: 0, promptVersion: "live-analysis-v1" } };
       }
       const collection = await collectLiveIntelligenceItems(repository, request);
       const collectionElapsed = Math.max(1, Date.now() - collectionStarted);
-      const completedAt = new Date(start.getTime() + collectionElapsed).toISOString();
-      const downstream = stageOrder.slice(1).map((name) => stage(name, "warning", completedAt, 0, collection.items.length, 0, "Deferred in Sprint 3.1; live analysis is not run.", "LIVE_ANALYSIS_DEFERRED"));
       const collectStage = stage("collect", collection.status === "error" ? "error" : collection.status === "warning" ? "warning" : "success", startedAt, collectionElapsed, collection.summary.attemptedSources, collection.items.length, collection.status === "error" ? "Live collection failed safely." : `Live collection completed with ${collection.items.length} usable records.`);
-      return { runId: `mission-live-${start.getTime()}`, mode: "live", status: collection.status, startedAt, completedAt, elapsedMs: collectionElapsed, stages: [collectStage, ...downstream], logs: collection.logs, summary: { collected: collection.items.length, qualified: collection.items.length, verified: 0, highImpact: 0, editorialCandidates: 0, approved: 0, reportStatus: "not_created", videoPackageStatus: "not_created" }, items: collection.items, report: null, videoPackage: null, liveCollection: collection.summary };
+      const analysis = collection.items.length === 0
+        ? await analyzeLiveIntelligenceItems(repository, [], { now: () => Date.now() })
+        : await analyzeLiveIntelligenceItems(repository, collection.items, { createProvider: () => new VertexAiAnalyzer() });
+      const analysisElapsed = analysis.summary.durationMs;
+      const analysisStartedAt = new Date(start.getTime() + collectionElapsed).toISOString();
+      const analysisCompletedAt = new Date(new Date(analysisStartedAt).getTime() + analysisElapsed).toISOString();
+      const analysisStageStatus = analysis.status === "error" ? "error" : analysis.status === "warning" ? "warning" : "success";
+      const analysisStage = stage("analyze", analysisStageStatus, analysisStartedAt, analysisElapsed, collection.items.length, analysis.summary.analyzedItems, analysis.summary.attemptedItems === 0 || analysis.summary.skippedItems > 0 && analysis.summary.analyzedItems === 0 ? "Live analysis skipped; no usable source material was available." : analysis.summary.analyzedItems === 0 ? "Live analysis failed safely." : `Live analysis completed for ${analysis.summary.analyzedItems} records.` , analysis.status === "error" ? "LIVE_ANALYSIS_FAILED" : undefined);
+      const downstream = stageOrder.slice(3).map((name) => stage(name, "warning", analysisCompletedAt, 0, analysis.items.length, 0, "Deferred in Sprint 3.2; live ranking, editorial review, report, and video are not run.", "LIVE_DOWNSTREAM_DEFERRED"));
+      const overallStatus = analysis.status === "error" || collection.status === "error" ? "error" : analysis.status === "warning" || collection.status === "warning" ? "warning" : "success";
+      return { runId: `mission-live-${start.getTime()}`, mode: "live", status: overallStatus, startedAt, completedAt: analysisCompletedAt, elapsedMs: collectionElapsed + analysisElapsed, stages: [collectStage, stage("verify", "warning", analysisStartedAt, 0, analysis.items.length, 0, "Deferred in Sprint 3.2; live verification is not run.", "LIVE_DOWNSTREAM_DEFERRED"), analysisStage, ...downstream], logs: [...collection.logs, ...analysis.logs], summary: { collected: collection.items.length, qualified: analysis.summary.analyzedItems, verified: 0, highImpact: analysis.items.filter((item) => item.impactScore >= 80).length, editorialCandidates: 0, approved: 0, reportStatus: "not_created", videoPackageStatus: "not_created" }, items: analysis.items, report: null, videoPackage: null, liveCollection: collection.summary, liveAnalysis: analysis.summary };
     }
     const items = getDemoIntelligenceItems(); const ranked = rankIntelligenceItems(items); const approved = ranked.filter((item) => item.verificationStatus === "verified" && item.editorialStatus === "approved");
     let offset = 0; const stages: PipelineStageResult[] = []; const logs: PipelineLogEntry[] = [];

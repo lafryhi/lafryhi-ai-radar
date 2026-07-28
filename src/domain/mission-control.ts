@@ -12,7 +12,13 @@ export const IntelligenceItemSchema = z.object({
   impactScore: ScoreSchema, confidenceScore: ScoreSchema, evidenceCount: z.number().int().nonnegative(),
   verificationStatus: z.enum(["pending", "verified", "rejected"]),
   editorialStatus: z.enum(["pending", "approved", "rejected", "published"]),
-  sourceUrl: z.string().url().optional(), analysisStatus: z.enum(["deferred", "complete"]).optional(),
+  sourceUrl: z.string().url().optional(), analysisStatus: z.enum(["deferred", "running", "completed", "failed", "skipped"]).optional(),
+  relevanceScore: ScoreSchema.optional(),
+  keyClaims: z.array(z.object({ claim: z.string().min(1).max(500), evidenceRefs: z.array(z.string().min(1).max(80)).max(5) }).strict()).max(8).optional(),
+  impactRationale: z.string().min(1).max(800).optional(), confidenceRationale: z.string().min(1).max(800).optional(),
+  limitations: z.array(z.string().min(1).max(300)).max(8).optional(),
+  analysisModel: z.string().min(1).max(120).optional(), analysisPromptVersion: z.string().min(1).max(80).optional(),
+  requiresHumanReview: z.literal(true).optional(), analysisErrorCode: z.string().min(1).max(80).optional(), analysisMessage: z.string().min(1).max(300).optional(),
   whyRanked: z.array(z.string().min(1).max(240)).max(5).optional(),
   publishedAt: IsoDateSchema.optional(), createdAt: IsoDateSchema, updatedAt: IsoDateSchema.optional(),
 }).strict();
@@ -60,6 +66,7 @@ export interface MissionControlResponse {
   logs: PipelineLogEntry[]; summary: { collected: number; qualified: number; verified: number; highImpact: number; editorialCandidates: number; approved: number; reportStatus: "not_created" | "ready"; videoPackageStatus: "not_created" | "ready" };
   items: IntelligenceItem[]; report: WeeklyIntelligenceReport | null; videoPackage: VideoProductionPackage | null;
   liveCollection?: LiveCollectionSummary;
+  liveAnalysis?: { attemptedItems: number; analyzedItems: number; skippedItems: number; failedItems: number; durationMs: number; model?: string; promptVersion?: string };
 }
 
 export interface LiveCollectionSummary {
