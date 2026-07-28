@@ -82,3 +82,7 @@ For the deterministic operator demo, set `AI_RADAR_DEMO_MODE=true` and open `/op
 Mission Control also supports an explicit Live Collection mode backed by the trusted Source Registry and existing RSS discovery safeguards. Live collection stops before Vertex AI analysis; see `docs/SPRINT_3_1_LIVE_SOURCE_COLLECTION.md`.
 
 Live Collection can now analyze bounded, traceable records through the existing Vertex AI client with strict schema validation and mandatory human review. Ranking, editorial, report, and video stages remain deferred; see `docs/SPRINT_3_2_LIVE_VERTEX_ANALYSIS.md`.
+
+## Sprint 3.3 — Intelligence Ranking and Editorial Decisions
+
+The approved architecture for deterministic intelligence ranking, advisory editorial decisions, human review integration, and weekly report selection is documented in `docs/SPRINT_3_3_INTELLIGENCE_RANKING_EDITORIAL_DESIGN.md`. Sprint 3.3 is being delivered as additive, independently verified slices; automated recommendations never replace human publishing authority.
