@@ -99,16 +99,39 @@ export async function createManagedSource(form: FormData) {
 
 export async function updateManagedSource(form: FormData) {
   await requireOperator();
-  const id = String(form.get("sourceDefinitionId") || "");
+
+  const id = String(
+    form.get("sourceDefinitionId") || "",
+  );
+
   try {
-    await updateSourceDefinition(await getRepository(), id, sourceInput(form));
+    await updateSourceDefinition(
+      await getRepository(),
+      id,
+      sourceInput(form),
+    );
+
     revalidatePath("/operator/sources");
     revalidatePath(`/operator/sources/${id}`);
-    redirect(`/operator/sources/${id}?result=updated`);
   } catch (error) {
-    const code = error instanceof SourceManagementError ? error.statusCode : 503;
-    redirect(`/operator/sources/${id}?error=${code}`);
+    console.error(
+      "Failed to update managed source:",
+      error,
+    );
+
+    const code =
+      error instanceof SourceManagementError
+        ? error.statusCode
+        : 503;
+
+    redirect(
+      `/operator/sources/${id}?error=${code}`,
+    );
   }
+
+  redirect(
+    `/operator/sources/${id}?result=updated`,
+  );
 }
 
 export async function changeManagedSourceStatus(form: FormData) {
