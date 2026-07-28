@@ -89,7 +89,23 @@ export async function collectLiveIntelligenceItems(repository: RadarRepository, 
     logs.push(logEntry(logs.length, timestamp, "info", `Collecting from ${source.displayName}...`));
     try {
       const run = await discover(repository, "manual", source.id);
-      const sourceCandidates = (await repository.listRssCandidates(source.id, CANDIDATE_LIMIT)).filter((candidate) => candidate.discoveryRunId === run.id && inPeriod(candidate, request.period));
+      const storedCandidates = await repository.listRssCandidates(
+        source.id,
+        CANDIDATE_LIMIT,
+      );
+
+      const currentRunCandidates = storedCandidates.filter(
+        (candidate) =>
+          candidate.discoveryRunId === run.id
+          && inPeriod(candidate, request.period),
+      );
+
+      const sourceCandidates =
+        currentRunCandidates.length > 0
+          ? currentRunCandidates
+          : storedCandidates.filter((candidate) =>
+              inPeriod(candidate, request.period),
+            );
       if (hasUsableResults(run, sourceCandidates)) successfulSources += 1;
       if (run.feedsFailed > 0) failedSources += 1;
       for (const candidate of sourceCandidates) {
