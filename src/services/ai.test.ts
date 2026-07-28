@@ -9,6 +9,7 @@ import {
   GEMINI_SCHEMA_VERSION,
   GEMINI_THINKING_BUDGET,
   PROMPT_VERSION,
+  normalizeLiveAnalysisOutput,
   parseGeminiJson,
   parseGeminiResponse,
   VertexAiAnalyzer,
@@ -16,6 +17,10 @@ import {
 import { AnalysisResultSchema, GeminiAnalysisOutputSchema } from "@/domain/schemas";
 import { geminiAnalysisFixture, sourceFixture } from "@/test/fixtures";
 import { AnalysisFailure } from "./failure-recovery";
+import {
+  LIVE_ANALYSIS_MAX_OUTPUT_TOKENS,
+  LIVE_ANALYSIS_RESPONSE_JSON_SCHEMA,
+} from "./live-analysis-contract";
 
 const { clientConstructor, generateContent } = vi.hoisted(() => ({
   clientConstructor: vi.fn(),
@@ -254,6 +259,127 @@ describe("Gemini response parsing", () => {
       finishReason: "STOP",
     });
     expect(JSON.stringify(logged)).not.toMatch(/unsafe|article text|not logged/i);
+  });
+  it("retries truncated live analysis with a compact structured-output request", async () => {
+    process.env.GOOGLE_CLOUD_PROJECT = "test-project";
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const liveOutput = {
+      summary: "A concise factual summary based only on supplied source material.",
+      category: "model_release",
+      relevanceScore: 80,
+      impactScore: 75,
+      confidenceScore: 70,
+      keyClaims: [{ claim: "The source announces a model.", evidenceRefs: ["source-content"] }],
+      impactRationale: "The announced model may affect practical AI development.",
+      confidenceRationale: "The conclusion is bounded to the supplied source.",
+      limitations: ["Independent verification remains necessary."],
+      requiresHumanReview: true,
+    };
+    generateContent
+      .mockResolvedValueOnce({
+        text: "{\"summary\":\"partial",
+        candidates: [{ finishReason: "MAX_TOKENS" }],
+      })
+      .mockResolvedValueOnce({
+        text: JSON.stringify(liveOutput),
+        candidates: [{ finishReason: "STOP" }],
+      });
+
+    const result = await new VertexAiAnalyzer().analyzeLive({
+      intelligenceItemId: "item-1",
+      sourceDefinitionId: "source-1",
+      sourceName: "Official source",
+      sourceTrustLevel: "official",
+      articleUrl: "https://example.com/article",
+      articleTitle: "Model announcement",
+      publicationDate: "2026-07-28",
+      content: "The source announces a model with practical developer capabilities.",
+      evidenceIdentifiers: ["source-content"],
+    });
+
+    expect(result.result).toEqual(liveOutput);
+    expect(generateContent).toHaveBeenCalledTimes(2);
+    expect(String(generateContent.mock.calls[1][0].contents)).toContain("TRUNCATION RECOVERY");
+    expect(String(generateContent.mock.calls[1][0].contents)).toContain("new complete object, not a continuation or patch");
+    expect(generateContent.mock.calls[1][0].config).toMatchObject({
+      responseMimeType: "application/json",
+      responseJsonSchema: LIVE_ANALYSIS_RESPONSE_JSON_SCHEMA,
+      maxOutputTokens: LIVE_ANALYSIS_MAX_OUTPUT_TOKENS,
+      thinkingConfig: { thinkingBudget: 0, includeThoughts: false },
+    });
+  });
+  it("never parses or returns a live response truncated after the compact retry", async () => {
+    process.env.GOOGLE_CLOUD_PROJECT = "test-project";
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    generateContent.mockResolvedValue({
+      text: "{\"summary\":\"partial",
+      candidates: [{ finishReason: "MAX_TOKENS" }],
+    });
+
+    await expect(new VertexAiAnalyzer().analyzeLive({
+      intelligenceItemId: "item-1",
+      sourceName: "Official source",
+      sourceTrustLevel: "official",
+      articleUrl: "https://example.com/article",
+      articleTitle: "Model announcement",
+      publicationDate: "2026-07-28",
+      content: "The source announces a model.",
+      evidenceIdentifiers: ["source-content"],
+    })).rejects.toThrow("truncated live analysis after compact retry");
+    expect(generateContent).toHaveBeenCalledTimes(2);
+  });
+  it("normalizes every bounded live-analysis string before preserving Zod validation", async () => {
+    process.env.GOOGLE_CLOUD_PROJECT = "test-project";
+    const oversized = {
+      summary: `  ${"S".repeat(900)}  `,
+      category: `  ${"C".repeat(100)}  `,
+      relevanceScore: 80,
+      impactScore: 75,
+      confidenceScore: 70,
+      keyClaims: [{
+        claim: `  ${"K".repeat(600)}  `,
+        evidenceRefs: [`  ${"E".repeat(100)}  `],
+      }],
+      impactRationale: `  ${"I".repeat(900)}  `,
+      confidenceRationale: `  ${"R".repeat(900)}  `,
+      limitations: [`  ${"L".repeat(400)}  `],
+      requiresHumanReview: true,
+    };
+    generateContent.mockResolvedValue({
+      text: JSON.stringify(oversized),
+      candidates: [{ finishReason: "STOP" }],
+    });
+
+    const result = await new VertexAiAnalyzer().analyzeLive({
+      intelligenceItemId: "item-1",
+      sourceName: "Official source",
+      sourceTrustLevel: "official",
+      articleUrl: "https://example.com/article",
+      articleTitle: "Model announcement",
+      publicationDate: "2026-07-28",
+      content: "The source announces a model.",
+      evidenceIdentifiers: ["source-content"],
+    });
+
+    expect(result.result.summary).toBe("S".repeat(800));
+    expect(result.result.category).toBe("C".repeat(80));
+    expect(result.result.keyClaims[0].claim).toBe("K".repeat(500));
+    expect(result.result.keyClaims[0].evidenceRefs).toEqual(["E".repeat(80)]);
+    expect(result.result.impactRationale).toBe("I".repeat(800));
+    expect(result.result.confidenceRationale).toBe("R".repeat(800));
+    expect(result.result.limitations).toEqual(["L".repeat(300)]);
+  });
+  it("normalization preserves arrays, objects, wrong types, and unknown fields for Zod to reject", () => {
+    const input = {
+      summary: 123,
+      keyClaims: [{ claim: "valid", evidenceRefs: ["known"], unknown: "preserved" }],
+      limitations: "not-an-array",
+      unknown: { nested: ["unchanged"] },
+    };
+    const normalized = normalizeLiveAnalysisOutput(input);
+
+    expect(normalized).toMatchObject(input);
+    expect(normalized).not.toBe(input);
   });
   it("preserves legacy production parsing when recovery is disabled", async () => {
     process.env.GOOGLE_CLOUD_PROJECT = "test-project";
