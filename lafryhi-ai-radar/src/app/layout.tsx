@@ -16,6 +16,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Link href="/business-profile">My Business Profile</Link>
         <Link href="/decisions">My Decision Briefs</Link>
         <Link href="/impact">My Impact</Link>
+        <Link href="/pricing">Pricing</Link>
+        <Link href="/billing">Billing</Link>
         <Link href="/#decision-center">Decision Center</Link>
         <Link href="/#trusted-signals">Signals</Link>
         <Link href="/#decision-briefs">Decision Briefs</Link>

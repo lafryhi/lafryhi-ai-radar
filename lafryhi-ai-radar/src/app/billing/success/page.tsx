@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function BillingSuccessPage() { return <section className="public-shell narrow-shell"><p className="eyebrow">Checkout completed</p><h1>Payment confirmation is processing.</h1><p>Paddle may need a short time to deliver the verified webhook. Pro access is never granted from this page alone.</p><div className="hero-actions"><Link className="button-link" href="/billing">Check Subscription Status</Link><Link className="button-link secondary" href="/decisions">Return to Decision Briefs</Link></div></section>; }

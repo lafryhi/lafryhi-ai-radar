@@ -12,6 +12,7 @@ export function OperatorNav() {
       <Link href="/operator/sources">Trusted Sources</Link>
       <Link href="/operator/runs">Intelligence Runs</Link>
       <Link href="/operator/analytics">Product Analytics</Link>
+      <Link href="/operator/revenue">Revenue</Link>
     </nav>
     <form action={logout}><button className="secondary">Sign out</button></form>
   </aside>;

@@ -3,6 +3,7 @@ import { ProcessingRunSchema, RadarItemSchema, ReviewDecisionSchema, RssCandidat
 import type { RadarRepository } from "./repository";
 import { BusinessProfileSchema, StoredDecisionBriefSchema, type BusinessProfile, type StoredDecisionBrief } from "@/domain/public-mvp";
 import { DecisionActionSchema, DecisionFeedbackSchema, type DecisionAction, type DecisionFeedback } from "@/domain/decision-progress";
+import { BillingCustomerSchema, BillingWebhookEventSchema, CommercialEventSchema, EntitlementSchema, SubscriptionSchema, UsageCounterSchema, type BillingCustomer, type BillingWebhookEvent, type CommercialEvent, type Entitlement, type Subscription, type UsageCounter } from "@/domain/billing";
 
 export class FirestoreRepository implements RadarRepository {
   private db = new Firestore({ databaseId: process.env.FIRESTORE_DATABASE_ID || "(default)" });
@@ -60,6 +61,24 @@ export class FirestoreRepository implements RadarRepository {
   async findDecisionActionByBrief(decisionBriefId: string) { const s = await this.col("decisionActions").where("decisionBriefId", "==", decisionBriefId).limit(1).get(); return s.empty ? null : DecisionActionSchema.parse(s.docs[0].data()); }
   async listDecisionActionsByOwner(ownerId: string, limit = 100) { const s = await this.col("decisionActions").where("ownerId", "==", ownerId).limit(limit).get(); return s.docs.map((d) => DecisionActionSchema.parse(d.data())).sort((a,b) => b.updatedAt.localeCompare(a.updatedAt)); }
   async listAllDecisionActions(limit = 10_000) { const s = await this.col("decisionActions").limit(limit).get(); return s.docs.map((d) => DecisionActionSchema.parse(d.data())); }
+  async saveBillingCustomer(v: BillingCustomer) { const x = BillingCustomerSchema.parse(v); await this.col("billingCustomers").doc(x.id).set(x); }
+  async getBillingCustomer(id: string) { const d = await this.col("billingCustomers").doc(id).get(); return d.exists ? BillingCustomerSchema.parse(d.data()) : null; }
+  async findBillingCustomerByOwner(ownerId: string) { const s = await this.col("billingCustomers").where("ownerId","==",ownerId).limit(1).get(); return s.empty ? null : BillingCustomerSchema.parse(s.docs[0].data()); }
+  async listAllBillingCustomers(limit = 10_000) { return (await this.col("billingCustomers").limit(limit).get()).docs.map((d)=>BillingCustomerSchema.parse(d.data())); }
+  async saveSubscription(v: Subscription) { const x = SubscriptionSchema.parse(v); await this.col("subscriptions").doc(x.id).set(x); }
+  async getSubscriptionByPaddleId(id: string) { const s = await this.col("subscriptions").where("paddleSubscriptionId","==",id).limit(1).get(); return s.empty ? null : SubscriptionSchema.parse(s.docs[0].data()); }
+  async findSubscriptionByOwner(ownerId: string) { const s = await this.col("subscriptions").where("ownerId","==",ownerId).limit(20).get(); return s.docs.map((d)=>SubscriptionSchema.parse(d.data())).sort((a,b)=>b.providerUpdatedAt.localeCompare(a.providerUpdatedAt))[0] ?? null; }
+  async listAllSubscriptions(limit = 10_000) { return (await this.col("subscriptions").limit(limit).get()).docs.map((d)=>SubscriptionSchema.parse(d.data())); }
+  async saveEntitlement(v: Entitlement) { const x = EntitlementSchema.parse(v); await this.col("entitlements").doc(x.ownerId).set(x); }
+  async getEntitlement(ownerId: string) { const d = await this.col("entitlements").doc(ownerId).get(); return d.exists ? EntitlementSchema.parse(d.data()) : null; }
+  async saveUsageCounter(v: UsageCounter) { const x = UsageCounterSchema.parse(v); await this.col("usageCounters").doc(x.id).set(x); }
+  async getUsageCounter(ownerId: string, periodKey: string) { const d = await this.col("usageCounters").doc(`${ownerId}_${periodKey}`).get(); return d.exists ? UsageCounterSchema.parse(d.data()) : null; }
+  async listAllUsageCounters(limit = 10_000) { return (await this.col("usageCounters").limit(limit).get()).docs.map((d)=>UsageCounterSchema.parse(d.data())); }
+  async saveBillingWebhookEvent(v: BillingWebhookEvent) { const x = BillingWebhookEventSchema.parse(v); await this.col("billingWebhookEvents").doc(x.id).set(x); }
+  async getBillingWebhookEvent(id: string) { const d = await this.col("billingWebhookEvents").doc(id).get(); return d.exists ? BillingWebhookEventSchema.parse(d.data()) : null; }
+  async listAllBillingWebhookEvents(limit = 10_000) { return (await this.col("billingWebhookEvents").limit(limit).get()).docs.map((d)=>BillingWebhookEventSchema.parse(d.data())); }
+  async saveCommercialEvent(v: CommercialEvent) { const x = CommercialEventSchema.parse(v); await this.col("commercialEvents").doc(x.id).set(x); }
+  async listAllCommercialEvents(limit = 10_000) { return (await this.col("commercialEvents").limit(limit).get()).docs.map((d)=>CommercialEventSchema.parse(d.data())); }
   async getOperatorCounts() {
     const [pending, needsChanges, approved, rejected, published, failed, completed, sources] = await Promise.all([
       this.col("reviewDecisions").where("status", "==", "pending").count().get(),

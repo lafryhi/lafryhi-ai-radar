@@ -7,7 +7,7 @@ import { saveBusinessProfileAction, type PublicActionState } from "@/app/public-
 
 const initialState: PublicActionState = { status: "idle", message: "" };
 
-export function BusinessProfileForm({ profile }: { profile: BusinessProfile | null }) {
+export function BusinessProfileForm({ profile, createNew = false }: { profile: BusinessProfile | null; createNew?: boolean }) {
   const [state, action, pending] = useActionState(saveBusinessProfileAction, initialState);
   return <form action={action} className="public-form" onSubmit={(event) => {
     const goals = [...event.currentTarget.querySelectorAll<HTMLInputElement>('input[name="businessGoals"]')];
@@ -20,6 +20,8 @@ export function BusinessProfileForm({ profile }: { profile: BusinessProfile | nu
       first?.setCustomValidity("");
     }
   }}>
+    {profile && <input type="hidden" name="profileId" value={profile.id} />}
+    {createNew && <input type="hidden" name="createNew" value="true" />}
     <div className="field-grid">
       <label>Business Name<input name="businessName" required minLength={2} maxLength={160} defaultValue={profile?.businessName} autoComplete="organization" /></label>
       <label>Industry<input name="industry" required maxLength={160} defaultValue={profile?.industry} placeholder="e.g. Education technology" /></label>
@@ -41,6 +43,6 @@ export function BusinessProfileForm({ profile }: { profile: BusinessProfile | nu
     </fieldset>
     <button className="button-link" type="submit" disabled={pending}>{pending ? "Saving Profile…" : "Save Business Profile"}</button>
     <div className={`form-status ${state.status}`} role="status" aria-live="polite">{state.message}</div>
-    {state.status === "success" && <Link className="text-link" href="/decisions/new">Choose a Trusted Signal →</Link>}
+    {state.status === "success" && <Link className="text-link" href={`/decisions/new?profileId=${encodeURIComponent(state.resourceId ?? profile?.id ?? "")}`}>Choose a Trusted Signal →</Link>}
   </form>;
 }

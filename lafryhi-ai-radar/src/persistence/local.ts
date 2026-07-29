@@ -5,6 +5,7 @@ import { ProcessingRunSchema, RadarItemSchema, ReviewDecisionSchema, RssCandidat
 import { MemoryRepository } from "./memory";
 import { BusinessProfileSchema, StoredDecisionBriefSchema } from "@/domain/public-mvp";
 import { DecisionActionSchema, DecisionFeedbackSchema } from "@/domain/decision-progress";
+import { BillingCustomerSchema, BillingWebhookEventSchema, CommercialEventSchema, EntitlementSchema, SubscriptionSchema, UsageCounterSchema } from "@/domain/billing";
 
 const LocalDataSchema = z.object({
   sourceDefinitions: z.array(SourceDefinitionSchema).default([]),
@@ -19,6 +20,12 @@ const LocalDataSchema = z.object({
   decisionBriefs: z.array(StoredDecisionBriefSchema).default([]),
   decisionFeedback: z.array(DecisionFeedbackSchema).default([]),
   decisionActions: z.array(DecisionActionSchema).default([]),
+  billingCustomers: z.array(BillingCustomerSchema).default([]),
+  subscriptions: z.array(SubscriptionSchema).default([]),
+  entitlements: z.array(EntitlementSchema).default([]),
+  usageCounters: z.array(UsageCounterSchema).default([]),
+  billingWebhookEvents: z.array(BillingWebhookEventSchema).default([]),
+  commercialEvents: z.array(CommercialEventSchema).default([]),
 });
 
 export class LocalFileRepository extends MemoryRepository {
@@ -41,6 +48,12 @@ export class LocalFileRepository extends MemoryRepository {
       data.decisionBriefs.forEach((x) => this.decisionBriefs.set(x.id, x));
       data.decisionFeedback.forEach((x) => this.decisionFeedback.set(x.id, x));
       data.decisionActions.forEach((x) => this.decisionActions.set(x.id, x));
+      data.billingCustomers.forEach((x) => this.billingCustomers.set(x.id, x));
+      data.subscriptions.forEach((x) => this.subscriptions.set(x.id, x));
+      data.entitlements.forEach((x) => this.entitlements.set(x.ownerId, x));
+      data.usageCounters.forEach((x) => this.usageCounters.set(x.id, x));
+      data.billingWebhookEvents.forEach((x) => this.billingWebhookEvents.set(x.id, x));
+      data.commercialEvents.forEach((x) => this.commercialEvents.set(x.id, x));
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
     }
@@ -61,6 +74,12 @@ export class LocalFileRepository extends MemoryRepository {
       decisionBriefs: [...this.decisionBriefs.values()],
       decisionFeedback: [...this.decisionFeedback.values()],
       decisionActions: [...this.decisionActions.values()],
+      billingCustomers: [...this.billingCustomers.values()],
+      subscriptions: [...this.subscriptions.values()],
+      entitlements: [...this.entitlements.values()],
+      usageCounters: [...this.usageCounters.values()],
+      billingWebhookEvents: [...this.billingWebhookEvents.values()],
+      commercialEvents: [...this.commercialEvents.values()],
     }, null, 2));
     await rename(temp, this.path);
   }
@@ -112,5 +131,23 @@ export class LocalFileRepository extends MemoryRepository {
   override async findDecisionActionByBrief(decisionBriefId: string) { await this.load(); return super.findDecisionActionByBrief(decisionBriefId); }
   override async listDecisionActionsByOwner(ownerId: string, limit?: number) { await this.load(); return super.listDecisionActionsByOwner(ownerId, limit); }
   override async listAllDecisionActions(limit?: number) { await this.load(); return super.listAllDecisionActions(limit); }
+  override async saveBillingCustomer(v: Parameters<MemoryRepository["saveBillingCustomer"]>[0]) { await this.load(); await super.saveBillingCustomer(v); await this.flush(); }
+  override async getBillingCustomer(id: string) { await this.load(); return super.getBillingCustomer(id); }
+  override async findBillingCustomerByOwner(ownerId: string) { await this.load(); return super.findBillingCustomerByOwner(ownerId); }
+  override async listAllBillingCustomers(limit?: number) { await this.load(); return super.listAllBillingCustomers(limit); }
+  override async saveSubscription(v: Parameters<MemoryRepository["saveSubscription"]>[0]) { await this.load(); await super.saveSubscription(v); await this.flush(); }
+  override async getSubscriptionByPaddleId(id: string) { await this.load(); return super.getSubscriptionByPaddleId(id); }
+  override async findSubscriptionByOwner(ownerId: string) { await this.load(); return super.findSubscriptionByOwner(ownerId); }
+  override async listAllSubscriptions(limit?: number) { await this.load(); return super.listAllSubscriptions(limit); }
+  override async saveEntitlement(v: Parameters<MemoryRepository["saveEntitlement"]>[0]) { await this.load(); await super.saveEntitlement(v); await this.flush(); }
+  override async getEntitlement(ownerId: string) { await this.load(); return super.getEntitlement(ownerId); }
+  override async saveUsageCounter(v: Parameters<MemoryRepository["saveUsageCounter"]>[0]) { await this.load(); await super.saveUsageCounter(v); await this.flush(); }
+  override async getUsageCounter(ownerId: string, periodKey: string) { await this.load(); return super.getUsageCounter(ownerId, periodKey); }
+  override async listAllUsageCounters(limit?: number) { await this.load(); return super.listAllUsageCounters(limit); }
+  override async saveBillingWebhookEvent(v: Parameters<MemoryRepository["saveBillingWebhookEvent"]>[0]) { await this.load(); await super.saveBillingWebhookEvent(v); await this.flush(); }
+  override async getBillingWebhookEvent(id: string) { await this.load(); return super.getBillingWebhookEvent(id); }
+  override async listAllBillingWebhookEvents(limit?: number) { await this.load(); return super.listAllBillingWebhookEvents(limit); }
+  override async saveCommercialEvent(v: Parameters<MemoryRepository["saveCommercialEvent"]>[0]) { await this.load(); await super.saveCommercialEvent(v); await this.flush(); }
+  override async listAllCommercialEvents(limit?: number) { await this.load(); return super.listAllCommercialEvents(limit); }
   override async getOperatorCounts() { await this.load(); return super.getOperatorCounts(); }
 }

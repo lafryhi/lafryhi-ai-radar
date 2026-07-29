@@ -12,6 +12,7 @@ import { BusinessContextSchema, type BusinessContext, type DecisionEngineResult 
 import type { SourceRecord } from "@/domain/schemas";
 import type { RadarRepository } from "@/persistence/repository";
 import { z } from "zod";
+import { assertBusinessProfileCapacity, assertDecisionCapacity, countSuccessfulDecision } from "./billing";
 
 export class PublicMvpError extends Error {
   constructor(message: string, readonly code: "INVALID_INPUT" | "NOT_FOUND" | "FORBIDDEN" | "NOT_PUBLISHABLE") {
@@ -42,10 +43,15 @@ export async function saveBusinessProfile(
   ownerId: string,
   input: unknown,
   now = new Date().toISOString(),
+  options: { profileId?: string; createNew?: boolean } = {},
 ): Promise<BusinessProfile> {
   const parsed = BusinessProfileInputSchema.safeParse(businessProfilePayload(input));
   if (!parsed.success) throw new PublicMvpError(parsed.error.issues[0]?.message ?? "Invalid Business Profile.", "INVALID_INPUT");
-  const existing = await repository.findBusinessProfileByOwner(ownerId);
+  const requested = options.profileId ? await repository.getBusinessProfile(options.profileId) : null;
+  if (requested && requested.ownerId !== ownerId) throw new PublicMvpError("Business Profile not found.", "NOT_FOUND");
+  if (options.profileId && !requested) throw new PublicMvpError("Business Profile not found.", "NOT_FOUND");
+  const existing = requested ?? (options.createNew ? null : await repository.findBusinessProfileByOwner(ownerId));
+  await assertBusinessProfileCapacity(repository, ownerId, existing?.id);
   const profile = BusinessProfileSchema.parse({
     ...parsed.data,
     id: existing?.id ?? crypto.randomUUID(),
@@ -109,6 +115,7 @@ export async function generateOwnedDecisionBrief(
       throw new PublicMvpError("Generation request conflicts with an existing Decision Brief.", "INVALID_INPUT");
     }
   }
+  await assertDecisionCapacity(repository, ownerId, new Date(now));
 
   const businessContext = BusinessContextSchema.parse({
     industry: profile.industry,
@@ -143,6 +150,7 @@ export async function generateOwnedDecisionBrief(
     schemaVersion: 1,
   });
   await repository.saveDecisionBrief(stored);
+  await countSuccessfulDecision(repository, ownerId, new Date(now));
   return stored;
 }
 

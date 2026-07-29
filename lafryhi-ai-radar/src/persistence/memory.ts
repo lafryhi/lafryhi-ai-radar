@@ -2,6 +2,7 @@ import { ProcessingRunSchema, RadarItemSchema, ReviewDecisionSchema, RssCandidat
 import type { RadarRepository } from "./repository";
 import { BusinessProfileSchema, StoredDecisionBriefSchema, type BusinessProfile, type StoredDecisionBrief } from "@/domain/public-mvp";
 import { DecisionActionSchema, DecisionFeedbackSchema, type DecisionAction, type DecisionFeedback } from "@/domain/decision-progress";
+import { BillingCustomerSchema, BillingWebhookEventSchema, CommercialEventSchema, EntitlementSchema, SubscriptionSchema, UsageCounterSchema, type BillingCustomer, type BillingWebhookEvent, type CommercialEvent, type Entitlement, type Subscription, type UsageCounter } from "@/domain/billing";
 
 export class MemoryRepository implements RadarRepository {
   protected sourceDefinitions = new Map<string, SourceDefinition>();
@@ -16,6 +17,12 @@ export class MemoryRepository implements RadarRepository {
   protected decisionBriefs = new Map<string, StoredDecisionBrief>();
   protected decisionFeedback = new Map<string, DecisionFeedback>();
   protected decisionActions = new Map<string, DecisionAction>();
+  protected billingCustomers = new Map<string, BillingCustomer>();
+  protected subscriptions = new Map<string, Subscription>();
+  protected entitlements = new Map<string, Entitlement>();
+  protected usageCounters = new Map<string, UsageCounter>();
+  protected billingWebhookEvents = new Map<string, BillingWebhookEvent>();
+  protected commercialEvents = new Map<string, CommercialEvent>();
 
   async getSourceDefinition(id: string) { return this.sourceDefinitions.get(id) ?? null; }
   async findSourceDefinitionByDomain(domain: string) { return [...this.sourceDefinitions.values()].find((x) => x.canonicalDomain === domain || domain.endsWith(`.${x.canonicalDomain}`)) ?? null; }
@@ -64,6 +71,24 @@ export class MemoryRepository implements RadarRepository {
   async findDecisionActionByBrief(decisionBriefId: string) { return [...this.decisionActions.values()].find((x) => x.decisionBriefId === decisionBriefId) ?? null; }
   async listDecisionActionsByOwner(ownerId: string, limit = 100) { return [...this.decisionActions.values()].filter((x) => x.ownerId === ownerId).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, limit); }
   async listAllDecisionActions(limit = 10_000) { return [...this.decisionActions.values()].slice(0, limit); }
+  async saveBillingCustomer(value: BillingCustomer) { const x = BillingCustomerSchema.parse(value); this.billingCustomers.set(x.id, x); }
+  async getBillingCustomer(id: string) { return this.billingCustomers.get(id) ?? null; }
+  async findBillingCustomerByOwner(ownerId: string) { return [...this.billingCustomers.values()].find((x) => x.ownerId === ownerId) ?? null; }
+  async listAllBillingCustomers(limit = 10_000) { return [...this.billingCustomers.values()].slice(0, limit); }
+  async saveSubscription(value: Subscription) { const x = SubscriptionSchema.parse(value); this.subscriptions.set(x.id, x); }
+  async getSubscriptionByPaddleId(id: string) { return [...this.subscriptions.values()].find((x) => x.paddleSubscriptionId === id) ?? null; }
+  async findSubscriptionByOwner(ownerId: string) { return [...this.subscriptions.values()].filter((x) => x.ownerId === ownerId).sort((a,b) => b.providerUpdatedAt.localeCompare(a.providerUpdatedAt))[0] ?? null; }
+  async listAllSubscriptions(limit = 10_000) { return [...this.subscriptions.values()].slice(0, limit); }
+  async saveEntitlement(value: Entitlement) { const x = EntitlementSchema.parse(value); this.entitlements.set(x.ownerId, x); }
+  async getEntitlement(ownerId: string) { return this.entitlements.get(ownerId) ?? null; }
+  async saveUsageCounter(value: UsageCounter) { const x = UsageCounterSchema.parse(value); this.usageCounters.set(x.id, x); }
+  async getUsageCounter(ownerId: string, periodKey: string) { return [...this.usageCounters.values()].find((x) => x.ownerId === ownerId && x.periodKey === periodKey) ?? null; }
+  async listAllUsageCounters(limit = 10_000) { return [...this.usageCounters.values()].slice(0, limit); }
+  async saveBillingWebhookEvent(value: BillingWebhookEvent) { const x = BillingWebhookEventSchema.parse(value); this.billingWebhookEvents.set(x.id, x); }
+  async getBillingWebhookEvent(id: string) { return this.billingWebhookEvents.get(id) ?? null; }
+  async listAllBillingWebhookEvents(limit = 10_000) { return [...this.billingWebhookEvents.values()].slice(0, limit); }
+  async saveCommercialEvent(value: CommercialEvent) { const x = CommercialEventSchema.parse(value); this.commercialEvents.set(x.id, x); }
+  async listAllCommercialEvents(limit = 10_000) { return [...this.commercialEvents.values()].slice(0, limit); }
   async getOperatorCounts() {
     const reviews = [...this.reviews.values()];
     const runs = [...this.runs.values()];

@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function BillingCanceledPage() { return <section className="public-shell narrow-shell"><p className="eyebrow">Checkout canceled</p><h1>Your Free workspace is unchanged.</h1><p>No paid access was granted and your existing profiles, decisions, and progress remain available.</p><Link className="button-link" href="/pricing">Return to Pricing</Link></section>; }

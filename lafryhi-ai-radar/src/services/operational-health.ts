@@ -1,5 +1,5 @@
 import { Firestore } from "@google-cloud/firestore";
-import { validateProductionEnvironment } from "./runtime-config";
+import { billingConfigurationState, validateProductionEnvironment } from "./runtime-config";
 
 export function healthPayload(now = new Date(), version = process.env.K_REVISION || process.env.npm_package_version || "unknown") {
   return { status: "ok" as const, service: "lafryhi-ai-radar", version, timestamp: now.toISOString() };
@@ -24,8 +24,8 @@ export async function readinessPayload(
   try {
     validateProductionEnvironment(env);
     await dependencies.checkFirestore();
-    return { statusCode: 200, body: { status: "ready" as const, service: "lafryhi-ai-radar", checks: { configuration: "ok", firestore: "ok", vertexAi: "configured" }, timestamp: now.toISOString() } };
+    return { statusCode: 200, body: { status: "ready" as const, service: "lafryhi-ai-radar", checks: { configuration: "ok", firestore: "ok", vertexAi: "configured", billing: billingConfigurationState(env) }, timestamp: now.toISOString() } };
   } catch {
-    return { statusCode: 503, body: { status: "degraded" as const, service: "lafryhi-ai-radar", checks: { configuration: "unavailable", firestore: "unavailable", vertexAi: "unavailable" }, timestamp: now.toISOString() } };
+    return { statusCode: 503, body: { status: "degraded" as const, service: "lafryhi-ai-radar", checks: { configuration: "unavailable", firestore: "unavailable", vertexAi: "unavailable", billing: billingConfigurationState(env) }, timestamp: now.toISOString() } };
   }
 }

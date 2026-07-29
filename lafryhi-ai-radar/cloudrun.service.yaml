@@ -17,7 +17,7 @@ spec:
       containerConcurrency: 10
       timeoutSeconds: 120
       containers:
-        - image: us-central1-docker.pkg.dev/lafryhi-ai-radar-xprize/lafryhi-ai-radar/lafryhi-ai-radar:sprint6-production-final-v11
+        - image: us-central1-docker.pkg.dev/lafryhi-ai-radar-xprize/lafryhi-ai-radar/lafryhi-ai-radar:sprint7-paid-plans
           ports:
             - name: http1
               containerPort: 8080
@@ -50,6 +50,8 @@ spec:
               value: (default)
             - name: RSS_SCHEDULER_JOB_NAME
               value: lafryhi-ai-radar-rss-discovery
+            - name: BILLING_ENABLED
+              value: "false"
             - name: OPERATOR_ACCESS_TOKEN
               valueFrom:
                 secretKeyRef:

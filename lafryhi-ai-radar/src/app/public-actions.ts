@@ -6,10 +6,12 @@ import { requireAnonymousSessionId } from "@/auth/anonymous-session";
 import { getRepository } from "@/persistence";
 import { GeminiDecisionEngine } from "@/services/decision-engine";
 import { generateOwnedDecisionBrief, PublicMvpError, saveBusinessProfile } from "@/services/public-mvp";
+import { BillingError } from "@/services/billing";
 
 export interface PublicActionState {
   status: "idle" | "success" | "error";
   message: string;
+  resourceId?: string;
 }
 
 const values = (formData: FormData, name: string) =>
@@ -49,7 +51,7 @@ export async function saveBusinessProfileAction(
 ): Promise<PublicActionState> {
   try {
     const ownerId = await requireAnonymousSessionId();
-    await saveBusinessProfile(await getRepository(), ownerId, {
+    const profile = await saveBusinessProfile(await getRepository(), ownerId, {
       businessName: formData.get("businessName"),
       industry: formData.get("industry"),
       companySize: formData.get("companySize"),
@@ -59,13 +61,16 @@ export async function saveBusinessProfileAction(
       budgetRange: formData.get("budgetRange"),
       riskTolerance: formData.get("riskTolerance"),
       ownerId: formData.get("ownerId"),
+    }, undefined, {
+      profileId: String(formData.get("profileId") ?? "") || undefined,
+      createNew: formData.get("createNew") === "true",
     });
     revalidatePath("/business-profile");
-    return { status: "success", message: "Your Business Profile has been saved." };
+    return { status: "success", message: "Your Business Profile has been saved.", resourceId: profile.id };
   } catch (error) {
     return {
       status: "error",
-      message: error instanceof PublicMvpError ? error.message : "Unable to save your Business Profile.",
+      message: error instanceof PublicMvpError || error instanceof BillingError ? error.message : "Unable to save your Business Profile.",
     };
   }
 }
@@ -96,7 +101,7 @@ export async function generateDecisionBriefAction(
     }));
     return {
       status: "error",
-      message: error instanceof PublicMvpError ? error.message : "Unable to generate this Decision Brief.",
+      message: error instanceof PublicMvpError || error instanceof BillingError ? error.message : "Unable to generate this Decision Brief.",
     };
   }
   redirect(`/decisions/${briefId}`);

@@ -1,6 +1,7 @@
 import type { ProcessingRun, RadarItem, ReviewDecision, RssCandidate, RssDiscoveryRun, SourceDefinition, SourceRecord, StoredAnalysis } from "@/domain/schemas";
 import type { BusinessProfile, StoredDecisionBrief } from "@/domain/public-mvp";
 import type { DecisionAction, DecisionFeedback } from "@/domain/decision-progress";
+import type { BillingCustomer, BillingWebhookEvent, CommercialEvent, Entitlement, Subscription, UsageCounter } from "@/domain/billing";
 
 export interface OperatorCounts {
   pendingReviews: number;
@@ -60,5 +61,23 @@ export interface RadarRepository {
   findDecisionActionByBrief(decisionBriefId: string): Promise<DecisionAction | null>;
   listDecisionActionsByOwner(ownerId: string, limit?: number): Promise<DecisionAction[]>;
   listAllDecisionActions(limit?: number): Promise<DecisionAction[]>;
+  saveBillingCustomer(value: BillingCustomer): Promise<void>;
+  getBillingCustomer(id: string): Promise<BillingCustomer | null>;
+  findBillingCustomerByOwner(ownerId: string): Promise<BillingCustomer | null>;
+  listAllBillingCustomers(limit?: number): Promise<BillingCustomer[]>;
+  saveSubscription(value: Subscription): Promise<void>;
+  getSubscriptionByPaddleId(paddleSubscriptionId: string): Promise<Subscription | null>;
+  findSubscriptionByOwner(ownerId: string): Promise<Subscription | null>;
+  listAllSubscriptions(limit?: number): Promise<Subscription[]>;
+  saveEntitlement(value: Entitlement): Promise<void>;
+  getEntitlement(ownerId: string): Promise<Entitlement | null>;
+  saveUsageCounter(value: UsageCounter): Promise<void>;
+  getUsageCounter(ownerId: string, periodKey: string): Promise<UsageCounter | null>;
+  listAllUsageCounters(limit?: number): Promise<UsageCounter[]>;
+  saveBillingWebhookEvent(value: BillingWebhookEvent): Promise<void>;
+  getBillingWebhookEvent(id: string): Promise<BillingWebhookEvent | null>;
+  listAllBillingWebhookEvents(limit?: number): Promise<BillingWebhookEvent[]>;
+  saveCommercialEvent(value: CommercialEvent): Promise<void>;
+  listAllCommercialEvents(limit?: number): Promise<CommercialEvent[]>;
   getOperatorCounts(): Promise<OperatorCounts>;
 }

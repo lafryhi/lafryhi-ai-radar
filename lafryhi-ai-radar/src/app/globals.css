@@ -79,3 +79,4 @@
 .funnel strong { font-size: 2rem; }
 .funnel small { color: var(--muted); }
 @media (max-width: 720px) { .timeline li { grid-template-columns: 1fr; }.timeline small { grid-column: auto; } }
+.pricing-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2rem;margin:2rem 0}.price-card{display:flex;flex-direction:column}.price-card h2{font-size:3rem;margin:.2rem 0}.price-card h2 small{font-size:1rem;color:var(--muted)}.price-card ul{flex:1;padding-left:1.3rem}.price-card.featured{border-color:var(--green);box-shadow:0 0 0 1px var(--green)}.checkout-form{margin-top:1rem;gap:.8rem}.legal-links{display:flex;gap:1rem;justify-content:center}.billing-summary form{margin-top:1rem}.policy h1{font-size:clamp(2.5rem,6vw,4.5rem)}.policy h2{margin-top:2rem}@media(max-width:720px){.pricing-grid{grid-template-columns:1fr}}

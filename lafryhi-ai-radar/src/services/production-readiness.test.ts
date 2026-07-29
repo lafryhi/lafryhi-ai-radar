@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { anonymousSessionCookieOptions, isValidAnonymousSessionId } from "@/auth/session-policy";
 import { healthPayload, readinessPayload } from "./operational-health";
-import { resolvePersistenceAdapter, validateProductionEnvironment } from "./runtime-config";
+import { billingConfigurationState, resolvePersistenceAdapter, validateProductionEnvironment } from "./runtime-config";
 import * as operatorRssRoute from "@/app/api/internal/operator/rss/discover/route";
 import * as scheduledRssRoute from "@/app/api/internal/rss/scheduled/route";
 
@@ -37,6 +37,26 @@ describe("production environment and persistence selection", () => {
     expect(resolvePersistenceAdapter(production)).toBe("firestore");
     expect(() => resolvePersistenceAdapter({ NODE_ENV: "production" })).toThrow("Invalid production configuration");
   });
+
+  it("fails closed when enabled billing configuration is incomplete without exposing secrets", () => {
+    expect(billingConfigurationState(production)).toBe("not_configured");
+    const enabled = { ...production, BILLING_ENABLED: "true", PADDLE_API_KEY: "pdl_secret_never_print" };
+    expect(billingConfigurationState(enabled)).toBe("degraded");
+    try { validateProductionEnvironment(enabled); } catch (error) {
+      expect(String(error)).toContain("PADDLE_CLIENT_TOKEN");
+      expect(String(error)).not.toContain("pdl_secret_never_print");
+    }
+    const configured = {
+      ...enabled,
+      PADDLE_ENVIRONMENT: "sandbox",
+      PADDLE_CLIENT_TOKEN: "test_client_token",
+      PADDLE_WEBHOOK_SECRET: "pdl_webhook_secret",
+      PADDLE_PRO_PRICE_ID: "pri_01sandbox",
+      PADDLE_DEFAULT_CHECKOUT_URL: "https://example.test",
+    };
+    expect(validateProductionEnvironment(configured)).toMatchObject({ PERSISTENCE_ADAPTER: "firestore" });
+    expect(billingConfigurationState(configured)).toBe("configured");
+  });
 });
 
 describe("anonymous session production policy", () => {
@@ -55,7 +75,7 @@ describe("health and readiness", () => {
 
   it("reports ready or degraded without exposing secrets or internal errors", async () => {
     const ready = await readinessPayload({ async checkFirestore() {} }, production);
-    expect(ready).toMatchObject({ statusCode: 200, body: { status: "ready", checks: { firestore: "ok", vertexAi: "configured" } } });
+    expect(ready).toMatchObject({ statusCode: 200, body: { status: "ready", checks: { firestore: "ok", vertexAi: "configured", billing: "not_configured" } } });
     const degraded = await readinessPayload({ async checkFirestore() { throw new Error(`database failed ${production.OPERATOR_ACCESS_TOKEN}`); } }, production);
     expect(degraded.statusCode).toBe(503);
     expect(JSON.stringify(degraded)).not.toContain(production.OPERATOR_ACCESS_TOKEN);

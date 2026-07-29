@@ -208,6 +208,7 @@ describe("Public Decision Brief generation and access", () => {
     const brief = await generateOwnedDecisionBrief(repository, engine, ownerA, profile.id, "radar-published");
     expect(brief.result).toEqual(expect.objectContaining({ status: "INSUFFICIENT_EVIDENCE" }));
     expect("decisionBrief" in brief.result).toBe(false);
+    expect((await repository.getUsageCounter(ownerA, "2026-07"))?.decisionBriefCount).toBe(1);
   });
 
   it("deduplicates rapid repeated generation while allowing later intentional requests", async () => {
@@ -223,5 +224,15 @@ describe("Public Decision Brief generation and access", () => {
     expect(later.id).not.toBe(first.id);
     expect(engine.contexts).toHaveLength(2);
     expect(await repository.listDecisionBriefsByOwner(ownerA)).toHaveLength(2);
+    expect((await repository.getUsageCounter(ownerA, "2026-07"))?.decisionBriefCount).toBe(2);
+  });
+
+  it("does not consume usage when Gemini generation fails", async () => {
+    const repository = new MemoryRepository();
+    await seedPublishedSignal(repository);
+    const profile = await saveBusinessProfile(repository, ownerA, educationProfile);
+    const engine: DecisionEngineRunner = { async run() { throw new Error("provider unavailable"); } };
+    await expect(generateOwnedDecisionBrief(repository, engine, ownerA, profile.id, "radar-published", "2026-07-29T12:00:00.000Z")).rejects.toThrow("provider unavailable");
+    expect(await repository.getUsageCounter(ownerA, "2026-07")).toBeNull();
   });
 });

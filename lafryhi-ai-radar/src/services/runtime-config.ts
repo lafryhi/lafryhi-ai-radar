@@ -15,6 +15,16 @@ const ProductionConfigSchema = z.object({
   APP_BASE_URL: z.string().url().refine((value) => value.startsWith("https://"), "APP_BASE_URL must use HTTPS in production."),
 }).passthrough();
 
+const PaddleProductionSchema = z.object({
+  BILLING_ENABLED: z.literal("true"),
+  PADDLE_ENVIRONMENT: z.enum(["sandbox", "production"]),
+  PADDLE_CLIENT_TOKEN: z.string().min(8),
+  PADDLE_API_KEY: z.string().min(8),
+  PADDLE_WEBHOOK_SECRET: z.string().min(8),
+  PADDLE_PRO_PRICE_ID: z.string().startsWith("pri_"),
+  PADDLE_DEFAULT_CHECKOUT_URL: z.string().url(),
+}).passthrough();
+
 export type PersistenceAdapter = "memory" | "local" | "firestore";
 
 export function validateProductionEnvironment(env: NodeJS.ProcessEnv = process.env) {
@@ -23,7 +33,19 @@ export function validateProductionEnvironment(env: NodeJS.ProcessEnv = process.e
     const names = [...new Set(parsed.error.issues.map((issue) => String(issue.path[0] ?? "runtime configuration")))];
     throw new Error(`Invalid production configuration: ${names.join(", ")}.`);
   }
+  if (env.BILLING_ENABLED === "true") {
+    const billing = PaddleProductionSchema.safeParse(env);
+    if (!billing.success) {
+      const names = [...new Set(billing.error.issues.map((issue) => String(issue.path[0] ?? "billing configuration")))];
+      throw new Error(`Invalid production billing configuration: ${names.join(", ")}.`);
+    }
+  }
   return parsed.data;
+}
+
+export function billingConfigurationState(env: NodeJS.ProcessEnv = process.env): "configured" | "not_configured" | "degraded" {
+  if (env.BILLING_ENABLED !== "true") return "not_configured";
+  return PaddleProductionSchema.safeParse(env).success ? "configured" : "degraded";
 }
 
 export function resolvePersistenceAdapter(env: NodeJS.ProcessEnv = process.env): PersistenceAdapter {
