@@ -98,13 +98,19 @@ export class LocalFileRepository extends MemoryRepository {
   override async saveBusinessProfile(v: Parameters<MemoryRepository["saveBusinessProfile"]>[0]) { await this.load(); await super.saveBusinessProfile(v); await this.flush(); }
   override async getBusinessProfile(id: string) { await this.load(); return super.getBusinessProfile(id); }
   override async findBusinessProfileByOwner(ownerId: string) { await this.load(); return super.findBusinessProfileByOwner(ownerId); }
+  override async listBusinessProfilesByOwner(ownerId: string, limit?: number) { await this.load(); return super.listBusinessProfilesByOwner(ownerId, limit); }
+  override async listAllBusinessProfiles(limit?: number) { await this.load(); return super.listAllBusinessProfiles(limit); }
   override async saveDecisionBrief(v: Parameters<MemoryRepository["saveDecisionBrief"]>[0]) { await this.load(); await super.saveDecisionBrief(v); await this.flush(); }
   override async getDecisionBrief(id: string) { await this.load(); return super.getDecisionBrief(id); }
   override async listDecisionBriefsByOwner(ownerId: string, limit?: number) { await this.load(); return super.listDecisionBriefsByOwner(ownerId, limit); }
+  override async listAllDecisionBriefs(limit?: number) { await this.load(); return super.listAllDecisionBriefs(limit); }
   override async saveDecisionFeedback(v: Parameters<MemoryRepository["saveDecisionFeedback"]>[0]) { await this.load(); await super.saveDecisionFeedback(v); await this.flush(); }
   override async findDecisionFeedbackByBrief(decisionBriefId: string) { await this.load(); return super.findDecisionFeedbackByBrief(decisionBriefId); }
+  override async listDecisionFeedbackByOwner(ownerId: string, limit?: number) { await this.load(); return super.listDecisionFeedbackByOwner(ownerId, limit); }
+  override async listAllDecisionFeedback(limit?: number) { await this.load(); return super.listAllDecisionFeedback(limit); }
   override async saveDecisionAction(v: Parameters<MemoryRepository["saveDecisionAction"]>[0]) { await this.load(); await super.saveDecisionAction(v); await this.flush(); }
   override async findDecisionActionByBrief(decisionBriefId: string) { await this.load(); return super.findDecisionActionByBrief(decisionBriefId); }
   override async listDecisionActionsByOwner(ownerId: string, limit?: number) { await this.load(); return super.listDecisionActionsByOwner(ownerId, limit); }
+  override async listAllDecisionActions(limit?: number) { await this.load(); return super.listAllDecisionActions(limit); }
   override async getOperatorCounts() { await this.load(); return super.getOperatorCounts(); }
 }

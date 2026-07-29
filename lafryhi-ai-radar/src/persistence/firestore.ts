@@ -46,14 +46,20 @@ export class FirestoreRepository implements RadarRepository {
   async saveBusinessProfile(v: BusinessProfile) { const x = BusinessProfileSchema.parse(v); await this.col("businessProfiles").doc(x.id).set(x); }
   async getBusinessProfile(id: string) { const d = await this.col("businessProfiles").doc(id).get(); return d.exists ? BusinessProfileSchema.parse(d.data()) : null; }
   async findBusinessProfileByOwner(ownerId: string) { const s = await this.col("businessProfiles").where("ownerId", "==", ownerId).limit(1).get(); return s.empty ? null : BusinessProfileSchema.parse(s.docs[0].data()); }
+  async listBusinessProfilesByOwner(ownerId: string, limit = 100) { const s = await this.col("businessProfiles").where("ownerId", "==", ownerId).limit(limit).get(); return s.docs.map((d) => BusinessProfileSchema.parse(d.data())); }
+  async listAllBusinessProfiles(limit = 10_000) { const s = await this.col("businessProfiles").limit(limit).get(); return s.docs.map((d) => BusinessProfileSchema.parse(d.data())); }
   async saveDecisionBrief(v: StoredDecisionBrief) { const x = StoredDecisionBriefSchema.parse(v); await this.col("decisionBriefs").doc(x.id).set(x); }
   async getDecisionBrief(id: string) { const d = await this.col("decisionBriefs").doc(id).get(); return d.exists ? StoredDecisionBriefSchema.parse(d.data()) : null; }
   async listDecisionBriefsByOwner(ownerId: string, limit = 100) { const s = await this.col("decisionBriefs").where("ownerId", "==", ownerId).limit(limit).get(); return s.docs.map((d) => StoredDecisionBriefSchema.parse(d.data())).sort((a,b) => b.createdAt.localeCompare(a.createdAt)); }
+  async listAllDecisionBriefs(limit = 10_000) { const s = await this.col("decisionBriefs").limit(limit).get(); return s.docs.map((d) => StoredDecisionBriefSchema.parse(d.data())); }
   async saveDecisionFeedback(v: DecisionFeedback) { const x = DecisionFeedbackSchema.parse(v); await this.col("decisionFeedback").doc(x.id).set(x); }
   async findDecisionFeedbackByBrief(decisionBriefId: string) { const s = await this.col("decisionFeedback").where("decisionBriefId", "==", decisionBriefId).limit(1).get(); return s.empty ? null : DecisionFeedbackSchema.parse(s.docs[0].data()); }
+  async listDecisionFeedbackByOwner(ownerId: string, limit = 100) { const s = await this.col("decisionFeedback").where("ownerId", "==", ownerId).limit(limit).get(); return s.docs.map((d) => DecisionFeedbackSchema.parse(d.data())); }
+  async listAllDecisionFeedback(limit = 10_000) { const s = await this.col("decisionFeedback").limit(limit).get(); return s.docs.map((d) => DecisionFeedbackSchema.parse(d.data())); }
   async saveDecisionAction(v: DecisionAction) { const x = DecisionActionSchema.parse(v); await this.col("decisionActions").doc(x.id).set(x); }
   async findDecisionActionByBrief(decisionBriefId: string) { const s = await this.col("decisionActions").where("decisionBriefId", "==", decisionBriefId).limit(1).get(); return s.empty ? null : DecisionActionSchema.parse(s.docs[0].data()); }
   async listDecisionActionsByOwner(ownerId: string, limit = 100) { const s = await this.col("decisionActions").where("ownerId", "==", ownerId).limit(limit).get(); return s.docs.map((d) => DecisionActionSchema.parse(d.data())).sort((a,b) => b.updatedAt.localeCompare(a.updatedAt)); }
+  async listAllDecisionActions(limit = 10_000) { const s = await this.col("decisionActions").limit(limit).get(); return s.docs.map((d) => DecisionActionSchema.parse(d.data())); }
   async getOperatorCounts() {
     const [pending, needsChanges, approved, rejected, published, failed, completed, sources] = await Promise.all([
       this.col("reviewDecisions").where("status", "==", "pending").count().get(),

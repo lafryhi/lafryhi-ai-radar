@@ -11,6 +11,7 @@ export function OperatorNav() {
       <Link href="/operator/rejected">Rejected Intelligence</Link>
       <Link href="/operator/sources">Trusted Sources</Link>
       <Link href="/operator/runs">Intelligence Runs</Link>
+      <Link href="/operator/analytics">Product Analytics</Link>
     </nav>
     <form action={logout}><button className="secondary">Sign out</button></form>
   </aside>;

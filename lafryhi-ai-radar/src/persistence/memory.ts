@@ -50,14 +50,20 @@ export class MemoryRepository implements RadarRepository {
   async saveBusinessProfile(value: BusinessProfile) { const parsed = BusinessProfileSchema.parse(value); this.businessProfiles.set(parsed.id, parsed); }
   async getBusinessProfile(id: string) { return this.businessProfiles.get(id) ?? null; }
   async findBusinessProfileByOwner(ownerId: string) { return [...this.businessProfiles.values()].find((x) => x.ownerId === ownerId) ?? null; }
+  async listBusinessProfilesByOwner(ownerId: string, limit = 100) { return [...this.businessProfiles.values()].filter((x) => x.ownerId === ownerId).slice(0, limit); }
+  async listAllBusinessProfiles(limit = 10_000) { return [...this.businessProfiles.values()].slice(0, limit); }
   async saveDecisionBrief(value: StoredDecisionBrief) { const parsed = StoredDecisionBriefSchema.parse(value); this.decisionBriefs.set(parsed.id, parsed); }
   async getDecisionBrief(id: string) { return this.decisionBriefs.get(id) ?? null; }
   async listDecisionBriefsByOwner(ownerId: string, limit = 100) { return [...this.decisionBriefs.values()].filter((x) => x.ownerId === ownerId).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, limit); }
+  async listAllDecisionBriefs(limit = 10_000) { return [...this.decisionBriefs.values()].slice(0, limit); }
   async saveDecisionFeedback(value: DecisionFeedback) { const parsed = DecisionFeedbackSchema.parse(value); this.decisionFeedback.set(parsed.id, parsed); }
   async findDecisionFeedbackByBrief(decisionBriefId: string) { return [...this.decisionFeedback.values()].find((x) => x.decisionBriefId === decisionBriefId) ?? null; }
+  async listDecisionFeedbackByOwner(ownerId: string, limit = 100) { return [...this.decisionFeedback.values()].filter((x) => x.ownerId === ownerId).slice(0, limit); }
+  async listAllDecisionFeedback(limit = 10_000) { return [...this.decisionFeedback.values()].slice(0, limit); }
   async saveDecisionAction(value: DecisionAction) { const parsed = DecisionActionSchema.parse(value); this.decisionActions.set(parsed.id, parsed); }
   async findDecisionActionByBrief(decisionBriefId: string) { return [...this.decisionActions.values()].find((x) => x.decisionBriefId === decisionBriefId) ?? null; }
   async listDecisionActionsByOwner(ownerId: string, limit = 100) { return [...this.decisionActions.values()].filter((x) => x.ownerId === ownerId).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, limit); }
+  async listAllDecisionActions(limit = 10_000) { return [...this.decisionActions.values()].slice(0, limit); }
   async getOperatorCounts() {
     const reviews = [...this.reviews.values()];
     const runs = [...this.runs.values()];

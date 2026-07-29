@@ -46,13 +46,19 @@ export interface RadarRepository {
   saveBusinessProfile(value: BusinessProfile): Promise<void>;
   getBusinessProfile(id: string): Promise<BusinessProfile | null>;
   findBusinessProfileByOwner(ownerId: string): Promise<BusinessProfile | null>;
+  listBusinessProfilesByOwner(ownerId: string, limit?: number): Promise<BusinessProfile[]>;
+  listAllBusinessProfiles(limit?: number): Promise<BusinessProfile[]>;
   saveDecisionBrief(value: StoredDecisionBrief): Promise<void>;
   getDecisionBrief(id: string): Promise<StoredDecisionBrief | null>;
   listDecisionBriefsByOwner(ownerId: string, limit?: number): Promise<StoredDecisionBrief[]>;
+  listAllDecisionBriefs(limit?: number): Promise<StoredDecisionBrief[]>;
   saveDecisionFeedback(value: DecisionFeedback): Promise<void>;
   findDecisionFeedbackByBrief(decisionBriefId: string): Promise<DecisionFeedback | null>;
+  listDecisionFeedbackByOwner(ownerId: string, limit?: number): Promise<DecisionFeedback[]>;
+  listAllDecisionFeedback(limit?: number): Promise<DecisionFeedback[]>;
   saveDecisionAction(value: DecisionAction): Promise<void>;
   findDecisionActionByBrief(decisionBriefId: string): Promise<DecisionAction | null>;
   listDecisionActionsByOwner(ownerId: string, limit?: number): Promise<DecisionAction[]>;
+  listAllDecisionActions(limit?: number): Promise<DecisionAction[]>;
   getOperatorCounts(): Promise<OperatorCounts>;
 }
