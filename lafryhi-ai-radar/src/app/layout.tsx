@@ -13,12 +13,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <html lang="en"><body>
     <header className="site-header">
-      <Link href="/" className="brand"><span>LAFRYHI AI Radar</span><small>Decision Intelligence for Small Businesses</small></Link>
+      <Link href="/" className="brand" aria-label="LAFRYHI AI Radar home"><Image src="/lafryhi-ai-radar-logo.png" alt="LAFRYHI AI Radar" width={96} height={85} priority /></Link>
       <PublicNavigation />
     </header>
     <main>{children}</main>
     <footer className="site-footer">
-      <div className="footer-brand"><strong>LAFRYHI AI Radar</strong><p>Decision intelligence built for small businesses.</p></div>
+      <div className="footer-brand"><Image className="footer-logo" src="/lafryhi-ai-radar-logo.png" alt="LAFRYHI AI Radar" width={110} height={97} /><p>Decision intelligence built for small businesses.</p></div>
       <nav className="footer-links" aria-label="Footer navigation">
         <div><strong>Product</strong><Link href="/#how-it-works">How it works</Link><Link href="/pricing">Pricing</Link><Link href="/get-started">Start Free</Link></div>
         <div><strong>Company</strong><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/refund-policy">Refund Policy</Link></div>
