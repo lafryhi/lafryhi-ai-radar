@@ -1,0 +1,9 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-t", "${_IMAGE}", "."]
+images:
+  - "${_IMAGE}"
+substitutions:
+  _IMAGE: "us-central1-docker.pkg.dev/${PROJECT_ID}/lafryhi-ai-radar/lafryhi-ai-radar:${SHORT_SHA}"
+options:
+  logging: CLOUD_LOGGING_ONLY

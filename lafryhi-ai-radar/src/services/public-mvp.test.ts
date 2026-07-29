@@ -209,4 +209,19 @@ describe("Public Decision Brief generation and access", () => {
     expect(brief.result).toEqual(expect.objectContaining({ status: "INSUFFICIENT_EVIDENCE" }));
     expect("decisionBrief" in brief.result).toBe(false);
   });
+
+  it("deduplicates rapid repeated generation while allowing later intentional requests", async () => {
+    const repository = new MemoryRepository();
+    await seedPublishedSignal(repository);
+    const profile = await saveBusinessProfile(repository, ownerA, educationProfile);
+    const engine = new ContextAwareEngine();
+    const requestId = "44444444-4444-4444-8444-444444444444";
+    const first = await generateOwnedDecisionBrief(repository, engine, ownerA, profile.id, "radar-published", "2026-07-29T12:00:00.000Z", requestId);
+    const repeated = await generateOwnedDecisionBrief(repository, engine, ownerA, profile.id, "radar-published", "2026-07-29T12:00:01.000Z", requestId);
+    const later = await generateOwnedDecisionBrief(repository, engine, ownerA, profile.id, "radar-published", "2026-07-29T13:00:00.000Z", "55555555-5555-4555-8555-555555555555");
+    expect(repeated.id).toBe(first.id);
+    expect(later.id).not.toBe(first.id);
+    expect(engine.contexts).toHaveLength(2);
+    expect(await repository.listDecisionBriefsByOwner(ownerA)).toHaveLength(2);
+  });
 });

@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   buildDecisionIntelligencePrompt,
   calculateDecisionScore,
+  DECISION_INTELLIGENCE_JSON_SCHEMA,
   parseDecisionIntelligence,
   parseSignalIntelligence,
+  SIGNAL_INTELLIGENCE_JSON_SCHEMA,
 } from "./decision-engine";
 import type { BusinessContext, ReadySignalIntelligence } from "@/domain/decision-intelligence";
 
@@ -59,6 +61,19 @@ const readyDecision = {
 };
 
 describe("Gemini Decision Intelligence Engine", () => {
+  it("uses Vertex-compatible response schemas while retaining strict runtime parsing", () => {
+    const forbidden = new Set(["$schema", "format", "maxItems", "maxLength", "maximum", "minItems", "minLength", "minimum", "pattern"]);
+    const keys = (value: unknown): string[] =>
+      !value || typeof value !== "object"
+        ? []
+        : Object.entries(value).flatMap(([key, child]) => [key, ...keys(child)]);
+    expect(keys(SIGNAL_INTELLIGENCE_JSON_SCHEMA).filter((key) => forbidden.has(key))).toEqual([]);
+    expect(keys(DECISION_INTELLIGENCE_JSON_SCHEMA).filter((key) => forbidden.has(key))).toEqual([]);
+    expect(JSON.stringify(DECISION_INTELLIGENCE_JSON_SCHEMA)).toContain('"description":{');
+    expect(() => parseDecisionIntelligence(JSON.stringify({ ...readyDecision, confidence: 101 }), signal))
+      .toThrow("schema validation");
+  });
+
   it("accepts exact source evidence and rejects fabricated quotations", () => {
     const source = "The announcement says Gemini API is now available for developers.";
     expect(parseSignalIntelligence(JSON.stringify(signal), source).status).toBe("READY");
@@ -66,6 +81,15 @@ describe("Gemini Decision Intelligence Engine", () => {
       ...signal,
       evidence: [{ ...signal.evidence[0], quote: "a fabricated quote" }],
     }), source)).toThrow("not an exact excerpt");
+  });
+
+  it("bounds an overlong exact evidence excerpt before strict validation", () => {
+    const quote = "A".repeat(600);
+    const parsed = parseSignalIntelligence(JSON.stringify({
+      ...signal,
+      evidence: [{ ...signal.evidence[0], quote }],
+    }), quote);
+    expect(parsed.evidence[0].quote).toHaveLength(500);
   });
 
   it("rejects decision claims that cite evidence absent from Stage A", () => {

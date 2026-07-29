@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import type { PublicSignal } from "@/domain/public-mvp";
 import { generateDecisionBriefAction, type PublicActionState } from "@/app/public-actions";
 
@@ -8,8 +8,10 @@ const initialState: PublicActionState = { status: "idle", message: "" };
 
 export function SignalSelectionForm({ signals, businessProfileId }: { signals: PublicSignal[]; businessProfileId: string }) {
   const [state, action, pending] = useActionState(generateDecisionBriefAction, initialState);
+  const [generationRequestId] = useState(() => crypto.randomUUID());
   return <form action={action} className="public-form">
     <input type="hidden" name="businessProfileId" value={businessProfileId} />
+    <input type="hidden" name="generationRequestId" value={generationRequestId} />
     <fieldset className="signal-options"><legend className="sr-only">Available Trusted Signals</legend>
       {signals.map((signal) => <label className="signal-option" key={signal.id}>
         <input type="radio" name="signalId" value={signal.id} required />

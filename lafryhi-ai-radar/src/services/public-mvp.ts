@@ -11,6 +11,7 @@ import {
 import { BusinessContextSchema, type BusinessContext, type DecisionEngineResult } from "@/domain/decision-intelligence";
 import type { SourceRecord } from "@/domain/schemas";
 import type { RadarRepository } from "@/persistence/repository";
+import { z } from "zod";
 
 export class PublicMvpError extends Error {
   constructor(message: string, readonly code: "INVALID_INPUT" | "NOT_FOUND" | "FORBIDDEN" | "NOT_PUBLISHABLE") {
@@ -88,6 +89,7 @@ export async function generateOwnedDecisionBrief(
   businessProfileId: string,
   signalId: string,
   now = new Date().toISOString(),
+  idempotencyKey?: string,
 ): Promise<StoredDecisionBrief> {
   const profile = await getOwnedBusinessProfile(repository, ownerId, businessProfileId);
   if (!profile) throw new PublicMvpError("Business Profile not found.", "NOT_FOUND");
@@ -96,6 +98,17 @@ export async function generateOwnedDecisionBrief(
   if (!item || item.publicationState !== "published") throw new PublicMvpError("Trusted Signal is not available.", "NOT_PUBLISHABLE");
   const source = await repository.getSource(item.sourceRecordId);
   if (!source) throw new PublicMvpError("Verified source provenance is unavailable.", "NOT_PUBLISHABLE");
+  let decisionBriefId = crypto.randomUUID();
+  if (idempotencyKey) {
+    const parsedKey = z.string().uuid().safeParse(idempotencyKey);
+    if (!parsedKey.success) throw new PublicMvpError("Invalid generation request.", "INVALID_INPUT");
+    decisionBriefId = parsedKey.data;
+    const existing = await repository.getDecisionBrief(decisionBriefId);
+    if (existing) {
+      if (existing.ownerId === ownerId && existing.businessProfileId === profile.id && existing.signalId === signalId) return existing;
+      throw new PublicMvpError("Generation request conflicts with an existing Decision Brief.", "INVALID_INPUT");
+    }
+  }
 
   const businessContext = BusinessContextSchema.parse({
     industry: profile.industry,
@@ -118,7 +131,7 @@ export async function generateOwnedDecisionBrief(
   });
   const generated = await engine.run(source, businessContext);
   const stored = StoredDecisionBriefSchema.parse({
-    id: crypto.randomUUID(),
+    id: decisionBriefId,
     ownerId,
     businessProfileId: profile.id,
     signalId: item.id,

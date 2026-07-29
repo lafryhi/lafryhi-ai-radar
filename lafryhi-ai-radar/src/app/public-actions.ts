@@ -15,6 +15,34 @@ export interface PublicActionState {
 const values = (formData: FormData, name: string) =>
   formData.getAll(name).map(String).map((value) => value.trim()).filter(Boolean);
 
+function safeErrorDetails(error: unknown) {
+  const candidate = error && typeof error === "object"
+    ? error as { name?: unknown; status?: unknown; code?: unknown; message?: unknown }
+    : {};
+  const message = typeof candidate.message === "string" ? candidate.message : "";
+  const category =
+    message.includes("schema validation") ? "schema_validation" :
+    message.includes("malformed JSON") ? "malformed_json" :
+    message.includes("unknown evidence") ? "unknown_evidence" :
+    message.includes("exact excerpt") ? "invalid_evidence_excerpt" :
+    message.includes("INSUFFICIENT_EVIDENCE") ? "insufficient_evidence" :
+    "generation_failure";
+  return {
+    errorType: typeof candidate.name === "string" ? candidate.name : "UnknownError",
+    errorCode: typeof candidate.code === "number" || typeof candidate.code === "string"
+      ? String(candidate.code).slice(0, 32)
+      : undefined,
+    httpStatus: typeof candidate.status === "number" ? candidate.status : undefined,
+    category,
+    diagnostic: typeof candidate.status === "number"
+      ? message
+        .replace(/https?:\/\/\S+/g, "[url]")
+        .replace(/[^\x20-\x7E]/g, " ")
+        .slice(0, 500) || undefined
+      : undefined,
+  };
+}
+
 export async function saveBusinessProfileAction(
   _state: PublicActionState,
   formData: FormData,
@@ -57,9 +85,15 @@ export async function generateDecisionBriefAction(
       ownerId,
       profileId,
       signalId,
+      undefined,
+      String(formData.get("generationRequestId") ?? ""),
     );
     briefId = brief.id;
   } catch (error) {
+    console.error(JSON.stringify({
+      event: "public_decision_generation_failed",
+      ...safeErrorDetails(error),
+    }));
     return {
       status: "error",
       message: error instanceof PublicMvpError ? error.message : "Unable to generate this Decision Brief.",
