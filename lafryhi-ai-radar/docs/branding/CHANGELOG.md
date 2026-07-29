@@ -8,6 +8,20 @@ The format follows semantic versioning:
 - **Minor:** approved extension, new asset class, or meaningful guideline addition.
 - **Patch:** correction that does not change identity intent.
 
+## 1.0.2 — 2026-07-29
+
+### Corrected
+
+- Removed the unapproved placeholder domain from the official master Brand Kit.
+- Re-extracted the LinkedIn cover from the corrected master.
+- Updated the complete Brand Kit copy to match the corrected master.
+
+### Domain Policy
+
+- No custom public domain is currently approved for visual assets.
+- Marketing documentation continues to use the official Cloud Run production URL where a working link is required.
+- Fixed visual compositions omit the domain until a final public domain is formally approved.
+
 ## 1.0.1 — 2026-07-29
 
 ### Changed
