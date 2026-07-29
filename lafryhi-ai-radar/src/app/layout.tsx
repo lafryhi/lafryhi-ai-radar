@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { PublicNavigation } from "@/components/public-navigation";
 import "./globals.css";
+import "./landing.css";
 
 export const metadata: Metadata = {
   title: "LAFRYHI AI Radar | Decision Intelligence for Small Businesses",
@@ -16,8 +18,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     </header>
     <main>{children}</main>
     <footer className="site-footer">
-      <strong>Built with Google Gemini and Google Cloud.</strong>
-      <span>LAFRYHI AI Radar is an independent product and is not affiliated with or endorsed by Google.</span>
+      <div className="footer-brand"><strong>LAFRYHI AI Radar</strong><p>Decision intelligence built for small businesses.</p></div>
+      <nav className="footer-links" aria-label="Footer navigation">
+        <div><strong>Product</strong><Link href="/#how-it-works">How it works</Link><Link href="/pricing">Pricing</Link><Link href="/get-started">Start Free</Link></div>
+        <div><strong>Company</strong><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/refund-policy">Refund Policy</Link></div>
+        <div><strong>Support</strong><a href="mailto:contact@lafryhi.com">Contact</a><span className="footer-powered"><Image src="/gemini-spark.svg" alt="" width={18} height={18} /> Powered by Gemini</span></div>
+      </nav>
+      <div className="footer-bottom"><span>© {new Date().getFullYear()} LAFRYHI AI Radar.</span><span>Independent product. Not affiliated with or endorsed by Google.</span></div>
     </footer>
   </body></html>;
 }

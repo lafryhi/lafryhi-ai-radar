@@ -1,97 +1,105 @@
 import Image from "next/image";
-import { getRepository } from "@/persistence";
+import Link from "next/link";
 
-export const dynamic = "force-dynamic";
+const ArrowIcon = () => <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
+const SignalIcon = () => <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18v2M8 14v6M12 10v10M16 6v14M20 3v17" /></svg>;
+const ContextIcon = () => <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="M12 8v4l3 2" /></svg>;
+const BriefIcon = () => <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6zM9 10h6M9 14h6M9 18h4" /></svg>;
+const CheckIcon = () => <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>;
 
-export default async function Home() {
-  const items = await (await getRepository()).listPublishedItems();
-  const featured = items[0];
-
+export default function Home() {
   return <>
     <section className="hero">
       <div className="hero-copy">
         <p className="eyebrow">Decision Intelligence for Small Businesses</p>
         <h1>Transform trusted AI signals into confident business decisions.</h1>
-        <p className="lede">LAFRYHI AI Radar uses Gemini to analyze trusted AI developments and help small businesses identify opportunities, reduce risks, and decide what to do next.</p>
+        <p className="lede">LAFRYHI AI Radar continuously monitors trusted AI developments, analyzes their business impact with Gemini, and produces personalized Decision Briefs so small businesses know exactly what to do next.</p>
         <div className="hero-actions">
-          <a className="button-link" href="/get-started">Get Started</a>
-          <a className="button-link secondary" href="#how-it-works">See how it works</a>
+          <Link className="button-link button-primary" href="/get-started">Start Free <ArrowIcon /></Link>
+          <a className="button-link secondary" href="#example-brief">See Example Decision Brief</a>
         </div>
-        <div className="gemini-attribution" aria-label="Powered by Gemini">
-          <Image src="/gemini-spark.svg" alt="" width={28} height={28} />
-          <span>Powered by Gemini</span>
+        <p className="hero-reassurance"><CheckIcon /> No credit card required</p>
+      </div>
+      <div className="hero-visual" aria-label="From trusted signal to confident decision">
+        <div className="radar-orbit orbit-one" />
+        <div className="radar-orbit orbit-two" />
+        <div className="radar-core"><Image src="/gemini-spark.svg" alt="" width={44} height={44} /></div>
+        <div className="signal-chip signal-chip-one"><span>Signal verified</span><strong>Trusted evidence</strong></div>
+        <div className="signal-chip signal-chip-two"><span>Business fit</span><strong>High relevance</strong></div>
+        <div className="signal-chip signal-chip-three"><span>Next action</span><strong>Ready to test</strong></div>
+      </div>
+    </section>
+
+    <section id="example-brief" className="landing-section example-brief-section">
+      <div className="section-heading">
+        <div><p className="eyebrow">See what you receive</p><h2>A decision, not another news alert.</h2></div>
+        <p className="section-copy">A realistic preview of how one trusted AI development becomes a practical next step for your business.</p>
+      </div>
+      <article className="demo-brief">
+        <div className="demo-brief-top">
+          <div><span className="demo-label">Signal</span><h3>OpenAI introduces advanced voice capabilities for customer service workflows</h3></div>
+          <span className="demo-badge">Example brief</span>
         </div>
-      </div>
-      <div className="hero-brief" aria-label="Decision intelligence preview">
-        <p className="section-label">Decision Brief</p>
-        <span className="decision-state">Human verified</span>
-        <h2>Know what changed, why it affects your business, and what to do next.</h2>
-        <div className="brief-signal"><span>Trusted signal</span><strong>Verified source evidence</strong></div>
-        <div className="brief-signal"><span>Gemini intelligence</span><strong>Opportunity, risk, and impact</strong></div>
-        <div className="brief-signal"><span>Recommended action</span><strong>A clear, practical next step</strong></div>
-      </div>
+        <div className="demo-brief-grid">
+          <div className="demo-main">
+            <div className="demo-field"><span className="demo-label">Business Impact</span><strong className="impact-high">High</strong><p>Small service businesses can now test faster, more natural first-line responses without replacing their existing support process.</p></div>
+            <div className="demo-field recommendation"><span className="demo-label">Recommendation</span><p>Run a 2-week experiment on one repeat customer question. Compare response time, resolution rate, and customer satisfaction against your current workflow.</p></div>
+          </div>
+          <dl className="demo-metrics">
+            <div><dt>Estimated effort</dt><dd>Low</dd></div>
+            <div><dt>Potential benefit</dt><dd>High</dd></div>
+            <div><dt>Confidence</dt><dd>92%</dd></div>
+          </dl>
+        </div>
+        <div className="demo-footer">
+          <p><CheckIcon /> Evidence linked <span>•</span> Human verified <span>•</span> Personalized to your profile</p>
+          <Link className="button-link secondary" href="/get-started">View Full Decision Brief <ArrowIcon /></Link>
+        </div>
+      </article>
+      <p className="demo-disclaimer">Demonstration only. Your Decision Briefs are personalized to your business profile and the available evidence.</p>
     </section>
 
     <section id="how-it-works" className="landing-section">
-      <div className="section-heading"><div><p className="eyebrow">How it works</p><h2>From signal to decision</h2></div><p className="section-copy">A controlled intelligence pipeline turns trusted developments into evidence-backed guidance.</p></div>
-      <div className="process-grid">
-        <article className="process-card"><span>01</span><h3>Trusted Signals</h3><p>Official and verified sources are monitored through a governed source registry.</p></article>
-        <article className="process-card"><span>02</span><h3>Gemini Intelligence</h3><p>Gemini identifies business significance, opportunities, risks, confidence, and practical actions.</p></article>
-        <article className="process-card"><span>03</span><h3>Human Verification</h3><p>A human verifies the evidence and remains responsible for every published Decision Brief.</p></article>
-        <article className="process-card"><span>04</span><h3>Confident Decisions</h3><p>Small businesses receive a concise view of what matters and what to do next.</p></article>
+      <div className="centered-heading"><p className="eyebrow">How it works</p><h2>From AI change to your next move.</h2><p className="section-copy">Three simple steps turn a fast-moving field into focused business guidance.</p></div>
+      <div className="process-grid three-step">
+        <article className="process-card"><div className="step-icon"><SignalIcon /></div><span>Step 1</span><h3>Monitor trusted AI signals.</h3><p>We track credible developments so you do not have to sift through the noise.</p></article>
+        <article className="process-card"><div className="step-icon"><ContextIcon /></div><span>Step 2</span><h3>Gemini analyzes your business context.</h3><p>Each signal is evaluated against your needs, constraints, and opportunities.</p></article>
+        <article className="process-card"><div className="step-icon"><BriefIcon /></div><span>Step 3</span><h3>Receive a personalized Decision Brief.</h3><p>Get the impact, evidence, confidence, and a practical recommended action.</p></article>
       </div>
     </section>
 
-    <section id="trusted-signals" className="landing-section split-section">
-      <div><p className="eyebrow">Trusted Signals</p><h2>Start with evidence, not noise.</h2></div>
-      <div><p className="section-copy">AI developments are admitted through trusted-source governance, bounded discovery, provenance checks, and duplicate controls before Gemini Analysis begins.</p><p className="trust-note">Every Decision Brief preserves its original source, publication date, processing run, Gemini Analysis, and Human Verification record.</p></div>
-    </section>
-
-    <section id="decision-center" className="landing-section">
-      <div className="section-heading"><div><p className="eyebrow">Gemini Intelligence</p><h2>Decision Center</h2></div><p className="section-copy">Verified intelligence focused on Business Impact and action—not an endless stream of updates.</p></div>
-      <div className="stack decision-list">
-        {items.length === 0 && <div className="panel empty-state"><p className="section-label">Verification in progress</p><h3>No verified Decision Briefs yet</h3><p>The Decision Center remains evidence-first. A brief appears only after a trusted signal completes Gemini Analysis and Human Verification.</p></div>}
-        {items.map((item) => <article className="panel decision-brief" key={item.id}>
-          <div className="meta"><span>{item.category.replaceAll("_", " ")}</span><span>Verified {new Date(item.sourcePublishedAt).toLocaleDateString()}</span></div>
-          <h2>{item.publicTitle}</h2>
-          <p className="section-label">Gemini Insight</p><p>{item.publicSummary}</p>
-          <h3>Business Impact</h3><p>{item.whyItMatters}</p>
-          <h3>Recommended Action</h3><p>{item.recommendedAction}</p>
-          <div className="scores"><span>Decision Score {item.relevanceScore}/100</span><span>Confidence {item.confidenceScore}/100</span></div>
-          <p className="trace">Gemini Analysis with Human Verification · Trusted source: <a href={item.originalSourceUrl} target="_blank" rel="noopener noreferrer">{item.sourceName}</a></p>
-          <details><summary>Evidence and traceability</summary><code>source {item.sourceRecordId}<br />run {item.processingRunId}<br />Gemini analysis {item.analysisResultId}<br />Human verification {item.reviewDecisionId}</code></details>
-        </article>)}
+    <section id="pricing" className="landing-section home-pricing">
+      <div className="centered-heading"><p className="eyebrow">Simple pricing</p><h2>Start free. Upgrade only when ready.</h2><p className="section-copy">Try the complete decision workflow first, then add capacity as your business needs it.</p></div>
+      <div className="pricing-grid">
+        <article className="panel price-card"><p className="plan-name">Free</p><h2>$0 <small>/ month</small></h2><p className="plan-description">For exploring decision intelligence.</p><ul className="feature-list"><li><CheckIcon /><span><strong>1</strong> Business Profile</span></li><li><CheckIcon /><span><strong>3</strong> Decision Briefs / month</span></li><li><CheckIcon /><span>Core feedback and impact features</span></li></ul><Link className="button-link secondary" href="/get-started">Start Free</Link></article>
+        <article className="panel price-card featured"><span className="popular-badge">Most popular</span><p className="plan-name">Pro</p><h2>$9 <small>/ month</small></h2><p className="plan-description">For businesses ready to act more often.</p><ul className="feature-list"><li><CheckIcon /><span><strong>3</strong> Business Profiles</span></li><li><CheckIcon /><span><strong>50</strong> Decision Briefs / month</span></li><li><CheckIcon /><span>Priority access to new signals</span></li></ul><Link className="button-link button-primary" href="/pricing">Explore Pro <ArrowIcon /></Link></article>
       </div>
     </section>
 
-    <section id="decision-briefs" className="landing-section example-section">
-      <div><p className="eyebrow">Decision Brief Example</p><h2>{featured?.publicTitle ?? "A clear answer to: What should my business do next?"}</h2></div>
-      <div className="example-grid">
-        <div><span>Gemini Insight</span><p>{featured?.publicSummary ?? "Gemini translates a trusted signal into a concise explanation of the change and its decision relevance."}</p></div>
-        <div><span>Business Impact</span><p>{featured?.whyItMatters ?? "Understand the opportunity, risk, timing, and likely effect on a small business."}</p></div>
-        <div><span>Recommended Action</span><p>{featured?.recommendedAction ?? "Receive a bounded next step grounded in verified evidence—not a generic news summary."}</p></div>
-      </div>
+    <section className="trust-section" aria-labelledby="trust-title">
+      <p id="trust-title" className="sr-only">Why you can trust LAFRYHI AI Radar</p>
+      <div><Image src="/gemini-spark.svg" alt="" width={25} height={25} /><span>Powered by Gemini</span></div>
+      <div><CheckIcon /><span>Evidence-linked recommendations</span></div>
+      <div><CheckIcon /><span>Human-verified workflow</span></div>
+      <div><CheckIcon /><span>Secure cloud infrastructure</span></div>
+      <div><CheckIcon /><span>Small Business focused</span></div>
     </section>
 
-    <section id="opportunities" className="landing-section">
-      <div className="section-heading"><div><p className="eyebrow">Why businesses use AI Radar</p><h2>Less monitoring. More confident action.</h2></div></div>
-      <div className="value-grid">
-        <article><h3>Identify opportunities</h3><p>Recognize relevant capabilities, programs, and market changes before they are easy to miss.</p></article>
-        <article><h3>Reduce risk</h3><p>See uncertainty, evidence warnings, and potential business consequences before committing resources.</p></article>
-        <article><h3>Prioritize attention</h3><p>Focus on high-value signals and safely ignore developments that do not justify action.</p></article>
+    <section id="faq" className="landing-section faq-section">
+      <div><p className="eyebrow">FAQ</p><h2>Questions, answered.</h2><p className="section-copy">Everything you need to start making clearer decisions.</p></div>
+      <div className="faq-list">
+        <details><summary>What is a Decision Brief?</summary><p>A concise, personalized analysis of a trusted AI signal, including its business impact, supporting evidence, confidence, and a practical recommended action.</p></details>
+        <details><summary>Do I need AI experience?</summary><p>No. LAFRYHI AI Radar translates technical developments into plain business language and focused next steps.</p></details>
+        <details><summary>Is my data private?</summary><p>Your business context is used to personalize your Decision Briefs. We use secure cloud infrastructure and explain our data practices in our Privacy Policy.</p></details>
+        <details><summary>Can I cancel anytime?</summary><p>Yes. Pro is a monthly subscription with no annual commitment. You can manage or cancel it through the secure billing portal.</p></details>
       </div>
-    </section>
-
-    <section id="human-verification" className="landing-section verification-callout">
-      <div><p className="eyebrow">Human Verification</p><h2>Gemini advises. People decide.</h2></div>
-      <p>Gemini produces structured decision intelligence, but it cannot publish on its own. Every Decision Brief requires deliberate Human Verification and retains complete source provenance.</p>
     </section>
 
     <section className="cta-section">
-      <p className="eyebrow">Make the next signal actionable</p>
-      <h2>Turn AI change into business direction.</h2>
-      <p>Explore verified signals, Gemini Insights, Business Impact, and Recommended Actions in one Decision Center.</p>
-      <a className="button-link" href="/get-started">Create Your Decision Brief</a>
+      <p className="eyebrow">Your next decision starts here</p>
+      <h2>Know what matters. Decide what to do next.</h2>
+      <p>Create your free Business Profile and turn trusted AI change into a practical advantage.</p>
+      <Link className="button-link button-primary" href="/get-started">Start Free <ArrowIcon /></Link>
     </section>
   </>;
 }
