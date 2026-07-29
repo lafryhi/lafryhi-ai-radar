@@ -50,3 +50,19 @@
   .field-grid, .decision-header, .context-grid, .option-grid, .two-column, .score-components { grid-template-columns: 1fr; }
   .public-shell { width: min(100% - 24px, 1120px); padding-top: 46px; }
 }
+.progress-panel { border-inline-start: 4px solid var(--green); }
+.progress-facts { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin: 18px 0; }
+.progress-facts > div, .decision-list-status > span { display: grid; gap: 3px; padding: 12px; border-radius: 9px; background: #071524; }
+.progress-facts span, .decision-list-status span { color: var(--muted); font-size: .78rem; text-transform: uppercase; }
+.progress-facts strong, .decision-list-status strong { color: var(--text); }
+.inline-action { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+.progress-form { display: grid; gap: 12px; margin-top: 18px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #071524; }
+.progress-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.selected-action { box-shadow: 0 0 0 2px var(--green); }
+.decision-filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 22px 0; }
+.decision-filters a { padding: 7px 11px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; }
+.decision-filters a.active { color: var(--text); border-color: var(--blue); background: #172c47; }
+.decision-list-status { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+@media (max-width: 720px) {
+  .progress-facts, .progress-actions { grid-template-columns: 1fr; }
+}

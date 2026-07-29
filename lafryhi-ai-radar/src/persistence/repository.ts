@@ -1,5 +1,6 @@
 import type { ProcessingRun, RadarItem, ReviewDecision, RssCandidate, RssDiscoveryRun, SourceDefinition, SourceRecord, StoredAnalysis } from "@/domain/schemas";
 import type { BusinessProfile, StoredDecisionBrief } from "@/domain/public-mvp";
+import type { DecisionAction, DecisionFeedback } from "@/domain/decision-progress";
 
 export interface OperatorCounts {
   pendingReviews: number;
@@ -48,5 +49,10 @@ export interface RadarRepository {
   saveDecisionBrief(value: StoredDecisionBrief): Promise<void>;
   getDecisionBrief(id: string): Promise<StoredDecisionBrief | null>;
   listDecisionBriefsByOwner(ownerId: string, limit?: number): Promise<StoredDecisionBrief[]>;
+  saveDecisionFeedback(value: DecisionFeedback): Promise<void>;
+  findDecisionFeedbackByBrief(decisionBriefId: string): Promise<DecisionFeedback | null>;
+  saveDecisionAction(value: DecisionAction): Promise<void>;
+  findDecisionActionByBrief(decisionBriefId: string): Promise<DecisionAction | null>;
+  listDecisionActionsByOwner(ownerId: string, limit?: number): Promise<DecisionAction[]>;
   getOperatorCounts(): Promise<OperatorCounts>;
 }

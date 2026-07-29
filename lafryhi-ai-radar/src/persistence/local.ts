@@ -4,6 +4,7 @@ import { z } from "zod";
 import { ProcessingRunSchema, RadarItemSchema, ReviewDecisionSchema, RssCandidateSchema, RssDiscoveryRunSchema, SourceDefinitionSchema, SourceRecordSchema, StoredAnalysisSchema } from "@/domain/schemas";
 import { MemoryRepository } from "./memory";
 import { BusinessProfileSchema, StoredDecisionBriefSchema } from "@/domain/public-mvp";
+import { DecisionActionSchema, DecisionFeedbackSchema } from "@/domain/decision-progress";
 
 const LocalDataSchema = z.object({
   sourceDefinitions: z.array(SourceDefinitionSchema).default([]),
@@ -16,6 +17,8 @@ const LocalDataSchema = z.object({
   items: z.array(RadarItemSchema),
   businessProfiles: z.array(BusinessProfileSchema).default([]),
   decisionBriefs: z.array(StoredDecisionBriefSchema).default([]),
+  decisionFeedback: z.array(DecisionFeedbackSchema).default([]),
+  decisionActions: z.array(DecisionActionSchema).default([]),
 });
 
 export class LocalFileRepository extends MemoryRepository {
@@ -36,6 +39,8 @@ export class LocalFileRepository extends MemoryRepository {
       data.items.forEach((x) => this.items.set(x.id, x));
       data.businessProfiles.forEach((x) => this.businessProfiles.set(x.id, x));
       data.decisionBriefs.forEach((x) => this.decisionBriefs.set(x.id, x));
+      data.decisionFeedback.forEach((x) => this.decisionFeedback.set(x.id, x));
+      data.decisionActions.forEach((x) => this.decisionActions.set(x.id, x));
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
     }
@@ -54,6 +59,8 @@ export class LocalFileRepository extends MemoryRepository {
       items: [...this.items.values()],
       businessProfiles: [...this.businessProfiles.values()],
       decisionBriefs: [...this.decisionBriefs.values()],
+      decisionFeedback: [...this.decisionFeedback.values()],
+      decisionActions: [...this.decisionActions.values()],
     }, null, 2));
     await rename(temp, this.path);
   }
@@ -94,5 +101,10 @@ export class LocalFileRepository extends MemoryRepository {
   override async saveDecisionBrief(v: Parameters<MemoryRepository["saveDecisionBrief"]>[0]) { await this.load(); await super.saveDecisionBrief(v); await this.flush(); }
   override async getDecisionBrief(id: string) { await this.load(); return super.getDecisionBrief(id); }
   override async listDecisionBriefsByOwner(ownerId: string, limit?: number) { await this.load(); return super.listDecisionBriefsByOwner(ownerId, limit); }
+  override async saveDecisionFeedback(v: Parameters<MemoryRepository["saveDecisionFeedback"]>[0]) { await this.load(); await super.saveDecisionFeedback(v); await this.flush(); }
+  override async findDecisionFeedbackByBrief(decisionBriefId: string) { await this.load(); return super.findDecisionFeedbackByBrief(decisionBriefId); }
+  override async saveDecisionAction(v: Parameters<MemoryRepository["saveDecisionAction"]>[0]) { await this.load(); await super.saveDecisionAction(v); await this.flush(); }
+  override async findDecisionActionByBrief(decisionBriefId: string) { await this.load(); return super.findDecisionActionByBrief(decisionBriefId); }
+  override async listDecisionActionsByOwner(ownerId: string, limit?: number) { await this.load(); return super.listDecisionActionsByOwner(ownerId, limit); }
   override async getOperatorCounts() { await this.load(); return super.getOperatorCounts(); }
 }

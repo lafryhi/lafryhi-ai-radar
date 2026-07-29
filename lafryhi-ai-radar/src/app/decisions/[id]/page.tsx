@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { getAnonymousSessionId } from "@/auth/anonymous-session";
 import { getRepository } from "@/persistence";
 import { getOwnedDecisionBrief } from "@/services/public-mvp";
+import { getDecisionProgress } from "@/services/decision-progress";
+import { DecisionProgressPanel } from "@/components/public/decision-progress-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -10,8 +12,10 @@ const label = (value: string) => value.replaceAll("_", " ");
 export default async function DecisionBriefPage({ params }: { params: Promise<{ id: string }> }) {
   const ownerId = await getAnonymousSessionId();
   if (!ownerId) notFound();
-  const brief = await getOwnedDecisionBrief(await getRepository(), ownerId, (await params).id);
+  const repository = await getRepository();
+  const brief = await getOwnedDecisionBrief(repository, ownerId, (await params).id);
   if (!brief) notFound();
+  const progress = await getDecisionProgress(repository, ownerId, brief.id);
 
   const context = brief.businessContextSnapshot;
   if (brief.result.status === "INSUFFICIENT_EVIDENCE") return <section className="public-shell">
@@ -19,6 +23,7 @@ export default async function DecisionBriefPage({ params }: { params: Promise<{ 
     <h1>{brief.signalSnapshot.title}</h1>
     <div className="insufficient-panel"><span className="decision-badge">INSUFFICIENT EVIDENCE</span><h2>No recommendation was generated.</h2><p>{brief.result.reason}</p><h3>Evidence still needed</h3><ul>{brief.result.missingEvidence.map((item) => <li key={item}>{item}</li>)}</ul></div>
     <p className="privacy-note">The engine stopped at {label(brief.result.stage).toLowerCase()} instead of guessing.</p>
+    <DecisionProgressPanel decisionBriefId={brief.id} progress={progress} actionable={false} />
   </section>;
 
   const decision = brief.result.decisionBrief;
@@ -46,6 +51,7 @@ export default async function DecisionBriefPage({ params }: { params: Promise<{ 
 
     <section className="brief-section evidence-section"><p className="section-label">Verified facts</p><h2>Evidence</h2><p>Source: <a href={brief.signalSnapshot.sourceUrl} target="_blank" rel="noopener noreferrer">{brief.signalSnapshot.title} — {brief.signalSnapshot.sourceName}</a> · Published {new Date(brief.signalSnapshot.publishedAt).toLocaleDateString()}</p>{decision.supportingEvidence.map((evidence) => <blockquote id={`evidence-${evidence.id}`} key={evidence.id}><strong>{evidence.id}</strong> “{evidence.quote}”<footer>{evidence.significance}</footer></blockquote>)}</section>
     <section className="brief-section two-column"><div><h2>Success Criteria</h2><ul>{decision.successCriteria.map((item) => <li key={item}>{item}</li>)}</ul></div><div><h2>Reconsideration Triggers</h2><ul>{decision.reconsiderationTriggers.map((item) => <li key={item}>{item}</li>)}</ul></div></section>
+    <DecisionProgressPanel decisionBriefId={brief.id} progress={progress} />
   </section>;
 }
 
