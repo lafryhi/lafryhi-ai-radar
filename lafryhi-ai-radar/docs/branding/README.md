@@ -8,16 +8,18 @@ This directory is the official repository for the LAFRYHI AI Radar visual identi
 
 ## Single Source of Truth
 
-The six files in [`reference/`](./reference/) are the **single source of truth for the visual identity**:
+[`reference/brand-kit-reference-v1.png`](./reference/brand-kit-reference-v1.png) is the **official master reference and single source of truth for the visual identity**.
+
+The following files are approved, deterministic extracts from that master:
 
 1. [`01-logo.png`](./reference/01-logo.png) — primary horizontal logo lockup.
 2. [`02-profile-picture.png`](./reference/02-profile-picture.png) — standalone social profile mark.
 3. [`03-facebook-cover.png`](./reference/03-facebook-cover.png) — Facebook cover composition.
 4. [`04-linkedin-cover.png`](./reference/04-linkedin-cover.png) — LinkedIn cover composition.
 5. [`05-social-post-template.png`](./reference/05-social-post-template.png) — master social-post layout.
-6. [`06-brand-kit-reference.png`](./reference/06-brand-kit-reference.png) — consolidated identity reference.
+6. [`06-brand-kit-reference.png`](./reference/06-brand-kit-reference.png) — complete copy of the official master Brand Kit.
 
-When another asset, implementation, or interpretation conflicts with these references, the reference set governs until an approved branding change is recorded in the [Changelog](./CHANGELOG.md).
+When another asset, implementation, or interpretation conflicts with the master, the master governs until an approved branding change is recorded in the [Changelog](./CHANGELOG.md). Extracts must not be independently redesigned.
 
 ## Repository Map
 
@@ -25,7 +27,7 @@ When another asset, implementation, or interpretation conflicts with these refer
 | --- | --- |
 | [`BRAND_GUIDELINES.md`](./BRAND_GUIDELINES.md) | Identity principles, logo rules, visual language, accessibility, and governance. |
 | [`CHANGELOG.md`](./CHANGELOG.md) | Versioned record of approved brand changes. |
-| [`reference/`](./reference/) | Official visual references and single source of truth. |
+| [`reference/`](./reference/) | Official master Brand Kit and its approved extracted assets. |
 | [`logos/svg/`](./logos/svg/) | Approved production-ready vector logo exports. |
 | [`logos/png/`](./logos/png/) | Approved production-ready raster logo exports. |
 | [`logos/favicon/`](./logos/favicon/) | Approved favicon and application-icon exports. |
@@ -46,7 +48,7 @@ Empty production folders contain `.gitkeep` until reviewed exports are added. Re
 - Never stretch, recolor, rotate, redraw, or decorate the mark without approval.
 - Never combine the identity with Google or Gemini marks.
 - Technology attribution must not imply affiliation with or endorsement by Google.
-- Record every approved reference change in the [Changelog](./CHANGELOG.md).
+- Record every approved master-reference change in the [Changelog](./CHANGELOG.md).
 
 ## Related Documentation
 

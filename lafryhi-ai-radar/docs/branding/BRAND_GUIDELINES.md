@@ -17,9 +17,9 @@ The identity should communicate trust, evidence, clarity, human judgment, transp
 
 ## Official References
 
-The files in [`reference/`](./reference/) are the single source of truth for visual identity. The consolidated [`06-brand-kit-reference.png`](./reference/06-brand-kit-reference.png) is the quickest overview; the individual references govern their respective formats.
+[`brand-kit-reference-v1.png`](./reference/brand-kit-reference-v1.png) is the official master reference and single source of truth for visual identity. [`06-brand-kit-reference.png`](./reference/06-brand-kit-reference.png) is a complete copy of that master, while `01` through `05` are pixel crops of approved sections.
 
-These references define visual intent. Production exports placed in `logos/` or `social/` must be derived from, reviewed against, and visually consistent with them.
+The extracted references must not be independently redesigned. Production exports placed in `logos/` or `social/` must be derived from, reviewed against, and visually consistent with the official master.
 
 ## Logo System
 
@@ -146,4 +146,4 @@ Brand changes require:
 4. Link and structure validation.
 5. An entry in [`CHANGELOG.md`](./CHANGELOG.md).
 
-Do not overwrite an official reference without recording the version change.
+Do not overwrite the official master or its extracts without recording the version change.
