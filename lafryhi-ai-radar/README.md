@@ -74,6 +74,7 @@ The token guard is temporary and must be replaced with identity-based authentica
 
 ## Documentation
 
+- [Go-To-Market Business Documentation](docs/business/README.md) — Business Bible, 90-day roadmap, customer discovery, growth metrics, content strategy, launch playbook, and decision log.
 - `GEMINI_XPRIZE_PHASE1_IMPLEMENTATION.md`
 - `GEMINI_XPRIZE_PHASE1_EVIDENCE.md`
 - `GEMINI_XPRIZE_PHASE7_DECISION_INTELLIGENCE.md`
