@@ -10,6 +10,8 @@ Launch is a sequence of learning stages, not a single announcement. Audience siz
 
 Begin with a small network of founders, consultants, agencies, developers, and other likely early users.
 
+Include a Facebook soft launch through the official Page and a small, relevant network. Establish the Page identity, publish a clear product introduction and Decision Brief example, and observe whether visitors progress beyond engagement to Business Profile creation and Brief generation. Do not mass-invite unrelated contacts.
+
 ### Goals
 
 - Observe behavior.
@@ -31,11 +33,14 @@ Begin with a small network of founders, consultants, agencies, developers, and o
 Expand to:
 
 - LinkedIn.
+- Facebook Page and relevant Facebook groups.
 - YouTube.
 - Relevant founder and developer communities.
 - The Google Cloud and Gemini ecosystem.
 
 Respect each community's rules. Lead with a useful decision or learning rather than a generic promotional link. Tailor context to the community without changing the core product claim.
+
+For Facebook Community Launch activity, participate as a transparent, useful community member. Share standalone value, disclose the product relationship, avoid repeated promotional posting, and link to AI Radar only when it directly supports the discussion. Follow the [Facebook Growth Playbook](./FACEBOOK_GROWTH_PLAYBOOK.md).
 
 ## Product Hunt Readiness Gates
 

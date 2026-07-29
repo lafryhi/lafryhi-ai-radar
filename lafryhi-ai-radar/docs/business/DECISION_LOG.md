@@ -13,6 +13,7 @@ This log records material commercial and strategic decisions. It should capture 
 | Decision 003 | 2026-07-29 | Do not build major features without user evidence. | Prevent speculative development. | Required evidence: repeated feedback, behavior, retention, or revenue evidence. |
 | Decision 004 | 2026-07-29 | Use LinkedIn as the primary initial acquisition channel. | The target audience includes founders, consultants, agencies, and small-business decision-makers. | Compare qualified acquisition, activation, and learning against secondary channels. |
 | Decision 005 | 2026-07-29 | Delay the full Product Hunt launch. | First validate messaging and product value with early users. | Launch only after the readiness gates in the [Launch Playbook](./LAUNCH_PLAYBOOK.md) are satisfied. |
+| Decision 006 | 2026-07-29 | Facebook becomes an official primary acquisition channel alongside LinkedIn. | Facebook provides strong access to entrepreneurs, Arabic-speaking founders, developers, educators, agencies, and small-business communities. | Expected evidence: qualified traffic, Business Profiles, Decision Brief generation, returning users, and genuine paid conversions. |
 
 ## Future Decision Template
 

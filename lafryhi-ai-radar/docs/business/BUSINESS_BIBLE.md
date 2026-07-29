@@ -97,6 +97,15 @@ Initial customer segments are prioritized as follows:
 
 This order is a starting hypothesis. Acquisition, activation, interview, retention, and revenue evidence will determine which segment receives sustained focus.
 
+## Customer Acquisition Strategy
+
+LinkedIn and Facebook are the official primary initial acquisition channels.
+
+- **LinkedIn** supports professional positioning, founder and consultant networks, business-to-business conversations, and evidence-led product education.
+- **Facebook** supports community-led discovery among entrepreneurs, small-business owners, developers, freelancers, agencies, educators, and Arabic-speaking markets.
+
+The channels complement one another. Neither is assumed to perform better in advance. Qualified traffic, Business Profile creation, Decision Brief generation, useful outcomes, return usage, and genuine paid conversion will determine channel investment. Operational guidance for Facebook is defined in the [Facebook Growth Playbook](./FACEBOOK_GROWTH_PLAYBOOK.md).
+
 ## Jobs to Be Done
 
 Customers may hire LAFRYHI AI Radar to:

@@ -16,6 +16,7 @@ The repository's technical documentation explains how the product is designed, b
 | [Customer Discovery](./CUSTOMER_DISCOVERY.md) | Interview protocol, feedback taxonomy, and evidence standards. |
 | [Growth Metrics](./GROWTH_METRICS.md) | North Star Metric, funnel, KPIs, and initial learning targets. |
 | [Content Strategy](./CONTENT_STRATEGY.md) | Sustainable content channels, pillars, cadence, calls to action, and editorial rules. |
+| [Facebook Growth Playbook](./FACEBOOK_GROWTH_PLAYBOOK.md) | Facebook presence, content, community participation, measurement, and first 30-day plan. |
 | [Launch Playbook](./LAUNCH_PLAYBOOK.md) | Soft launch, community launch, Product Hunt readiness, and launch assets. |
 | [Decision Log](./DECISION_LOG.md) | Durable record of commercial and strategic decisions. |
 

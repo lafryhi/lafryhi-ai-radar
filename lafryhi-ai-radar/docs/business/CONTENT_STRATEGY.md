@@ -8,11 +8,12 @@ Content should help small-business decision-makers understand a real AI developm
 
 ## Channels
 
-### Primary Channel
+### Primary Channels
 
-**LinkedIn**
+- **LinkedIn** provides direct access to founders, consultants, agency leaders, freelance professionals, and small-business decision-makers. It supports evidence-led posts, practical examples, founder learning, and direct conversations.
+- **Facebook** provides community-led reach among entrepreneurs, small-business owners, developers, educators, agencies, and Arabic-speaking markets. It supports native education, discussion, visual formats, and responsible group participation.
 
-LinkedIn provides direct access to founders, consultants, agency leaders, freelance professionals, and small-business decision-makers. It supports short evidence-led posts, practical examples, founder learning, and direct conversations.
+The primary channels complement one another. Downstream customer behavior—not reach alone—will determine future emphasis.
 
 ### Secondary Channels
 
@@ -20,7 +21,8 @@ LinkedIn provides direct access to founders, consultants, agency leaders, freela
 - Product Hunt.
 - Dev.to.
 - Medium.
-- Google Cloud and Gemini communities.
+- Google Cloud communities.
+- Gemini communities.
 
 Secondary channels should reuse or deepen validated themes rather than create separate high-volume editorial obligations.
 
@@ -47,6 +49,21 @@ Use a sustainable cadence of three posts per week:
 | Friday | Behind the Build or Founder Insight | Build trust through transparent learning and responsible practice. |
 
 A post should be repurposed for a secondary channel only when the format adds value—for example, a deeper YouTube walkthrough or a Dev.to technical explanation.
+
+## Facebook Content Formats
+
+Adapt content for Facebook rather than copying LinkedIn posts without context:
+
+- Images and evidence-led infographics.
+- Carousels explaining a decision step by step.
+- Native and short videos.
+- Polls that open a genuine discovery conversation.
+- Stories for lightweight education and product context.
+- Live sessions for practical AI decision discussions.
+- Decision Brief screenshots using demonstration or authorized anonymized data.
+- Founder posts written for community discussion.
+
+Detailed Page, group, measurement, and 30-day guidance is maintained in the [Facebook Growth Playbook](./FACEBOOK_GROWTH_PLAYBOOK.md).
 
 ## Calls to Action
 

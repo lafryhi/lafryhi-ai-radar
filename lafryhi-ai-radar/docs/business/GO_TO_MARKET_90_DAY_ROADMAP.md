@@ -22,10 +22,11 @@ This roadmap is a learning plan, not a feature roadmap. Its goal is to progress 
 ### Acquisition Channels
 
 - LinkedIn.
+- Facebook.
 - YouTube.
+- Google Cloud communities.
+- Gemini communities.
 - Founder network.
-- Gemini and Google Cloud communities.
-- SaaS and developer communities.
 
 ### Decision Gate
 
@@ -97,11 +98,11 @@ The improvement step is intentionally singular. Concentrated changes make it eas
 
 | Week | Primary objective | Target metric | Main channel | Customer-learning activity | Decision gate |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Recruit an initial observation cohort | 10 real users | Founder network and LinkedIn | Observe onboarding; interview at least 3 users | Can users explain the product and begin without live help? |
-| 2 | Complete the first-user cohort | 20 cumulative users | LinkedIn and direct outreach | Review first-value paths and interview non-activators | Is there a dominant onboarding bottleneck and responsive segment? |
-| 3 | Test Decision Brief usefulness | At least 10 generated Briefs with follow-up | LinkedIn | Ask about the actual decision before and after the Brief | Can users name a decision improved by the Brief? |
-| 4 | Validate trust and repeat intent | Useful feedback rate trending toward 60% | LinkedIn and Gemini communities | Interview useful and not-useful respondents | Is value strong enough to expand acquisition? |
-| 5 | Establish a measurable funnel | Funnel stages measurable for the cohort | LinkedIn | Compare activated and non-activated users | Which single stage loses the most qualified users? |
+| 1 | Recruit an initial observation cohort | 10 real users | Founder network, LinkedIn, and Facebook | Observe onboarding; interview at least 3 users | Can users explain the product and begin without live help? |
+| 2 | Complete the first-user cohort | 20 cumulative users | LinkedIn, Facebook, and direct outreach | Review first-value paths and interview non-activators | Is there a dominant onboarding bottleneck and responsive segment? |
+| 3 | Test Decision Brief usefulness | At least 10 generated Briefs with follow-up | LinkedIn and Facebook | Ask about the actual decision before and after the Brief | Can users name a decision improved by the Brief? |
+| 4 | Validate trust and repeat intent | Useful feedback rate trending toward 60% | Facebook, LinkedIn, and Gemini communities | Interview useful and not-useful respondents | Is value strong enough to expand acquisition? |
+| 5 | Establish a measurable funnel | Funnel stages measurable for the cohort | LinkedIn and Facebook | Compare activated and non-activated users | Which single stage loses the most qualified users? |
 | 6 | Improve the largest bottleneck | Measurable improvement at one stage | Best channel from Weeks 1–5 | Usability follow-up on the changed stage | Did the targeted metric improve without harming trust? |
 | 7 | Test segment concentration | 60 cumulative users | Best-performing community | Compare activation and value by segment | Which segment demonstrates the strongest useful behavior? |
 | 8 | Reach 100 real users | 100 cumulative users | Winning channel plus referrals | Interview returning users | Is there repeat Brief generation and an initial retention signal? |
