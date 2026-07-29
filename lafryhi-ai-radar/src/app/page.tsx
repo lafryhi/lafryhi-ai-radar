@@ -14,7 +14,7 @@ export default async function Home() {
         <h1>Transform trusted AI signals into confident business decisions.</h1>
         <p className="lede">LAFRYHI AI Radar uses Gemini to analyze trusted AI developments and help small businesses identify opportunities, reduce risks, and decide what to do next.</p>
         <div className="hero-actions">
-          <a className="button-link" href="#decision-center">Explore the Decision Center</a>
+          <a className="button-link" href="/get-started">Get Started</a>
           <a className="button-link secondary" href="#how-it-works">See how it works</a>
         </div>
         <div className="gemini-attribution" aria-label="Powered by Gemini">
@@ -91,7 +91,7 @@ export default async function Home() {
       <p className="eyebrow">Make the next signal actionable</p>
       <h2>Turn AI change into business direction.</h2>
       <p>Explore verified signals, Gemini Insights, Business Impact, and Recommended Actions in one Decision Center.</p>
-      <a className="button-link" href="#decision-center">Open the Decision Center</a>
+      <a className="button-link" href="/get-started">Create Your Decision Brief</a>
     </section>
   </>;
 }

@@ -244,7 +244,7 @@ export class GeminiDecisionEngine {
     const decisionBrief = DecisionBriefSchema.parse({
       ...decisionFields,
       businessContext: context,
-      supportingEvidence: signal.evidence.filter((item) => decision.supportingEvidenceIds.includes(item.id)),
+      supportingEvidence: signal.evidence,
       score,
     });
     return {
