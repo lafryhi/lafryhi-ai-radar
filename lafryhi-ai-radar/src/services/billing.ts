@@ -177,7 +177,17 @@ export async function processPaddleWebhook(repository: RadarRepository, rawBody:
   if (customer && paddleCustomerId && !customer.paddleCustomerId) {
     await repository.saveBillingCustomer(BillingCustomerSchema.parse({ ...customer, paddleCustomerId, updatedAt: now.toISOString() }));
   }
-  if (subscriptionId) {
+  if (event.event_type === "transaction.completed" && existingSubscription) {
+    const transactionId = stringOrNull(event.data.id) ?? existingSubscription.paddleTransactionId;
+    if (transactionId !== existingSubscription.paddleTransactionId) {
+      await repository.saveSubscription(SubscriptionSchema.parse({
+        ...existingSubscription,
+        paddleTransactionId: transactionId,
+        updatedAt: now.toISOString(),
+      }));
+    }
+  }
+  if (subscriptionId && event.event_type !== "transaction.completed") {
     const providerStatus = stringOrNull(event.data.status) ?? (event.event_type === "transaction.payment_failed" || event.event_type === "transaction.past_due" ? "past_due" : existingSubscription?.status.toLowerCase() ?? "active");
     const status = mapPaddleStatus(providerStatus);
     if (!existingSubscription || event.occurred_at >= existingSubscription.providerUpdatedAt) {

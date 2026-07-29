@@ -109,6 +109,29 @@ describe("Paddle checkout and verified webhooks", () => {
     expect((await resolveEntitlement(repo, owner, fixed)).effectivePlan).toBe("PRO");
   });
 
+  it("does not let a completed transaction overwrite an active subscription status", async () => {
+    configure(); const repo = new MemoryRepository(); await seedCustomer(repo);
+    const active = event("evt_01active_transaction", "subscription.activated", "active");
+    await processPaddleWebhook(repo, active, signed(active), new Date(fixed));
+    const completed = JSON.stringify({
+      event_id: "evt_01completed_transaction",
+      event_type: "transaction.completed",
+      occurred_at: "2026-07-29T10:00:01.000Z",
+      data: {
+        id: "txn_01sandboxtransaction",
+        subscription_id: "sub_01sandboxsubscription",
+        customer_id: "ctm_01sandboxcustomer",
+        status: "completed",
+        custom_data: { billing_customer_id: customerId, plan_code: "PRO" },
+      },
+    });
+    await processPaddleWebhook(repo, completed, signed(completed), new Date("2026-07-29T10:00:01.000Z"));
+    const subscription = await repo.getSubscriptionByPaddleId("sub_01sandboxsubscription");
+    expect(subscription?.status).toBe("ACTIVE");
+    expect(subscription?.paddleTransactionId).toBe("txn_01sandboxtransaction");
+    expect((await resolveEntitlement(repo, owner, "2026-07-29T10:00:02.000Z")).effectivePlan).toBe("PRO");
+  });
+
   it("maps cancellation and payment failure to Free", async () => {
     configure(); const repo = new MemoryRepository(); await seedCustomer(repo);
     const active = event("evt_01a", "subscription.activated", "active");
