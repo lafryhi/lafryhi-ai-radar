@@ -1,7 +1,13 @@
-# LAFRYHI AI Radar v1.1.0-rc1
+# LAFRYHI AI Radar v1.1.0-rc2
 
-Release date: July 29, 2026  
-Release name: **Bright Premium Experience**
+Release date: July 30, 2026  
+Release name: **Bright Premium Experience — Complete Snapshot**
+
+## Release-candidate status
+
+RC2 supersedes `v1.1.0-rc1` for deployment. RC1 did not include the complete canonical source tree, while RC2 contains the application source, services, tests, fixtures, build configuration, deployment manifests, public assets, and supporting documentation required to reconstruct and build the canonical nested application from Git.
+
+The historical `v1.1.0-rc1` tag remains unchanged and must not be deployed.
 
 ## Release highlights
 
