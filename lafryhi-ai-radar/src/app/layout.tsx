@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PublicNavigation } from "@/components/public-navigation";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -11,19 +12,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return <html lang="en"><body>
     <header className="site-header">
       <Link href="/" className="brand"><span>LAFRYHI AI Radar</span><small>Decision Intelligence for Small Businesses</small></Link>
-      <nav aria-label="Primary navigation">
-        <Link href="/get-started">Get Started</Link>
-        <Link href="/business-profile">My Business Profile</Link>
-        <Link href="/decisions">My Decision Briefs</Link>
-        <Link href="/impact">My Impact</Link>
-        <Link href="/pricing">Pricing</Link>
-        <Link href="/billing">Billing</Link>
-        <Link href="/#decision-center">Decision Center</Link>
-        <Link href="/#trusted-signals">Signals</Link>
-        <Link href="/#decision-briefs">Decision Briefs</Link>
-        <Link href="/#opportunities">Opportunities</Link>
-        <Link href="/operator/sources">Trusted Sources</Link>
-      </nav>
+      <PublicNavigation />
     </header>
     <main>{children}</main>
     <footer className="site-footer">
