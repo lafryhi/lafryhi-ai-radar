@@ -1,13 +1,13 @@
-# LAFRYHI AI Radar v1.1.0-rc2
+# LAFRYHI AI Radar v1.1.0
 
 Release date: July 30, 2026  
-Release name: **Bright Premium Experience — Complete Snapshot**
+Release name: **Bright Premium Experience**
 
-## Release-candidate status
+## Stable release
 
-RC2 supersedes `v1.1.0-rc1` for deployment. RC1 did not include the complete canonical source tree, while RC2 contains the application source, services, tests, fixtures, build configuration, deployment manifests, public assets, and supporting documentation required to reconstruct and build the canonical nested application from Git.
+This is the first stable LAFRYHI AI Radar release. It was promoted from `v1.1.0-rc2` after successful Cloud Run production deployment and verification.
 
-The historical `v1.1.0-rc1` tag remains unchanged and must not be deployed.
+The release combines the Bright Brand Integration with a complete, reproducible Git snapshot containing the application source, services, tests, fixtures, build configuration, deployment manifests, public assets, and supporting documentation.
 
 ## Release highlights
 
@@ -22,8 +22,12 @@ The historical `v1.1.0-rc1` tag remains unchanged and must not be deployed.
 - **Performance preserved** — Keeps the experience lightweight and avoids unnecessary runtime dependencies.
 - **Business logic unchanged** — Preserves existing APIs, authentication, billing behavior, workflows, and product functionality.
 
-## Release scope
+## Release scope and compatibility
 
-This release candidate is a visual integration release. It does not introduce changes to application business logic, APIs, authentication behavior, or billing behavior.
+This visual integration release does not change application business logic, APIs, authentication behavior, or billing behavior.
 
-No deployment is included in this release preparation.
+## Temporary dependency-risk acceptance
+
+The production acceptance review identified 12 npm audit high-severity entries that originate from one `brace-expansion` advisory; they are not 12 independent vulnerabilities. There are zero critical vulnerabilities.
+
+No user-controlled glob or brace pattern reaches the affected dependency in this application. Propagation through Firestore and `google-gax` was assessed as likely unreachable at runtime. A compatible patch or minor remediation is not currently available, so the finding is temporarily accepted and must be re-audited when compatible upstream releases become available.
