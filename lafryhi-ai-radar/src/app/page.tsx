@@ -1,105 +1,186 @@
 import Image from "next/image";
-import Link from "next/link";
+
+const repositoryUrl = "https://github.com/lafryhi/lafryhi-ai-radar";
+const architectureUrl = `${repositoryUrl}/blob/main/GEMINI_XPRIZE_ARCHITECTURE.md`;
+const evaluationUrl = `${repositoryUrl}/blob/main/eval/results/2026-07-30T12-44-43-854Z-gemini-migration.md`;
 
 const ArrowIcon = () => <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
-const SignalIcon = () => <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18v2M8 14v6M12 10v10M16 6v14M20 3v17" /></svg>;
-const ContextIcon = () => <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="M12 8v4l3 2" /></svg>;
-const BriefIcon = () => <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6zM9 10h6M9 14h6M9 18h4" /></svg>;
 const CheckIcon = () => <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>;
+
+const differentiators = [
+  ["01", "Evidence Verification", "Every factual claim is tied to exact source evidence before it can influence a decision."],
+  ["02", "Editorial Governance", "A deterministic policy constitution constrains model recommendations independently of the model provider."],
+  ["03", "Human Review", "AI output never publishes itself. Human judgment remains the final editorial authority."],
+  ["04", "Decision Traceability", "Evaluation, signal, decision, policy, review, and publication identifiers form one reconstructable chain."],
+  ["05", "Candidate Model Evaluation", "Production and candidate models run against the same contract, evidence, and policy controls."],
+  ["06", "Safe Production Migration", "A model changes production only after reliability, safety, editorial, and operational gates pass."],
+] as const;
+
+const pipeline = [
+  ["01", "Official Sources", "Trusted input"],
+  ["02", "Signal Intelligence", "Extract grounded claims"],
+  ["03", "Decision Intelligence", "Assess relevance and action"],
+  ["04", "Evidence Verification", "Validate quotes and IDs"],
+  ["05", "Editorial Policy Engine", "Apply deterministic rules"],
+  ["06", "Human Review", "Approve, defer, or reject"],
+  ["07", "Publication", "Only reviewed output"],
+] as const;
+
+const metrics = [
+  ["VALID", "Evaluation Integrity", "Forensically validated report"],
+  ["ADMISSIBLE", "Metric Admissibility", "Eligible for governance review"],
+  ["100%", "Reliability", "Transport through pipeline completion"],
+  ["100%", "Detector Agreement", "One canonical term adjudication"],
+  ["100%", "Evidence Compliance", "Exact evidence and evidence IDs"],
+  ["0%", "Production Traffic", "Candidate remains evaluation-only"],
+] as const;
+
+const safetyControls = [
+  ["Human Review", "Normal application review remains mandatory, regardless of model or policy outcome."],
+  ["Evidence Validation", "Exact quotations, evidence IDs, schemas, and application rules are checked independently."],
+  ["Policy Enforcement", "Versioned rules downgrade, block, or route material findings to additional review."],
+  ["Audit Trail", "Privacy-safe identifiers and fingerprints make every decision reconstructable."],
+  ["Production Isolation", "Candidate execution cannot publish, persist application data, or receive production traffic."],
+  ["Governance-Based Deployment", "Migration readiness depends on measured thresholds—not a newer model name."],
+] as const;
+
+const technologies = [
+  ["G", "Gemini"],
+  ["V", "Vertex AI"],
+  ["N", "Next.js"],
+  ["TS", "TypeScript"],
+  ["CR", "Cloud Run"],
+  ["F", "Firestore"],
+  ["Z", "Zod"],
+  ["Vt", "Vitest"],
+] as const;
+
+function SectionHeading({ eyebrow, title, copy }: { eyebrow: string; title: string; copy: string }) {
+  return <div className="governance-heading">
+    <p className="eyebrow">{eyebrow}</p>
+    <h2>{title}</h2>
+    <p className="section-copy">{copy}</p>
+  </div>;
+}
 
 export default function Home() {
   return <>
-    <section className="hero">
+    <section className="hero governance-hero">
       <div className="hero-copy">
-        <p className="eyebrow">Decision Intelligence for Small Businesses</p>
-        <h1>Transform trusted AI signals into confident business decisions.</h1>
-        <p className="lede">LAFRYHI AI Radar continuously monitors trusted AI developments, analyzes their business impact with Gemini, and produces personalized Decision Briefs so small businesses know exactly what to do next.</p>
+        <p className="hero-product">LAFRYHI AI Radar</p>
+        <p className="eyebrow">Evidence-Driven AI Governance for Editorial Intelligence</p>
+        <h1><span>AI evaluates the news.</span> LAFRYHI AI Radar evaluates the AI.</h1>
+        <p className="lede">A production-grade governance platform for testing candidate AI models before migration—through grounded evidence, deterministic editorial policy, complete traceability, and mandatory human review.</p>
         <div className="hero-actions">
-          <Link className="button-link button-primary" href="/get-started">Start Free <ArrowIcon /></Link>
-          <a className="button-link secondary" href="#example-brief">See Example Decision Brief</a>
+          <a className="button-link button-primary" href={architectureUrl} target="_blank" rel="noreferrer">View Architecture <ArrowIcon /></a>
+          <a className="button-link secondary" href={evaluationUrl} target="_blank" rel="noreferrer">Evaluation Report</a>
+          <a className="button-link text-button" href={repositoryUrl} target="_blank" rel="noreferrer">GitHub Repository <ArrowIcon /></a>
         </div>
-        <p className="hero-reassurance"><CheckIcon /> No credit card required</p>
+        <p className="hero-reassurance"><CheckIcon /> Production remains isolated while governance decides what comes next.</p>
       </div>
-      <div className="hero-visual" aria-label="From trusted signal to confident decision">
+
+      <div className="hero-visual governance-radar" aria-label="Governance controls surrounding an evaluated AI model">
         <div className="radar-orbit orbit-one" />
         <div className="radar-orbit orbit-two" />
         <div className="radar-core"><Image src="/gemini-spark.svg" alt="" width={44} height={44} /></div>
-        <div className="signal-chip signal-chip-one"><span>Signal verified</span><strong>Trusted evidence</strong></div>
-        <div className="signal-chip signal-chip-two"><span>Business fit</span><strong>High relevance</strong></div>
-        <div className="signal-chip signal-chip-three"><span>Next action</span><strong>Ready to test</strong></div>
+        <div className="signal-chip signal-chip-one"><span>Evidence</span><strong>Exact quotes verified</strong></div>
+        <div className="signal-chip signal-chip-two"><span>Policy</span><strong>Deterministic rules</strong></div>
+        <div className="signal-chip signal-chip-three"><span>Decision</span><strong>Human review required</strong></div>
+        <div className="model-label production-label"><span>Production</span><strong>Gemini 2.5 Flash</strong></div>
+        <div className="model-label candidate-label"><span>Evaluation only</span><strong>Gemini 3.1 Flash-Lite</strong></div>
       </div>
     </section>
 
-    <section id="example-brief" className="landing-section example-brief-section">
+    <section className="status-banner" aria-label="Release candidate status">
+      <div><span>Release</span><strong>RC-1</strong></div>
+      <div><span>Production Model</span><strong>Gemini 2.5 Flash</strong></div>
+      <div><span>Candidate Model</span><strong>Gemini 3.1 Flash-Lite <em>Evaluation only</em></strong></div>
+      <div><span>Shadow Evaluation</span><strong>Second controlled run completed</strong></div>
+      <div><span>Governance</span><strong className="status-active">Evaluation active</strong></div>
+    </section>
+
+    <section className="landing-section challenge-section">
+      <div className="challenge-number" aria-hidden="true">01</div>
+      <div>
+        <p className="eyebrow">The challenge</p>
+        <h2>AI can generate information.<br /><span>Who evaluates the AI?</span></h2>
+      </div>
+      <div className="challenge-copy">
+        <p>Model output can be fluent, structured, and technically valid while still making the wrong editorial decision.</p>
+        <p>LAFRYHI AI Radar evaluates the whole path before production deployment: transport, schema, evidence, recommendations, policy behavior, operational isolation, and human-review guarantees.</p>
+      </div>
+    </section>
+
+    <section className="landing-section" id="difference">
+      <SectionHeading eyebrow="Governance by design" title="What makes AI Radar different" copy="The system does not ask whether a candidate model is newer. It asks whether that model can be trusted inside a controlled editorial workflow." />
+      <div className="governance-card-grid">
+        {differentiators.map(([number, title, copy]) => <article className="governance-card" key={title}>
+          <span>{number}</span><h3>{title}</h3><p>{copy}</p>
+        </article>)}
+      </div>
+    </section>
+
+    <section className="landing-section architecture-section" id="architecture">
+      <SectionHeading eyebrow="System architecture" title="Governance is part of the pipeline." copy="Evidence and policy are not post-processing decorations. They are explicit gates between model output and publication." />
+      <div className="architecture-flow" role="list" aria-label="AI Radar governance pipeline">
+        {pipeline.map(([number, title, copy], index) => <div className="architecture-step" role="listitem" key={title}>
+          <article><span>{number}</span><h3>{title}</h3><p>{copy}</p></article>
+          {index < pipeline.length - 1 && <div className="flow-arrow" aria-hidden="true">↓</div>}
+        </div>)}
+      </div>
+      <div className="architecture-guarantee"><CheckIcon /><span><strong>Publication is not an AI action.</strong> It is a reviewed governance outcome.</span></div>
+    </section>
+
+    <section className="landing-section evaluation-section" id="evaluation">
       <div className="section-heading">
-        <div><p className="eyebrow">See what you receive</p><h2>A decision, not another news alert.</h2></div>
-        <p className="section-copy">A realistic preview of how one trusted AI development becomes a practical next step for your business.</p>
+        <SectionHeading eyebrow="Verified engineering evidence" title="Evaluation highlights" copy="Results from the second controlled 15-case shadow evaluation, validated against the report contract and offline forensic validator." />
+        <a className="text-link report-link" href={evaluationUrl} target="_blank" rel="noreferrer">Read the full report <ArrowIcon /></a>
       </div>
-      <article className="demo-brief">
-        <div className="demo-brief-top">
-          <div><span className="demo-label">Signal</span><h3>OpenAI introduces advanced voice capabilities for customer service workflows</h3></div>
-          <span className="demo-badge">Example brief</span>
-        </div>
-        <div className="demo-brief-grid">
-          <div className="demo-main">
-            <div className="demo-field"><span className="demo-label">Business Impact</span><strong className="impact-high">High</strong><p>Small service businesses can now test faster, more natural first-line responses without replacing their existing support process.</p></div>
-            <div className="demo-field recommendation"><span className="demo-label">Recommendation</span><p>Run a 2-week experiment on one repeat customer question. Compare response time, resolution rate, and customer satisfaction against your current workflow.</p></div>
-          </div>
-          <dl className="demo-metrics">
-            <div><dt>Estimated effort</dt><dd>Low</dd></div>
-            <div><dt>Potential benefit</dt><dd>High</dd></div>
-            <div><dt>Confidence</dt><dd>92%</dd></div>
-          </dl>
-        </div>
-        <div className="demo-footer">
-          <p><CheckIcon /> Evidence linked <span>•</span> Human verified <span>•</span> Personalized to your profile</p>
-          <Link className="button-link secondary" href="/get-started">View Full Decision Brief <ArrowIcon /></Link>
-        </div>
-      </article>
-      <p className="demo-disclaimer">Demonstration only. Your Decision Briefs are personalized to your business profile and the available evidence.</p>
+      <div className="evaluation-metrics">
+        {metrics.map(([value, label, note]) => <article className="evaluation-card" key={label}>
+          <span>{label}</span><strong>{value}</strong><p>{note}</p>
+        </article>)}
+      </div>
+      <p className="evaluation-note"><strong>Transparent by design:</strong> the candidate remains evaluation-only because governance thresholds—not technical compatibility alone—control migration.</p>
     </section>
 
-    <section id="how-it-works" className="landing-section">
-      <div className="centered-heading"><p className="eyebrow">How it works</p><h2>From AI change to your next move.</h2><p className="section-copy">Three simple steps turn a fast-moving field into focused business guidance.</p></div>
-      <div className="process-grid three-step">
-        <article className="process-card"><div className="step-icon"><SignalIcon /></div><span>Step 1</span><h3>Monitor trusted AI signals.</h3><p>We track credible developments so you do not have to sift through the noise.</p></article>
-        <article className="process-card"><div className="step-icon"><ContextIcon /></div><span>Step 2</span><h3>Gemini analyzes your business context.</h3><p>Each signal is evaluated against your needs, constraints, and opportunities.</p></article>
-        <article className="process-card"><div className="step-icon"><BriefIcon /></div><span>Step 3</span><h3>Receive a personalized Decision Brief.</h3><p>Get the impact, evidence, confidence, and a practical recommended action.</p></article>
+    <section className="landing-section why-section">
+      <div className="why-panel">
+        <p className="eyebrow">Why it matters</p>
+        <h2>Trust is established before deployment—not after failure.</h2>
+        <p>Production migration should never depend on model version alone. AI Radar compares raw model behavior, policy-adjusted behavior, evidence integrity, latency, token usage, and editorial outcomes before a candidate can move closer to production.</p>
+      </div>
+      <div className="migration-principles">
+        <div><span>01</span><strong>Evaluate the model</strong><p>Use one versioned dataset and production contract.</p></div>
+        <div><span>02</span><strong>Govern the decision</strong><p>Preserve raw output while applying deterministic safeguards.</p></div>
+        <div><span>03</span><strong>Protect production</strong><p>Keep traffic, persistence, and publication isolated.</p></div>
       </div>
     </section>
 
-    <section id="pricing" className="landing-section home-pricing">
-      <div className="centered-heading"><p className="eyebrow">Simple pricing</p><h2>Start free. Upgrade only when ready.</h2><p className="section-copy">Try the complete decision workflow first, then add capacity as your business needs it.</p></div>
-      <div className="pricing-grid">
-        <article className="panel price-card"><p className="plan-name">Free</p><h2>$0 <small>/ month</small></h2><p className="plan-description">For exploring decision intelligence.</p><ul className="feature-list"><li><CheckIcon /><span><strong>1</strong> Business Profile</span></li><li><CheckIcon /><span><strong>3</strong> Decision Briefs / month</span></li><li><CheckIcon /><span>Core feedback and impact features</span></li></ul><Link className="button-link secondary" href="/get-started">Start Free</Link></article>
-        <article className="panel price-card featured"><span className="popular-badge">Most popular</span><p className="plan-name">Pro</p><h2>$9 <small>/ month</small></h2><p className="plan-description">For businesses ready to act more often.</p><ul className="feature-list"><li><CheckIcon /><span><strong>3</strong> Business Profiles</span></li><li><CheckIcon /><span><strong>50</strong> Decision Briefs / month</span></li><li><CheckIcon /><span>Priority access to new signals</span></li></ul><Link className="button-link button-primary" href="/pricing">Explore Pro <ArrowIcon /></Link></article>
+    <section className="landing-section technology-section">
+      <SectionHeading eyebrow="Technology" title="Built on a production-ready stack" copy="Typed contracts, managed infrastructure, deterministic validation, and reproducible tests support every layer." />
+      <div className="technology-grid">
+        {technologies.map(([mark, name]) => <div className="technology-chip" key={name}><span>{mark}</span><strong>{name}</strong></div>)}
       </div>
     </section>
 
-    <section className="trust-section" aria-labelledby="trust-title">
-      <p id="trust-title" className="sr-only">Why you can trust LAFRYHI AI Radar</p>
-      <div><Image src="/gemini-spark.svg" alt="" width={25} height={25} /><span>Powered by Gemini</span></div>
-      <div><CheckIcon /><span>Evidence-linked recommendations</span></div>
-      <div><CheckIcon /><span>Human-verified workflow</span></div>
-      <div><CheckIcon /><span>Secure cloud infrastructure</span></div>
-      <div><CheckIcon /><span>Small Business focused</span></div>
-    </section>
-
-    <section id="faq" className="landing-section faq-section">
-      <div><p className="eyebrow">FAQ</p><h2>Questions, answered.</h2><p className="section-copy">Everything you need to start making clearer decisions.</p></div>
-      <div className="faq-list">
-        <details><summary>What is a Decision Brief?</summary><p>A concise, personalized analysis of a trusted AI signal, including its business impact, supporting evidence, confidence, and a practical recommended action.</p></details>
-        <details><summary>Do I need AI experience?</summary><p>No. LAFRYHI AI Radar translates technical developments into plain business language and focused next steps.</p></details>
-        <details><summary>Is my data private?</summary><p>Your business context is used to personalize your Decision Briefs. We use secure cloud infrastructure and explain our data practices in our Privacy Policy.</p></details>
-        <details><summary>Can I cancel anytime?</summary><p>Yes. Pro is a monthly subscription with no annual commitment. You can manage or cancel it through the secure billing portal.</p></details>
+    <section className="landing-section safety-section">
+      <SectionHeading eyebrow="Safety & governance" title="Every boundary is explicit." copy="The platform is designed so that a successful model response is only the beginning of evaluation—not permission to publish or deploy." />
+      <div className="safety-grid">
+        {safetyControls.map(([title, copy]) => <article key={title}>
+          <div className="safety-check"><CheckIcon /></div><h3>{title}</h3><p>{copy}</p>
+        </article>)}
       </div>
     </section>
 
-    <section className="cta-section">
-      <p className="eyebrow">Your next decision starts here</p>
-      <h2>Know what matters. Decide what to do next.</h2>
-      <p>Create your free Business Profile and turn trusted AI change into a practical advantage.</p>
-      <Link className="button-link button-primary" href="/get-started">Start Free <ArrowIcon /></Link>
+    <section className="cta-section governance-cta">
+      <p className="eyebrow">Building Trust Before Deployment</p>
+      <h2>Better AI starts with better governance.</h2>
+      <p>LAFRYHI AI Radar makes model evaluation measurable, editorial decisions explainable, and production migration accountable.</p>
+      <div className="hero-actions">
+        <a className="button-link button-primary" href={architectureUrl} target="_blank" rel="noreferrer">Explore the Architecture <ArrowIcon /></a>
+        <a className="button-link secondary" href={repositoryUrl} target="_blank" rel="noreferrer">View on GitHub</a>
+      </div>
     </section>
   </>;
 }
