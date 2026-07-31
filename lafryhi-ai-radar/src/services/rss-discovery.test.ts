@@ -142,6 +142,26 @@ describe("controlled RSS discovery", () => {
   });
 
   it.each([
+    ["canonical resource", "projects/test/locations/us-central1/jobs/lafryhi-ai-radar-rss-discovery"],
+    ["plain job name", "lafryhi-ai-radar-rss-discovery"],
+    ["surrounding whitespace", "  projects/test/locations/us-central1/jobs/lafryhi-ai-radar-rss-discovery  "],
+    ["trailing slash", "projects/test/locations/us-central1/jobs/lafryhi-ai-radar-rss-discovery/"],
+  ])("accepts supported Scheduler job-name form: %s", async (_name, jobName) => {
+    const repository = new MemoryRepository();
+    process.env.RSS_SCHEDULER_JOB_NAME = "lafryhi-ai-radar-rss-discovery";
+    process.env.RSS_SCHEDULER_SECRET = "phase-six-scheduler-secret";
+    const authorized = await handleScheduledRssDiscovery(new NextRequest("https://example.test/api/internal/rss/scheduled", {
+      method: "POST",
+      headers: {
+        "x-cloudscheduler": "true",
+        "x-cloudscheduler-jobname": jobName,
+        "x-internal-scheduler-secret": "phase-six-scheduler-secret",
+      },
+    }), repository);
+    expect(authorized.status).toBe(200);
+  });
+
+  it.each([
     {
       name: "missing scheduler marker",
       headers: {

@@ -28,7 +28,8 @@ export async function handleScheduledRssDiscovery(request: NextRequest, reposito
   const candidateSecretHeader = request.headers.get("x-internal-scheduler-secret");
   const secretPresent = candidateSecretHeader !== null;
   const candidateSecret = candidateSecretHeader || "";
-  const jobNameMatches = jobNamePresent && jobName.endsWith(`/jobs/${expected}`);
+  const normalizedJobName = jobName?.trim().replace(/\/+$/, "") || "";
+  const jobNameMatches = jobNamePresent && (normalizedJobName === expected || normalizedJobName.endsWith(`/jobs/${expected}`));
   const secretValid = expectedSecret.length >= 20 && timingSafeEqual(
     createHash("sha256").update(candidateSecret).digest(),
     createHash("sha256").update(expectedSecret).digest(),
