@@ -1,0 +1,9 @@
+{
+  "name": "rss_scheduler_non_2xx",
+  "type": "logging.googleapis.com/user/rss_scheduler_non_2xx",
+  "kind": "DELTA",
+  "valueType": "INT64",
+  "description": "Counts non-2xx responses from the RSS Cloud Scheduler job.",
+  "logFilter": "resource.type=\"cloud_scheduler_job\" AND resource.labels.job_id=\"lafryhi-ai-radar-rss-discovery\" AND httpRequest.status >= 300",
+  "labels": []
+}

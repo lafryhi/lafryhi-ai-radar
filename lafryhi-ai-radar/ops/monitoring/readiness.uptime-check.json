@@ -1,0 +1,14 @@
+{
+  "name": "projects/lafryhi-ai-radar-xprize/uptimeCheckConfigs/lafryhi-readiness-endpoint-Hb8cPvGEbVM",
+  "displayName": "LAFRYHI readiness endpoint",
+  "host": "lafryhi-ai-radar-1090908272413.us-central1.run.app",
+  "path": "/api/readiness",
+  "protocol": "HTTPS",
+  "method": "GET",
+  "expectedStatus": 200,
+  "period": "300s",
+  "timeout": "10s",
+  "selectedRegions": [
+    "USA"
+  ]
+}

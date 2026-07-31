@@ -1,0 +1,18 @@
+{
+  "name": "projects/lafryhi-ai-radar-xprize/alertPolicies/14210219191550957948",
+  "displayName": "RSS Scheduler repeated non-2xx",
+  "enabled": true,
+  "notificationChannels": [
+    "projects/lafryhi-ai-radar-xprize/notificationChannels/12686894792160731285"
+  ],
+  "condition": {
+    "displayName": "At least 3 RSS Scheduler non-2xx responses in 24h",
+    "metricFilter": "metric.type=\"logging.googleapis.com/user/rss_scheduler_non_2xx\" AND resource.type=\"cloud_scheduler_job\"",
+    "comparison": "COMPARISON_GT",
+    "threshold": 2,
+    "duration": "86400s",
+    "alignmentPeriod": "3600s",
+    "perSeriesAligner": "ALIGN_SUM",
+    "crossSeriesReducer": "REDUCE_SUM"
+  }
+}

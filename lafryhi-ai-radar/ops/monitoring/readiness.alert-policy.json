@@ -1,0 +1,17 @@
+{
+  "name": "projects/lafryhi-ai-radar-xprize/alertPolicies/17293647990413979180",
+  "displayName": "LAFRYHI readiness check failed",
+  "enabled": true,
+  "notificationChannels": [
+    "projects/lafryhi-ai-radar-xprize/notificationChannels/12686894792160731285"
+  ],
+  "condition": {
+    "displayName": "Readiness check below 100 percent for 10 minutes",
+    "metricFilter": "metric.type=\"monitoring.googleapis.com/uptime_check/check_passed\" AND resource.type=\"uptime_url\" AND metric.labels.check_id=\"lafryhi-readiness-endpoint-Hb8cPvGEbVM\"",
+    "comparison": "COMPARISON_LT",
+    "threshold": 1,
+    "duration": "600s",
+    "alignmentPeriod": "300s",
+    "perSeriesAligner": "ALIGN_FRACTION_TRUE"
+  }
+}
