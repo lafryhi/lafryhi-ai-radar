@@ -141,6 +141,123 @@ describe("controlled RSS discovery", () => {
     expect(authorized.status).toBe(200);
   });
 
+  it.each([
+    {
+      name: "missing scheduler marker",
+      headers: {
+        "x-cloudscheduler-jobname": "projects/test/locations/us-central1/jobs/lafryhi-ai-radar-rss-discovery",
+        "x-internal-scheduler-secret": "phase-six-scheduler-secret",
+      },
+      diagnostics: {
+        schedulerMarkerPresent: false,
+        schedulerMarkerValid: false,
+        jobNamePresent: true,
+        jobNameMatches: true,
+        secretPresent: true,
+        secretValid: true,
+      },
+    },
+    {
+      name: "invalid scheduler marker",
+      headers: {
+        "x-cloudscheduler": "false",
+        "x-cloudscheduler-jobname": "projects/test/locations/us-central1/jobs/lafryhi-ai-radar-rss-discovery",
+        "x-internal-scheduler-secret": "phase-six-scheduler-secret",
+      },
+      diagnostics: {
+        schedulerMarkerPresent: true,
+        schedulerMarkerValid: false,
+        jobNamePresent: true,
+        jobNameMatches: true,
+        secretPresent: true,
+        secretValid: true,
+      },
+    },
+    {
+      name: "missing job name",
+      headers: {
+        "x-cloudscheduler": "true",
+        "x-internal-scheduler-secret": "phase-six-scheduler-secret",
+      },
+      diagnostics: {
+        schedulerMarkerPresent: true,
+        schedulerMarkerValid: true,
+        jobNamePresent: false,
+        jobNameMatches: false,
+        secretPresent: true,
+        secretValid: true,
+      },
+    },
+    {
+      name: "mismatched job name",
+      headers: {
+        "x-cloudscheduler": "true",
+        "x-cloudscheduler-jobname": "projects/test/locations/us-central1/jobs/different-job",
+        "x-internal-scheduler-secret": "phase-six-scheduler-secret",
+      },
+      diagnostics: {
+        schedulerMarkerPresent: true,
+        schedulerMarkerValid: true,
+        jobNamePresent: true,
+        jobNameMatches: false,
+        secretPresent: true,
+        secretValid: true,
+      },
+    },
+    {
+      name: "missing secret",
+      headers: {
+        "x-cloudscheduler": "true",
+        "x-cloudscheduler-jobname": "projects/test/locations/us-central1/jobs/lafryhi-ai-radar-rss-discovery",
+      },
+      diagnostics: {
+        schedulerMarkerPresent: true,
+        schedulerMarkerValid: true,
+        jobNamePresent: true,
+        jobNameMatches: true,
+        secretPresent: false,
+        secretValid: false,
+      },
+    },
+    {
+      name: "invalid secret",
+      headers: {
+        "x-cloudscheduler": "true",
+        "x-cloudscheduler-jobname": "projects/test/locations/us-central1/jobs/lafryhi-ai-radar-rss-discovery",
+        "x-internal-scheduler-secret": "invalid-scheduler-secret",
+      },
+      diagnostics: {
+        schedulerMarkerPresent: true,
+        schedulerMarkerValid: true,
+        jobNamePresent: true,
+        jobNameMatches: true,
+        secretPresent: true,
+        secretValid: false,
+      },
+    },
+  ])("logs boolean-only authentication diagnostics for $name", async ({ headers, diagnostics }) => {
+    const repository = new MemoryRepository();
+    process.env.RSS_SCHEDULER_JOB_NAME = "lafryhi-ai-radar-rss-discovery";
+    process.env.RSS_SCHEDULER_SECRET = "phase-six-scheduler-secret";
+    const warning = vi.mocked(console.warn);
+
+    const response = await handleScheduledRssDiscovery(new NextRequest("https://example.test/api/internal/rss/scheduled", { method: "POST", headers: headers as Record<string, string> }), repository);
+
+    expect(response.status).toBe(401);
+    expect(warning).toHaveBeenCalledTimes(1);
+    const serialized = String(warning.mock.calls[0][0]);
+    expect(JSON.parse(serialized)).toMatchObject({
+      event: "rss.schedule_unauthorized",
+      reason: "unauthorized",
+      ...diagnostics,
+    });
+    expect(serialized).not.toContain("phase-six-scheduler-secret");
+    expect(serialized).not.toContain("invalid-scheduler-secret");
+    expect(serialized).not.toContain("projects/test");
+    expect(serialized).not.toContain("x-internal-scheduler-secret");
+    expect(serialized).not.toMatch(/authorization|bearer|credential|token|query/i);
+  });
+
   it("protects the non-persistent runtime diagnostic", async () => {
     process.env.OPERATOR_ACCESS_TOKEN = "phase-six-operator-access-token";
     const unauthorized = await diagnosticPost(new NextRequest("https://example.test/api/internal/rss/diagnostics", { method: "POST" }));
