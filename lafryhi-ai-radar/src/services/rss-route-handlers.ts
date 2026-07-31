@@ -3,6 +3,7 @@ import { z } from "zod";
 import { validOperatorToken } from "@/auth/operator";
 import type { RadarRepository } from "@/persistence/repository";
 import { discoverRss } from "./rss-discovery";
+import { logRssEvent } from "./rss-events";
 import { createHash, timingSafeEqual } from "node:crypto";
 
 const RequestSchema = z.object({ sourceDefinitionId: z.string().min(1) }).strict();
@@ -19,14 +20,12 @@ export async function handleOperatorRssDiscovery(request: NextRequest, repositor
 
 export async function handleScheduledRssDiscovery(request: NextRequest, repository: RadarRepository) {
   const schedulerMarker = request.headers.get("x-cloudscheduler");
-  const schedulerMarkerPresent = schedulerMarker !== null;
   const schedulerMarkerValid = schedulerMarker === "true";
   const jobName = request.headers.get("x-cloudscheduler-jobname");
   const jobNamePresent = jobName !== null;
   const expected = process.env.RSS_SCHEDULER_JOB_NAME || "lafryhi-ai-radar-rss-discovery";
   const expectedSecret = process.env.RSS_SCHEDULER_SECRET || "";
   const candidateSecretHeader = request.headers.get("x-internal-scheduler-secret");
-  const secretPresent = candidateSecretHeader !== null;
   const candidateSecret = candidateSecretHeader || "";
   const normalizedJobName = jobName?.trim().replace(/\/+$/, "") || "";
   const jobNameMatches = jobNamePresent && (normalizedJobName === expected || normalizedJobName.endsWith(`/jobs/${expected}`));
@@ -35,17 +34,7 @@ export async function handleScheduledRssDiscovery(request: NextRequest, reposito
     createHash("sha256").update(expectedSecret).digest(),
   );
   if (!schedulerMarkerValid || !jobNameMatches || !secretValid) {
-    console.warn(JSON.stringify({
-      event: "rss.schedule_unauthorized",
-      reason: "unauthorized",
-      schedulerMarkerPresent,
-      schedulerMarkerValid,
-      jobNamePresent,
-      jobNameMatches,
-      secretPresent,
-      secretValid,
-      timestamp: new Date().toISOString(),
-    }));
+    logRssEvent({ event: "rss.schedule_unauthorized", reason: "unauthorized" }, "warn");
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
   const run = await discoverRss(repository, "scheduled");
