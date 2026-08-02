@@ -162,7 +162,7 @@ export class VertexAiAnalyzer implements AiAnalyzer {
       opportunity: { isOpportunity: false, deadline: null, eligibility: null, benefit: null, effortEstimate: null },
       duplicateAnalysis: { similarityScore: 0, classification: "unique", relatedPreviousArticles: [], duplicateReason: null },
     });
-    return { result, model: process.env.GEMINI_MODEL || "gemini-2.5-flash" };
+    return { result, model: this.engine.modelUsed };
   }
 }
 

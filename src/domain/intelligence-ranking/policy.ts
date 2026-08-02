@@ -1,7 +1,15 @@
 import type { RankingPolicy } from "./contracts";
 import { RankingPolicySchema } from "./schemas";
 
-export const RANKING_POLICY_V1: RankingPolicy = RankingPolicySchema.parse({
+function deepFreeze<T>(value: T): T {
+  if (value && typeof value === "object" && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    for (const nested of Object.values(value)) deepFreeze(nested);
+  }
+  return value;
+}
+
+export const RANKING_POLICY_V1: RankingPolicy = deepFreeze(RankingPolicySchema.parse({
   version: "ranking-policy-v1",
   algorithmVersion: "deterministic-ranking-v1",
   supportedAnalysisPromptVersions: ["live-analysis-v1"],
@@ -30,7 +38,7 @@ export const RANKING_POLICY_V1: RankingPolicy = RankingPolicySchema.parse({
     { below: 0.40, maximumFinalScore: 49.99 },
     { below: 0.60, maximumFinalScore: 69.99 },
   ],
-});
+}));
 
 export function getRankingPolicy(version: string): RankingPolicy {
   if (version === RANKING_POLICY_V1.version) return RANKING_POLICY_V1;

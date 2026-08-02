@@ -25,4 +25,18 @@ describe("schemas", () => {
     expect(legacy.overallRecommendation).toBe("Needs Human Attention");
     expect(legacy.duplicateAnalysis.classification).toBe("unique");
   });
+  it("bounds derived key points when reading a long legacy summary", () => {
+    const summary = "Legacy production analysis with detailed context. ".repeat(8);
+    const legacy = StoredAnalysisSchema.parse({
+      id: "long-legacy-analysis", sourceRecordId: "legacy-source", processingRunId: "legacy-run",
+      createdAt: "2026-07-24T00:00:00.000Z",
+      summary, whyItMatters: analysisFixture.whyItMatters,
+      category: analysisFixture.category, relevanceScore: 72, confidenceScore: 90,
+      recommendedAction: analysisFixture.recommendedAction, evidence: analysisFixture.evidence,
+      warnings: ["Legacy production warning with detailed context. ".repeat(8)], opportunity: analysisFixture.opportunity,
+    });
+    expect(summary.length).toBeGreaterThan(160);
+    expect(legacy.keyPoints).toEqual([summary.slice(0, 160)]);
+    expect(legacy.potentialRisks[0]).toHaveLength(160);
+  });
 });

@@ -42,10 +42,26 @@ spec:
               value: us-central1
             - name: GEMINI_MODEL
               value: gemini-2.5-flash
+            - name: GEMINI_PRIMARY_MODEL
+              value: gemini-2.5-flash
+            - name: GEMINI_FALLBACK_MODEL
+              value: gemini-2.5-flash
             - name: VERTEX_TIMEOUT_MS
               value: "60000"
             - name: GEMINI_MAX_OUTPUT_TOKENS
               value: "8192"
+            - name: GEMINI_RETRY_COUNT
+              value: "2"
+            - name: GEMINI_RETRY_DELAY_MS
+              value: "500"
+            - name: GEMINI_FALLBACK_ENABLED
+              value: "true"
+            - name: GEMINI_THINKING_MODE
+              value: auto
+            - name: GEMINI_SHADOW_ENABLED
+              value: "false"
+            - name: GEMINI_SHADOW_MODEL
+              value: ""
             - name: FIRESTORE_DATABASE_ID
               value: (default)
             - name: RSS_SCHEDULER_JOB_NAME

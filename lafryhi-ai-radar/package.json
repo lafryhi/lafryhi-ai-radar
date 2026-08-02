@@ -9,11 +9,23 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "eval:gemini:validate": "tsx scripts/evaluate-gemini-migration.ts validate",
+    "eval:gemini:dry-run": "tsx scripts/evaluate-gemini-migration.ts dry-run",
+    "eval:gemini:run": "tsx scripts/evaluate-gemini-migration.ts run",
+    "eval:gemini:report": "tsx scripts/evaluate-gemini-migration.ts report",
+    "eval:gemini:probe:validate": "tsx scripts/probe-gemini-candidate.ts validate",
+    "eval:gemini:probe:dry-run": "tsx scripts/probe-gemini-candidate.ts dry-run",
+    "eval:gemini:probe": "tsx scripts/probe-gemini-candidate.ts probe",
+    "eval:gemini:smoke": "tsx scripts/probe-gemini-candidate.ts smoke",
+    "eval:policy:replay": "tsx scripts/replay-editorial-policy.ts",
+    "shadow:readiness:validate": "tsx scripts/validate-shadow-readiness.ts",
+    "eval:shadow:forensic-validate": "tsx scripts/forensic-validate-shadow-report.ts",
+    "eval:forbidden-terms:replay": "tsx scripts/replay-forbidden-terms.ts"
   },
   "dependencies": {
     "@google-cloud/firestore": "latest",
-    "@google/genai": "latest",
+    "@google/genai": "2.13.0",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
@@ -26,6 +38,7 @@
     "eslint": "latest",
     "eslint-config-next": "latest",
     "typescript": "latest",
+    "tsx": "4.20.6",
     "vitest": "latest"
   },
   "overrides": {

@@ -1,0 +1,253 @@
+{
+  "runLabel": "gemini-3-flash-probe-repeat-2026-07-30",
+  "timestamp": "2026-07-30T07:51:55.153Z",
+  "gitCommit": "658c3136b6cee992d9f170522fcf938de0d06e7f",
+  "sdkVersion": "2.13.0",
+  "candidateModel": "gemini-3-flash-preview",
+  "candidateLifecycleStage": "preview",
+  "lifecycleNotice": "Candidate lifecycle stage is operator-supplied, not independently verified.",
+  "productionModel": "gemini-2.5-flash",
+  "attemptedLocations": [
+    "us-central1",
+    "global"
+  ],
+  "successfulLocations": [],
+  "results": [
+    {
+      "candidateModel": "gemini-3-flash-preview",
+      "projectConfigured": true,
+      "location": "us-central1",
+      "endpointReachable": true,
+      "modelReachable": false,
+      "requestAccepted": false,
+      "responseReceived": false,
+      "jsonParseValid": false,
+      "schemaValid": false,
+      "structuredOutputSupported": false,
+      "thinkingConfigurationSupported": null,
+      "transportStatus": "MODEL_NOT_FOUND",
+      "contractStatus": "NOT_TESTED",
+      "availabilityStatus": "UNAVAILABLE",
+      "durationMs": 1623,
+      "attempts": 1,
+      "errorCategory": "model-availability",
+      "sanitizedError": "{\"error\":{\"code\":404,\"message\":\"Publisher model `projects/lafryhi-ai-radar-xprize/locations/us-central1/publishers/google/models/gemini-3-flash-preview` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.\",\"status\":\"NOT_FOUND\"}}",
+      "checkedAt": "2026-07-30T07:51:48.743Z",
+      "primaryStructuredProbe": {
+        "attempted": true,
+        "endpointReachable": true,
+        "modelReachable": false,
+        "requestAccepted": false,
+        "responseReceived": false,
+        "jsonParseValid": false,
+        "schemaValid": false,
+        "structuredOutputSupported": false,
+        "transportStatus": "MODEL_NOT_FOUND",
+        "contractStatus": "NOT_TESTED",
+        "availabilityStatus": "UNAVAILABLE",
+        "responseShape": "EMPTY",
+        "diagnosticJsonExtracted": false,
+        "responseLength": 0,
+        "candidateCount": 0,
+        "durationMs": 1623,
+        "attempts": 1,
+        "requestConfiguration": {
+          "responseMimeTypeIncluded": true,
+          "responseJsonSchemaIncluded": true,
+          "responseSchemaIncluded": false,
+          "temperature": 0,
+          "maxOutputTokens": 128,
+          "thinkingConfig": "OMITTED",
+          "apiVersion": "v1",
+          "vertexAiMode": true,
+          "location": "us-central1"
+        },
+        "errorCategory": "model-availability",
+        "sanitizedError": "{\"error\":{\"code\":404,\"message\":\"Publisher model `projects/lafryhi-ai-radar-xprize/locations/us-central1/publishers/google/models/gemini-3-flash-preview` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.\",\"status\":\"NOT_FOUND\"}}"
+      },
+      "strictPromptRetryProbe": {
+        "attempted": false,
+        "endpointReachable": false,
+        "modelReachable": false,
+        "requestAccepted": false,
+        "responseReceived": false,
+        "jsonParseValid": false,
+        "schemaValid": false,
+        "structuredOutputSupported": false,
+        "transportStatus": "NOT_ATTEMPTED",
+        "contractStatus": "NOT_TESTED",
+        "availabilityStatus": "UNKNOWN",
+        "responseShape": "EMPTY",
+        "diagnosticJsonExtracted": false,
+        "responseLength": 0,
+        "candidateCount": 0,
+        "durationMs": 0,
+        "attempts": 0,
+        "requestConfiguration": {
+          "responseMimeTypeIncluded": true,
+          "responseJsonSchemaIncluded": true,
+          "responseSchemaIncluded": false,
+          "temperature": 0,
+          "maxOutputTokens": 128,
+          "thinkingConfig": "OMITTED",
+          "apiVersion": "v1",
+          "vertexAiMode": true,
+          "location": "us-central1"
+        }
+      }
+    },
+    {
+      "candidateModel": "gemini-3-flash-preview",
+      "projectConfigured": true,
+      "location": "global",
+      "endpointReachable": true,
+      "modelReachable": true,
+      "requestAccepted": true,
+      "responseReceived": true,
+      "jsonParseValid": false,
+      "schemaValid": false,
+      "structuredOutputSupported": false,
+      "thinkingConfigurationSupported": null,
+      "transportStatus": "REACHABLE",
+      "contractStatus": "FINISH_REASON_INVALID",
+      "availabilityStatus": "AVAILABLE_CONTRACT_INCOMPATIBLE",
+      "actualModel": "gemini-3-flash-preview",
+      "modelVersion": "gemini-3-flash-preview",
+      "durationMs": 4784,
+      "attempts": 2,
+      "finishReason": "MAX_TOKENS",
+      "usageMetadata": {
+        "promptTokenCount": 120,
+        "candidatesTokenCount": 13,
+        "totalTokenCount": 232,
+        "trafficType": "ON_DEMAND",
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 120
+          }
+        ],
+        "candidatesTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 13
+          }
+        ],
+        "thoughtsTokenCount": 99
+      },
+      "checkedAt": "2026-07-30T07:51:50.368Z",
+      "primaryStructuredProbe": {
+        "attempted": true,
+        "endpointReachable": true,
+        "modelReachable": true,
+        "requestAccepted": true,
+        "responseReceived": true,
+        "jsonParseValid": false,
+        "schemaValid": false,
+        "structuredOutputSupported": false,
+        "transportStatus": "REACHABLE",
+        "contractStatus": "FINISH_REASON_INVALID",
+        "availabilityStatus": "AVAILABLE_CONTRACT_INCOMPATIBLE",
+        "responseShape": "RAW_JSON",
+        "diagnosticJsonExtracted": false,
+        "responsePrefix": "{\"status\":\"ok\",\"candidate\":\"gemini-3-flash",
+        "responseLength": 42,
+        "contentType": "application/json; charset=UTF-8",
+        "candidateCount": 1,
+        "finishReason": "MAX_TOKENS",
+        "actualModel": "gemini-3-flash-preview",
+        "modelVersion": "gemini-3-flash-preview",
+        "usageMetadata": {
+          "promptTokenCount": 120,
+          "candidatesTokenCount": 13,
+          "totalTokenCount": 232,
+          "trafficType": "ON_DEMAND",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 120
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 13
+            }
+          ],
+          "thoughtsTokenCount": 99
+        },
+        "durationMs": 2859,
+        "attempts": 1,
+        "requestConfiguration": {
+          "responseMimeTypeIncluded": true,
+          "responseJsonSchemaIncluded": true,
+          "responseSchemaIncluded": false,
+          "temperature": 0,
+          "maxOutputTokens": 128,
+          "thinkingConfig": "OMITTED",
+          "apiVersion": "v1",
+          "vertexAiMode": true,
+          "location": "global"
+        }
+      },
+      "strictPromptRetryProbe": {
+        "attempted": true,
+        "endpointReachable": true,
+        "modelReachable": true,
+        "requestAccepted": true,
+        "responseReceived": true,
+        "jsonParseValid": false,
+        "schemaValid": false,
+        "structuredOutputSupported": false,
+        "transportStatus": "REACHABLE",
+        "contractStatus": "FINISH_REASON_INVALID",
+        "availabilityStatus": "AVAILABLE_CONTRACT_INCOMPATIBLE",
+        "responseShape": "NON_JSON_TEXT",
+        "diagnosticJsonExtracted": false,
+        "responsePrefix": "Here is the JSON requested",
+        "responseLength": 26,
+        "contentType": "application/json; charset=UTF-8",
+        "candidateCount": 1,
+        "finishReason": "MAX_TOKENS",
+        "actualModel": "gemini-3-flash-preview",
+        "modelVersion": "gemini-3-flash-preview",
+        "usageMetadata": {
+          "promptTokenCount": 138,
+          "candidatesTokenCount": 6,
+          "totalTokenCount": 262,
+          "trafficType": "ON_DEMAND",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 138
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 6
+            }
+          ],
+          "thoughtsTokenCount": 118
+        },
+        "durationMs": 1925,
+        "attempts": 1,
+        "requestConfiguration": {
+          "responseMimeTypeIncluded": true,
+          "responseJsonSchemaIncluded": true,
+          "responseSchemaIncluded": false,
+          "temperature": 0,
+          "maxOutputTokens": 128,
+          "thinkingConfig": "OMITTED",
+          "apiVersion": "v1",
+          "vertexAiMode": true,
+          "location": "global"
+        }
+      }
+    }
+  ],
+  "realCallsEnabled": true,
+  "availabilityStatus": "REACHABLE_BUT_CONTRACT_FAILED",
+  "noDeploymentOccurred": true,
+  "productionConfigurationUnchanged": true
+}

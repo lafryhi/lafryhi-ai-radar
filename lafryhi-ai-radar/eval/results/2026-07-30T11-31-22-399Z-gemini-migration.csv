@@ -1,0 +1,2 @@
+"caseId","baselineStatus","candidateStatus","baselineModel","candidateModel","baselineRawPosition","candidateRawPosition","baselineEffectivePosition","candidateEffectivePosition","candidatePolicyAction"
+"official-google-announcement","READY","READY","gemini-2.5-flash","gemini-3.1-flash-lite","DEFER","ACT_NOW","DEFER","MONITOR","REQUIRE_HUMAN_REVIEW"

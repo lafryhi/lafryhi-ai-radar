@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "shadow-readiness-v1",
+  "generatedAt": "2026-07-30T12:30:00.000Z",
+  "approvedProductionModel": "gemini-2.5-flash",
+  "candidateModel": "gemini-3.1-flash-lite",
+  "overallStatus": "READY",
+  "requirements": [
+    {"id":"SR-001","description":"Production and fallback models remain immutable and approved.","status":"PASS","severity":"CRITICAL","automaticCheck":"Exact model-ID equality","manualCheck":"Confirm runtime environment snapshot","evidence":["gemini-2.5-flash","gemini-2.5-flash"]},
+    {"id":"SR-002","description":"Candidate is distinct and restricted to evaluation-only use.","status":"PASS","severity":"CRITICAL","automaticCheck":"Candidate-use and model separation","manualCheck":"Confirm no candidate in production manifest","evidence":["EVALUATION_ONLY","gemini-3.1-flash-lite"]},
+    {"id":"SR-003","description":"Shadow traffic allocation remains exactly zero percent.","status":"PASS","severity":"CRITICAL","automaticCheck":"Traffic percentage equals zero","manualCheck":"Confirm no traffic or canary operation","evidence":["0%"]},
+    {"id":"SR-004","description":"Publication capability is disabled for evaluation.","status":"PASS","severity":"CRITICAL","automaticCheck":"Publication flags are false","manualCheck":"Review publication isolation boundary","evidence":["publication=false"]},
+    {"id":"SR-005","description":"Cloud Run mutation capability is disabled.","status":"PASS","severity":"CRITICAL","automaticCheck":"Cloud Run write flag is false","manualCheck":"Confirm operator executes no deployment command","evidence":["cloudRunWrites=false"]},
+    {"id":"SR-006","description":"Firestore mutation capability is disabled.","status":"PASS","severity":"CRITICAL","automaticCheck":"Firestore write flags are false","manualCheck":"Confirm evaluation service account scope","evidence":["firestoreWrites=false"]},
+    {"id":"SR-007","description":"Report destination is repository-relative and traversal-safe.","status":"PASS","severity":"BLOCKING","automaticCheck":"Path containment validation","manualCheck":"Confirm storage retention and access","evidence":["eval/results/shadow"]},
+    {"id":"SR-008","description":"Raw outputs are disabled and evaluation inputs are redacted.","status":"PASS","severity":"CRITICAL","automaticCheck":"Privacy controls validation","manualCheck":"Review a sanitized sample report","evidence":["raw=false","redacted=true"]},
+    {"id":"SR-009","description":"Mandatory application human-review pipeline remains enabled.","status":"PASS","severity":"CRITICAL","automaticCheck":"Review pipeline flag is true","manualCheck":"Reviewer confirms staffing and escalation","evidence":["review=true"]},
+    {"id":"SR-010","description":"Evaluation dataset and semantic fixtures pass strict validation.","status":"PASS","severity":"BLOCKING","automaticCheck":"Dataset and fixture schemas","manualCheck":"Approve dataset provenance and representativeness","evidence":["valid=true"]},
+    {"id":"SR-011","description":"Editorial policy constitution is valid and pinned to v1.1.","status":"PASS","severity":"CRITICAL","automaticCheck":"Strict constitution schema and version pin","manualCheck":"Editorial governor signs off policy","evidence":["valid=true"]},
+    {"id":"SR-012","description":"Dataset, fixture, policy, evaluation, and report versions are compatible.","status":"PASS","severity":"BLOCKING","automaticCheck":"Compatibility matrix validation","manualCheck":"Confirm historical reports are not mixed","evidence":["valid=true"]},
+    {"id":"SR-013","description":"Decision-chain identifiers cover evaluation through publication.","status":"PASS","severity":"BLOCKING","automaticCheck":"Traceability schema sample","manualCheck":"Reviewer reconstructs one saved case","evidence":["valid=true"]}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "shadow-release-manifest-v1",
+  "gitRevision": "658c3136b6cee992d9f170522fcf938de0d06e7f",
+  "policyVersion": "editorial-policy-v1.1",
+  "constitutionVersion": "editorial-policy-v1.1",
+  "datasetVersion": "1.0",
+  "fixtureVersion": "editorial-context-v1.1",
+  "evaluationVersion": "gemini-migration-evaluation-v2.6",
+  "reportVersion": "gemini-migration-report-v1.1",
+  "testTotals": {"tests": 263, "files": 28},
+  "validationTotals": {"test":"PASS","typecheck":"PASS","lint":"PASS","build":"PASS"},
+  "knownLimitations": [
+    "Certification uses a synthetic 15-case dataset and does not constitute live shadow evidence.",
+    "Candidate availability and behavior can vary by location and provider-side model version.",
+    "Manual reviewer capacity must be confirmed immediately before a future shadow run.",
+    "The availability gate is integrated into dataset case 1; its four requests are reused and the evaluator aborts before cases 2-15 if any gate control fails."
+  ],
+  "knownRisks": ["RISK-005","RISK-007","RISK-008","RISK-011"],
+  "approvedProductionModel": "gemini-2.5-flash",
+  "candidateModel": "gemini-3.1-flash-lite",
+  "candidateUse": "EVALUATION_ONLY",
+  "releaseTimestamp": "2026-07-30T12:30:00.000Z",
+  "containsSecrets": false
+}

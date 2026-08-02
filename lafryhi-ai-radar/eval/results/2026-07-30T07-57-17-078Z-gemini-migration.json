@@ -1,0 +1,224 @@
+{
+  "datasetVersion": "1.0",
+  "timestamp": "2026-07-30T07:57:17.078Z",
+  "gitCommit": "658c3136b6cee992d9f170522fcf938de0d06e7f",
+  "sdkVersion": "2.13.0",
+  "productionModel": "gemini-2.5-flash",
+  "candidateModel": "gemini-3.1-flash-lite",
+  "candidateLifecycleStage": "ga",
+  "lifecycleNotice": "Candidate lifecycle stage is operator-supplied, not independently verified.",
+  "runLabel": "gemini-3-1-flash-lite-smoke-2026-07-30",
+  "location": "us-central1",
+  "caseCount": 1,
+  "configuration": {
+    "concurrency": 1,
+    "timeoutMs": 120000,
+    "maxCases": 1,
+    "sampleRate": 1,
+    "saveRawOutputs": false,
+    "redactInputs": true
+  },
+  "baselineMetrics": {
+    "requestSuccessRate": 0,
+    "jsonParseSuccessRate": 1,
+    "schemaValidRate": 0,
+    "applicationValidationRate": 0,
+    "exactEvidenceRate": 1,
+    "evidenceIdComplianceRate": 1,
+    "enumComplianceRate": 1,
+    "pipelineCompletionRate": 0,
+    "insufficientEvidenceCorrectnessRate": 1,
+    "meanLatencyMs": 4657,
+    "medianLatencyMs": 4657,
+    "p95LatencyMs": 4657,
+    "averageAttempts": 1,
+    "fallbackRate": 0,
+    "timeoutRate": 0,
+    "missingTokenMetadataRate": 1
+  },
+  "candidateMetrics": {
+    "requestSuccessRate": 0,
+    "jsonParseSuccessRate": 1,
+    "schemaValidRate": 1,
+    "applicationValidationRate": 0,
+    "exactEvidenceRate": 1,
+    "evidenceIdComplianceRate": 1,
+    "enumComplianceRate": 1,
+    "pipelineCompletionRate": 0,
+    "insufficientEvidenceCorrectnessRate": 1,
+    "meanLatencyMs": 626,
+    "medianLatencyMs": 626,
+    "p95LatencyMs": 626,
+    "averageAttempts": 1,
+    "fallbackRate": 0,
+    "timeoutRate": 0,
+    "missingTokenMetadataRate": 1
+  },
+  "comparativeMetrics": {
+    "statusAgreementRate": 1,
+    "recommendationAgreementRate": 1,
+    "meanScoreDrift": 0,
+    "meanConfidenceDrift": 0,
+    "meanRelevanceDrift": 0,
+    "meanEvidenceCountDrift": 0,
+    "insufficientEvidenceAgreementRate": 1,
+    "requiredKeywordComplianceRate": 0,
+    "forbiddenKeywordViolationRate": 0,
+    "unsupportedClaimRate": 0,
+    "quotationMismatchRate": 0
+  },
+  "promotion": {
+    "recommendation": "NOT_ELIGIBLE",
+    "checks": [
+      {
+        "name": "pipeline completion",
+        "severity": "fail",
+        "actual": 0,
+        "threshold": ">= 98%"
+      },
+      {
+        "name": "JSON parse",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 99%"
+      },
+      {
+        "name": "schema validity",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 99%"
+      },
+      {
+        "name": "exact evidence",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 98%"
+      },
+      {
+        "name": "evidence IDs",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": "100%"
+      },
+      {
+        "name": "enums",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": "100%"
+      },
+      {
+        "name": "insufficient evidence",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 95%"
+      },
+      {
+        "name": "status agreement",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 90%"
+      },
+      {
+        "name": "p95 latency",
+        "severity": "pass",
+        "actual": 626,
+        "threshold": "<= 1.5x baseline"
+      },
+      {
+        "name": "fallback rate",
+        "severity": "pass",
+        "actual": 0,
+        "threshold": "<= baseline + 2pp"
+      },
+      {
+        "name": "timeout rate",
+        "severity": "pass",
+        "actual": 0,
+        "threshold": "<= 1%"
+      }
+    ],
+    "criticalInvariantViolations": []
+  },
+  "failedCases": [
+    "official-google-announcement"
+  ],
+  "warningCases": [
+    "official-google-announcement"
+  ],
+  "missingMetadata": [
+    "official-google-announcement"
+  ],
+  "recommendation": "NOT_ELIGIBLE",
+  "caseResults": [
+    {
+      "caseId": "official-google-announcement",
+      "category": "official-source",
+      "language": "en",
+      "source": {
+        "title": "Google announces a controlled AI API update",
+        "url": "https://example.test/google-update",
+        "publisher": "Google",
+        "publishedAt": "2026-07-01T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 4657,
+          "requestSucceeded": false,
+          "jsonParseValid": true,
+          "schemaValid": false,
+          "applicationValid": false,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 0,
+          "failureCategory": "model-error",
+          "sanitizedError": "Signal Intelligence failed schema validation: [\n  {\n    \"origin\": \"array\",\n    \"code\": \"too_small\",\n    \"minimum\": 1,\n    \"inclusive\": true,\n    \"path\": [\n      \"whyImportant\"\n    ],\n    \"message\": \"Too small: expected array to have >=1 items\"\n  }\n]"
+        },
+        "pipelineCompleted": false,
+        "status": "FAILED",
+        "evidenceCount": 0,
+        "outputText": "[REDACTED]"
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 626,
+          "requestSucceeded": false,
+          "jsonParseValid": true,
+          "schemaValid": true,
+          "applicationValid": false,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 0,
+          "failureCategory": "model-error",
+          "sanitizedError": "{\"error\":{\"code\":404,\"message\":\"Publisher model `projects/lafryhi-ai-radar-xprize/locations/us-central1/publishers/google/models/gemini-3.1-flash-lite` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.\",\"status\":\"NOT_FOUND\"}}"
+        },
+        "pipelineCompleted": false,
+        "status": "FAILED",
+        "evidenceCount": 0,
+        "outputText": "[REDACTED]"
+      },
+      "expectationChecks": {
+        "requiredKeywords": false,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false
+      },
+      "invariantViolations": []
+    }
+  ]
+}

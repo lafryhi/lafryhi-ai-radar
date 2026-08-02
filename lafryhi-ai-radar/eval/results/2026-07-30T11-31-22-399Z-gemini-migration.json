@@ -1,0 +1,452 @@
+{
+  "datasetVersion": "1.0",
+  "timestamp": "2026-07-30T11:31:22.399Z",
+  "gitCommit": "658c3136b6cee992d9f170522fcf938de0d06e7f",
+  "sdkVersion": "2.13.0",
+  "productionModel": "gemini-2.5-flash",
+  "candidateModel": "gemini-3.1-flash-lite",
+  "candidateLifecycleStage": "ga",
+  "lifecycleNotice": "Candidate lifecycle stage is operator-supplied, not independently verified.",
+  "runLabel": "phase-5-availability-gate-2026-07-30",
+  "location": "global",
+  "caseCount": 1,
+  "configuration": {
+    "concurrency": 1,
+    "timeoutMs": 120000,
+    "maxCases": 1,
+    "sampleRate": 1,
+    "saveRawOutputs": false,
+    "redactInputs": true
+  },
+  "baselineMetrics": {
+    "transportSuccessRate": 1,
+    "responseReceivedRate": 1,
+    "requestSuccessRate": 1,
+    "jsonParseSuccessRate": 1,
+    "schemaValidRate": 1,
+    "applicationValidationRate": 1,
+    "exactEvidenceRate": 1,
+    "evidenceIdComplianceRate": 1,
+    "enumComplianceRate": 1,
+    "pipelineCompletionRate": 1,
+    "insufficientEvidenceCorrectnessRate": 1,
+    "meanLatencyMs": 5628.5,
+    "medianLatencyMs": 4913,
+    "p95LatencyMs": 6344,
+    "averageAttempts": 1,
+    "fallbackRate": 0,
+    "timeoutRate": 0,
+    "averageInputTokens": 600,
+    "averageOutputTokens": 774,
+    "averageTotalTokens": 1374,
+    "missingTokenMetadataRate": 0
+  },
+  "candidateMetrics": {
+    "transportSuccessRate": 1,
+    "responseReceivedRate": 1,
+    "requestSuccessRate": 1,
+    "jsonParseSuccessRate": 1,
+    "schemaValidRate": 1,
+    "applicationValidationRate": 1,
+    "exactEvidenceRate": 1,
+    "evidenceIdComplianceRate": 1,
+    "enumComplianceRate": 1,
+    "pipelineCompletionRate": 1,
+    "insufficientEvidenceCorrectnessRate": 1,
+    "meanLatencyMs": 4624,
+    "medianLatencyMs": 4379,
+    "p95LatencyMs": 4869,
+    "averageAttempts": 1,
+    "fallbackRate": 0,
+    "timeoutRate": 0,
+    "averageInputTokens": 2016.5,
+    "averageOutputTokens": 741.5,
+    "averageTotalTokens": 2758,
+    "missingTokenMetadataRate": 0
+  },
+  "comparativeMetrics": {
+    "statusAgreementRate": 1,
+    "recommendationAgreementRate": 0,
+    "rawStatusAgreementRate": 1,
+    "rawRecommendationAgreementRate": 0,
+    "policyAdjustedRecommendationAgreementRate": 0,
+    "effectivePositionOverrideRate": 1,
+    "effectivePositionDowngradeRate": 1,
+    "effectivePositionUpgradeRate": 0,
+    "actionDowngradeRate": 0,
+    "requireHumanReviewRate": 1,
+    "normalApplicationReviewRate": 1,
+    "pendingPathConversionRate": 0,
+    "blockRate": 0,
+    "policyOverrideRate": 1,
+    "policyDowngradeRate": 1,
+    "policyBlockRate": 0,
+    "policyHumanReviewRate": 1,
+    "forbiddenTermDetectionRate": 0,
+    "overEscalationCorrectionRate": 1,
+    "excessiveConservatismCorrectionRate": 0,
+    "outOfPolicyRecommendationCorrectionRate": 1,
+    "meanScoreDrift": 1,
+    "meanConfidenceDrift": 0,
+    "meanRelevanceDrift": 2,
+    "meanEvidenceCountDrift": 0,
+    "insufficientEvidenceAgreementRate": 1,
+    "requiredKeywordComplianceRate": 1,
+    "forbiddenKeywordViolationRate": 0,
+    "unsupportedClaimRate": 0,
+    "quotationMismatchRate": 0
+  },
+  "promotion": {
+    "recommendation": "ELIGIBLE_FOR_CANARY",
+    "checks": [
+      {
+        "name": "pipeline completion",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 98%"
+      },
+      {
+        "name": "JSON parse",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 99%"
+      },
+      {
+        "name": "schema validity",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 99%"
+      },
+      {
+        "name": "exact evidence",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 98%"
+      },
+      {
+        "name": "evidence IDs",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": "100%"
+      },
+      {
+        "name": "enums",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": "100%"
+      },
+      {
+        "name": "insufficient evidence",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 95%"
+      },
+      {
+        "name": "status agreement",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 90%"
+      },
+      {
+        "name": "p95 latency",
+        "severity": "pass",
+        "actual": 4869,
+        "threshold": "<= 1.5x baseline"
+      },
+      {
+        "name": "fallback rate",
+        "severity": "pass",
+        "actual": 0,
+        "threshold": "<= baseline + 2pp"
+      },
+      {
+        "name": "timeout rate",
+        "severity": "pass",
+        "actual": 0,
+        "threshold": "<= 1%"
+      }
+    ],
+    "criticalInvariantViolations": [],
+    "integrity": "VALID",
+    "integrityReasons": []
+  },
+  "failedCases": [],
+  "warningCases": [],
+  "missingMetadata": [],
+  "recommendation": "ELIGIBLE_FOR_CANARY",
+  "evaluationIntegrity": "VALID",
+  "evaluationIntegrityReasons": [],
+  "caseResults": [
+    {
+      "caseId": "official-google-announcement",
+      "category": "official-source",
+      "language": "en",
+      "source": {
+        "title": "Google announces a controlled AI API update",
+        "url": "https://example.test/google-update",
+        "publisher": "Google",
+        "publishedAt": "2026-07-01T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 4913,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 4909,
+            "validationMs": 4,
+            "totalMs": 4913
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 436,
+          "outputTokens": 664,
+          "totalTokens": 1100,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 6344,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 6340,
+            "validationMs": 4,
+            "totalMs": 6344
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 764,
+          "outputTokens": 884,
+          "totalTokens": 1648,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "DEFER",
+        "score": 3,
+        "confidence": 5,
+        "relevance": 5,
+        "evidenceCount": 3,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "DEFER",
+          "effectivePosition": "DEFER",
+          "action": "REQUIRE_HUMAN_REVIEW",
+          "reasons": [
+            {
+              "ruleId": "EP-008",
+              "message": "A material editorial policy finding requires additional human review.",
+              "affectedField": "humanReviewState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3"
+              ],
+              "originalPosition": "DEFER",
+              "effectivePosition": "DEFER",
+              "humanReviewRequired": true
+            }
+          ],
+          "triggeredRuleIds": [
+            "EP-008"
+          ],
+          "humanReviewRequired": true,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": true,
+          "forbiddenTermsDetected": [],
+          "policyScore": 85,
+          "auditMetadata": {
+            "itemId": "official-google-announcement",
+            "evaluatedAt": "2026-07-30T11:31:22.376Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 4379,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 4378,
+            "validationMs": 1,
+            "totalMs": 4379
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1973,
+          "outputTokens": 684,
+          "totalTokens": 2657,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 4869,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 4867,
+            "validationMs": 2,
+            "totalMs": 4869
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 2060,
+          "outputTokens": 799,
+          "totalTokens": 2859,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "ACT_NOW",
+        "score": 4,
+        "confidence": 5,
+        "relevance": 3,
+        "evidenceCount": 3,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "ACT_NOW",
+          "effectivePosition": "MONITOR",
+          "action": "REQUIRE_HUMAN_REVIEW",
+          "reasons": [
+            {
+              "ruleId": "EP-001",
+              "message": "ACT_NOW lacked the explicit evidence, authority, confidence, materiality, conflict, promotion, and verification conditions required by policy.",
+              "affectedField": "recommendedPosition",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3"
+              ],
+              "originalPosition": "ACT_NOW",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-008",
+              "message": "A material editorial policy finding requires additional human review.",
+              "affectedField": "humanReviewState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3"
+              ],
+              "originalPosition": "ACT_NOW",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            }
+          ],
+          "triggeredRuleIds": [
+            "EP-001",
+            "EP-008"
+          ],
+          "humanReviewRequired": true,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": true,
+          "forbiddenTermsDetected": [],
+          "policyScore": 70,
+          "auditMetadata": {
+            "itemId": "official-google-announcement",
+            "evaluatedAt": "2026-07-30T11:31:22.393Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": [
+          "RUN_EXPERIMENT",
+          "MONITOR"
+        ]
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_625f046a8e9fcdd7854dd5d6",
+        "caseId": "case_81f66012596f74f824356736",
+        "signalId": "signal_0861822210d0a5f13c3fa458",
+        "decisionId": "decision_25550624eb7ed72ff6a9a7eb",
+        "policyId": "policy_e97fe6b2d23b522340f2e7f8",
+        "reviewId": "review_7a153f8f4aba35f5350b805a",
+        "publicationId": "publication_c093694b39a88e063251ebf6"
+      }
+    }
+  ]
+}

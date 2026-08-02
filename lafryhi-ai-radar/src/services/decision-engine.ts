@@ -1,4 +1,3 @@
-import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 import {
   BusinessContextSchema,
@@ -14,8 +13,11 @@ import {
   type SignalIntelligence,
 } from "@/domain/decision-intelligence";
 import type { SourceRecord } from "@/domain/schemas";
+import { ControlledGeminiClient } from "./gemini-client";
+import type { GeminiGenerationResult } from "./gemini-client";
+import { parseGeminiRuntimeConfig } from "./gemini-runtime-config";
 
-export const SIGNAL_INTELLIGENCE_PROMPT_VERSION = "signal-intelligence-v1";
+export const SIGNAL_INTELLIGENCE_PROMPT_VERSION = "signal-intelligence-v1.1";
 export const DECISION_INTELLIGENCE_PROMPT_VERSION = "decision-intelligence-v1";
 
 const VERTEX_UNSUPPORTED_CONSTRAINTS = new Set([
@@ -159,6 +161,9 @@ Create business-independent Signal Intelligence from one trusted source.
 Separate facts from advice: report only what the source establishes and do not recommend any business action.
 Every factual claim and extracted entity must cite one or more evidence IDs.
 Evidence IDs must be exactly E1, E2, E3, and so on, with no other prefix or punctuation.
+For READY, whatHappened, whatChanged, and whyImportant must each contain at least one
+source-supported claim. Never invent a reason merely to satisfy this requirement; if the
+source cannot support any one of these required arrays, return INSUFFICIENT_EVIDENCE.
 Keep the result compact: at most 5 whatHappened, 5 whatChanged, 5 whyImportant,
 12 technologies, 12 affectedIndustries, 10 risks, 10 opportunities, 30 entities,
 8 evidence entries (E1 through E8 only), and 10 warnings. Never exceed these limits.
@@ -203,60 +208,59 @@ ${JSON.stringify(businessContext)}`;
 }
 
 export class GeminiDecisionEngine {
-  private readonly model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  private readonly model: string;
   private readonly maxOutputTokens: number;
-  private readonly client: GoogleGenAI;
+  private readonly client: ControlledGeminiClient;
+  private actualModel: string;
+  private latestGeneration?: GeminiGenerationResult;
 
-  constructor(client?: GoogleGenAI) {
-    const timeout = Number(process.env.VERTEX_TIMEOUT_MS || "60000");
-    this.maxOutputTokens = Number(process.env.GEMINI_MAX_OUTPUT_TOKENS || "4096");
-    if (!Number.isInteger(timeout) || timeout < 1_000 || timeout > 120_000) throw new Error("VERTEX_TIMEOUT_MS must be between 1000 and 120000.");
-    if (!Number.isInteger(this.maxOutputTokens) || this.maxOutputTokens < 1_024 || this.maxOutputTokens > 8_192) {
-      throw new Error("GEMINI_MAX_OUTPUT_TOKENS must be between 1024 and 8192.");
-    }
-    if (client) {
-      this.client = client;
-      return;
-    }
-    const project = process.env.GOOGLE_CLOUD_PROJECT;
-    if (!project) throw new Error("GOOGLE_CLOUD_PROJECT is required for Vertex AI.");
-    this.client = new GoogleGenAI({
-      vertexai: true,
-      project,
-      location: process.env.GOOGLE_CLOUD_LOCATION || "us-central1",
-      httpOptions: { timeout },
-    });
+  constructor(client?: ControlledGeminiClient) {
+    const config = client?.config ?? parseGeminiRuntimeConfig();
+    this.model = config.primaryModel;
+    this.actualModel = this.model;
+    this.maxOutputTokens = config.maxOutputTokens;
+    this.client = client ?? new ControlledGeminiClient(config);
+  }
+
+  get modelUsed() {
+    return this.actualModel;
+  }
+
+  get lastGeneration() {
+    return this.latestGeneration;
   }
 
   async analyzeSignal(source: SourceRecord): Promise<SignalIntelligence> {
-    const response = await this.client.models.generateContent({
-      model: this.model,
+    const generation = await this.client.generateContent({
       contents: buildSignalIntelligencePrompt(source),
       config: {
         responseMimeType: "application/json",
         responseJsonSchema: SIGNAL_INTELLIGENCE_JSON_SCHEMA,
         temperature: 0,
-        thinkingConfig: { thinkingBudget: 0 },
         maxOutputTokens: this.maxOutputTokens,
       },
     });
+    const response = generation.response;
+    this.latestGeneration = generation;
+    this.actualModel = generation.actualModel;
     if (!response.text) throw new Error("Vertex AI returned no Signal Intelligence.");
     return parseSignalIntelligence(response.text, source.normalizedText);
   }
 
   async generateDecisionBrief(signal: ReadySignalIntelligence, context: BusinessContext): Promise<GeminiDecisionOutput> {
     const businessContext = BusinessContextSchema.parse(context);
-    const response = await this.client.models.generateContent({
-      model: this.model,
+    const generation = await this.client.generateContent({
       contents: buildDecisionIntelligencePrompt(signal, businessContext),
       config: {
         responseMimeType: "application/json",
         responseJsonSchema: DECISION_INTELLIGENCE_JSON_SCHEMA,
         temperature: 0.1,
-        thinkingConfig: { thinkingBudget: 0 },
         maxOutputTokens: this.maxOutputTokens,
       },
     });
+    const response = generation.response;
+    this.latestGeneration = generation;
+    this.actualModel = generation.actualModel;
     if (!response.text) throw new Error("Vertex AI returned no Decision Intelligence.");
     return parseDecisionIntelligence(response.text, signal);
   }
@@ -265,7 +269,7 @@ export class GeminiDecisionEngine {
     const signal = await this.analyzeSignal(source);
     if (signal.status === "INSUFFICIENT_EVIDENCE") {
       return {
-        model: this.model,
+        model: this.actualModel,
         result: DecisionEngineResultSchema.parse({
           status: "INSUFFICIENT_EVIDENCE",
           stage: "SIGNAL_INTELLIGENCE",
@@ -278,7 +282,7 @@ export class GeminiDecisionEngine {
     const decision = await this.generateDecisionBrief(signal, context);
     if (decision.status === "INSUFFICIENT_EVIDENCE") {
       return {
-        model: this.model,
+        model: this.actualModel,
         result: DecisionEngineResultSchema.parse({
           status: "INSUFFICIENT_EVIDENCE",
           stage: "DECISION_INTELLIGENCE",
@@ -310,7 +314,7 @@ export class GeminiDecisionEngine {
       score,
     });
     return {
-      model: this.model,
+      model: this.actualModel,
       result: DecisionEngineResultSchema.parse({ status: "READY", signalIntelligence: signal, decisionBrief }),
     };
   }

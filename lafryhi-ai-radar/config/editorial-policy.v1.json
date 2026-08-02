@@ -1,0 +1,72 @@
+{
+  "policyVersion": "editorial-policy-v1",
+  "supportedPositions": [
+    "ACT_NOW",
+    "RUN_EXPERIMENT",
+    "MONITOR",
+    "DEFER",
+    "IGNORE",
+    "AVOID",
+    "INSUFFICIENT_EVIDENCE"
+  ],
+  "actionPriority": ["ALLOW", "DOWNGRADE", "REQUIRE_HUMAN_REVIEW", "BLOCK"],
+  "thresholds": {
+    "actNowMinimumEvidence": 2,
+    "actNowMinimumTrustedSources": 1,
+    "actNowMinimumConfidence": 70,
+    "actNowMinimumImportance": 65,
+    "materialScoreDrift": 15,
+    "materialConfidenceDrift": 15
+  },
+  "forbiddenTerms": ["all firms", "garanti"],
+  "rules": [
+    {
+      "id": "EP-001",
+      "priority": 50,
+      "action": "DOWNGRADE",
+      "reasonTemplate": "ACT_NOW did not satisfy every evidence, trust, confidence, importance, conflict, promotion, and verification threshold."
+    },
+    {
+      "id": "EP-002",
+      "priority": 60,
+      "action": "DOWNGRADE",
+      "reasonTemplate": "Promotional or low-impact content cannot exceed its demonstrated material impact."
+    },
+    {
+      "id": "EP-003",
+      "priority": 30,
+      "action": "REQUIRE_HUMAN_REVIEW",
+      "reasonTemplate": "Conflicting evidence must remain visible and be resolved by human review."
+    },
+    {
+      "id": "EP-004",
+      "priority": 40,
+      "action": "REQUIRE_HUMAN_REVIEW",
+      "reasonTemplate": "Pending verification must remain on a defer or monitor path."
+    },
+    {
+      "id": "EP-005",
+      "priority": 55,
+      "action": "DOWNGRADE",
+      "reasonTemplate": "Date or numerical escalation lacks the strict evidence and materiality conditions required for ACT_NOW."
+    },
+    {
+      "id": "EP-006",
+      "priority": 20,
+      "action": "REQUIRE_HUMAN_REVIEW",
+      "reasonTemplate": "Configured forbidden language was detected in the model decision."
+    },
+    {
+      "id": "EP-007",
+      "priority": 10,
+      "action": "REQUIRE_HUMAN_REVIEW",
+      "reasonTemplate": "INSUFFICIENT_EVIDENCE was used for a policy condition that requires review rather than evidence erasure."
+    },
+    {
+      "id": "EP-008",
+      "priority": 70,
+      "action": "REQUIRE_HUMAN_REVIEW",
+      "reasonTemplate": "Editorial conditions require a human decision before any publication action."
+    }
+  ]
+}

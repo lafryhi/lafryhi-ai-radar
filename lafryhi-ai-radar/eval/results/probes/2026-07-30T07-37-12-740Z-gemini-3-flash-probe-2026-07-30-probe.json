@@ -1,0 +1,47 @@
+{
+  "runLabel": "gemini-3-flash-probe-2026-07-30",
+  "timestamp": "2026-07-30T07:37:12.740Z",
+  "gitCommit": "658c3136b6cee992d9f170522fcf938de0d06e7f",
+  "sdkVersion": "2.13.0",
+  "candidateModel": "gemini-3-flash-preview",
+  "candidateLifecycleStage": "preview",
+  "lifecycleNotice": "Candidate lifecycle stage is operator-supplied, not independently verified.",
+  "productionModel": "gemini-2.5-flash",
+  "attemptedLocations": [
+    "us-central1",
+    "global"
+  ],
+  "successfulLocations": [],
+  "results": [
+    {
+      "candidateModel": "gemini-3-flash-preview",
+      "projectConfigured": true,
+      "location": "us-central1",
+      "reachable": false,
+      "structuredOutputSupported": false,
+      "thinkingConfigurationSupported": null,
+      "durationMs": 1553,
+      "attempts": 1,
+      "errorCategory": "model-availability",
+      "sanitizedError": "{\"error\":{\"code\":404,\"message\":\"Publisher model `projects/lafryhi-ai-radar-xprize/locations/us-central1/publishers/google/models/gemini-3-flash-preview` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.\",\"status\":\"NOT_FOUND\"}}",
+      "checkedAt": "2026-07-30T07:37:07.625Z"
+    },
+    {
+      "candidateModel": "gemini-3-flash-preview",
+      "projectConfigured": true,
+      "location": "global",
+      "reachable": false,
+      "structuredOutputSupported": false,
+      "thinkingConfigurationSupported": null,
+      "durationMs": 3559,
+      "attempts": 1,
+      "errorCategory": "permanent",
+      "sanitizedError": "Unexpected token 'H', \"Here is the JSON\" is not valid JSON",
+      "checkedAt": "2026-07-30T07:37:09.181Z"
+    }
+  ],
+  "realCallsEnabled": true,
+  "availabilityStatus": "UNAVAILABLE",
+  "noDeploymentOccurred": true,
+  "productionConfigurationUnchanged": true
+}

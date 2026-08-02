@@ -11,6 +11,7 @@ export const RANKING_ELIGIBILITY_CODES = [
   "ANALYSIS_MODEL_MISSING",
   "ANALYSIS_PROMPT_VERSION_MISSING",
   "ANALYSIS_PROMPT_VERSION_UNSUPPORTED",
+  "RANKING_POLICY_VERSION_MISMATCH",
   "EVIDENCE_REFERENCE_UNKNOWN",
   "CLAIM_OR_LIMITATION_REQUIRED",
   "ITEM_OUTSIDE_REPORTING_INTERVAL",
@@ -73,6 +74,9 @@ export function evaluateRankingEligibility(
     found.add("ANALYSIS_PROMPT_VERSION_MISSING");
   } else if (!policy.supportedAnalysisPromptVersions.includes(item.analysisPromptVersion)) {
     found.add("ANALYSIS_PROMPT_VERSION_UNSUPPORTED");
+  }
+  if (input.policyVersion !== policy.version) {
+    found.add("RANKING_POLICY_VERSION_MISMATCH");
   }
 
   const claims = item.keyClaims ?? [];

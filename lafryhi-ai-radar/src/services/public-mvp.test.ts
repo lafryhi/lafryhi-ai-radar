@@ -205,7 +205,14 @@ describe("Public Decision Brief generation and access", () => {
         };
       },
     };
-    const brief = await generateOwnedDecisionBrief(repository, engine, ownerA, profile.id, "radar-published");
+    const brief = await generateOwnedDecisionBrief(
+      repository,
+      engine,
+      ownerA,
+      profile.id,
+      "radar-published",
+      "2026-07-29T12:00:00.000Z",
+    );
     expect(brief.result).toEqual(expect.objectContaining({ status: "INSUFFICIENT_EVIDENCE" }));
     expect("decisionBrief" in brief.result).toBe(false);
     expect((await repository.getUsageCounter(ownerA, "2026-07"))?.decisionBriefCount).toBe(1);

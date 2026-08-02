@@ -102,6 +102,7 @@ describe("ranking eligibility", () => {
       ["ANALYSIS_MODEL_MISSING", { item: { analysisModel: undefined } }],
       ["ANALYSIS_PROMPT_VERSION_MISSING", { item: { analysisPromptVersion: undefined } }],
       ["ANALYSIS_PROMPT_VERSION_UNSUPPORTED", { item: { analysisPromptVersion: "live-analysis-v2" } }],
+      ["RANKING_POLICY_VERSION_MISMATCH", { input: { policyVersion: "ranking-policy-v2" } }],
       ["EVIDENCE_REFERENCE_UNKNOWN", { item: { keyClaims: [{ claim: "Grounded claim", evidenceRefs: ["invented"] }] } }],
       ["CLAIM_OR_LIMITATION_REQUIRED", { item: { keyClaims: [], limitations: [] } }],
       ["ITEM_OUTSIDE_REPORTING_INTERVAL", { item: { createdAt: "2026-07-20T12:00:00.000Z" } }],

@@ -179,7 +179,11 @@ export const StoredAnalysisSchema = z.union([DecisionStoredAnalysisSchema, Legac
     if ("importanceScore" in value) return value;
     return {
       ...value,
-      keyPoints: [value.summary],
+      // Legacy summaries allow up to 800 characters, while decision-era key
+      // points are intentionally bounded to 160. Keep historical records
+      // readable without rewriting Firestore or weakening current write-time
+      // validation.
+      keyPoints: [value.summary.slice(0, 160)],
       importanceScore: value.relevanceScore,
       noveltyScore: 50,
       timelinessScore: 50,
@@ -195,7 +199,7 @@ export const StoredAnalysisSchema = z.union([DecisionStoredAnalysisSchema, Legac
       mentionedProducts: [],
       mentionedTechnologies: [],
       entities: [],
-      potentialRisks: value.warnings,
+      potentialRisks: value.warnings.map((warning) => warning.slice(0, 160)),
       followUpRecommended: true,
       breakingNews: false,
       estimatedReadingTime: 1,

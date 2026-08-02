@@ -35,6 +35,13 @@ export const RankingSignalSchema = z.object({
   if (value.availability !== "available" && value.normalizedValue !== null) {
     context.addIssue({ code: "custom", path: ["normalizedValue"], message: "Unavailable signals cannot have a normalized value." });
   }
+  if (
+    value.availability === "available"
+    && value.normalizedValue !== null
+    && Math.abs(value.contribution - value.normalizedValue * value.effectiveWeight) > WEIGHT_SUM_TOLERANCE
+  ) {
+    context.addIssue({ code: "custom", path: ["contribution"], message: "Signal contribution must equal normalized value multiplied by effective weight." });
+  }
 });
 
 export const ConfidenceCapSchema = z.object({
@@ -64,6 +71,9 @@ const RankBandThresholdsSchema = z.object({
 }).strict().superRefine((thresholds, context) => {
   if (!(thresholds.critical > thresholds.high && thresholds.high > thresholds.medium && thresholds.medium > thresholds.low)) {
     context.addIssue({ code: "custom", message: "Rank-band thresholds must be strictly descending." });
+  }
+  if (thresholds.low <= 0) {
+    context.addIssue({ code: "custom", path: ["low"], message: "The low threshold must be greater than zero so the minimal band is reachable." });
   }
 });
 
@@ -163,7 +173,21 @@ const EligibleRankingAssessmentSchema = RankingAssessmentBaseSchema.extend({
   baseScore: Score100Schema,
   finalScore: Score100Schema,
   rankBand: RankBandSchema,
-}).strict();
+}).strict().superRefine((assessment, context) => {
+  const factors = assessment.signals.map((signal) => signal.factor);
+  const uniqueFactors = new Set(factors);
+  if (
+    factors.length !== RANKING_FACTORS.length
+    || uniqueFactors.size !== RANKING_FACTORS.length
+    || RANKING_FACTORS.some((factor) => !uniqueFactors.has(factor))
+  ) {
+    context.addIssue({
+      code: "custom",
+      path: ["signals"],
+      message: "Eligible assessments require exactly one signal for every supported ranking factor.",
+    });
+  }
+});
 
 const ExcludedRankingAssessmentSchema = RankingAssessmentBaseSchema.extend({
   eligibility: ExcludedRankingEligibilitySchema,

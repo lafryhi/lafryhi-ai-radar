@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { parseGeminiRuntimeConfig } from "./gemini-runtime-config";
 
 const ProductionConfigSchema = z.object({
   NODE_ENV: z.literal("production"),
@@ -6,9 +7,7 @@ const ProductionConfigSchema = z.object({
   PERSISTENCE_ADAPTER: z.literal("firestore"),
   AI_ADAPTER: z.literal("vertex"),
   GOOGLE_CLOUD_PROJECT: z.string().min(1),
-  GOOGLE_CLOUD_LOCATION: z.string().min(1).default("us-central1"),
   FIRESTORE_DATABASE_ID: z.string().min(1).default("(default)"),
-  GEMINI_MODEL: z.string().min(1).default("gemini-2.5-flash"),
   OPERATOR_ACCESS_TOKEN: z.string().min(20),
   RSS_SCHEDULER_JOB_NAME: z.string().min(1),
   RSS_SCHEDULER_SECRET: z.string().min(20),
@@ -33,6 +32,7 @@ export function validateProductionEnvironment(env: NodeJS.ProcessEnv = process.e
     const names = [...new Set(parsed.error.issues.map((issue) => String(issue.path[0] ?? "runtime configuration")))];
     throw new Error(`Invalid production configuration: ${names.join(", ")}.`);
   }
+  parseGeminiRuntimeConfig(env);
   if (env.BILLING_ENABLED === "true") {
     const billing = PaddleProductionSchema.safeParse(env);
     if (!billing.success) {

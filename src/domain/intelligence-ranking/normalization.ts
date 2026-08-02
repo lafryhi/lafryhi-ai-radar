@@ -182,6 +182,11 @@ export function normalizeRankingSignals(
   input: RankingInput,
   policy: RankingPolicy,
 ): NormalizedRankingSignals {
+  if (input.policyVersion !== policy.version) {
+    throw new Error(
+      `Ranking input policy ${input.policyVersion} does not match ${policy.version}.`,
+    );
+  }
   const item = input.intelligenceItem;
   const timeliness = normalizeTimeliness(item.createdAt, input.cutoffAt);
   const evidence = normalizeEvidenceSufficiency(item.keyClaims, item.limitations);

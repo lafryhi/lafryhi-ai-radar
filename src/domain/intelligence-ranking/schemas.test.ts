@@ -16,7 +16,24 @@ const eligibleAssessment = {
   sourceDefinitionId: "source-1",
   inputDigest: "a".repeat(64),
   eligibility: { status: "eligible", reasonCodes: [] },
-  signals: [],
+  signals: [
+    ["impact", 0.8, 0.3],
+    ["relevance", 0.8, 0.25],
+    ["confidence", 0.8, 0.2],
+    ["timeliness", 0.8, 0.1],
+    ["evidenceSufficiency", 0.8, 0.1],
+    ["sourceAuthority", 0.8, 0.05],
+  ].map(([factor, normalizedValue, weight]) => ({
+    factor,
+    rawValue: normalizedValue,
+    normalizedValue,
+    availability: "available",
+    weight,
+    effectiveWeight: weight,
+    contribution: Number(normalizedValue) * Number(weight),
+    normalizationVersion: "ranking-normalization-v1",
+    explanationCodes: [],
+  })),
   adjustments: [],
   baseScore: 80,
   finalScore: 80,
@@ -94,6 +111,16 @@ describe("intelligence ranking schemas", () => {
       ...eligibleAssessment,
       eligibility: { status: "excluded", reasonCodes: ["SCORE_INVALID"] },
     })).toThrow();
+    expect(() => RankingAssessmentSchema.parse({
+      ...eligibleAssessment,
+      signals: eligibleAssessment.signals.slice(1),
+    })).toThrow("exactly one signal");
+    expect(() => RankingAssessmentSchema.parse({
+      ...eligibleAssessment,
+      signals: eligibleAssessment.signals.map((signal, index) =>
+        index === 1 ? { ...signal, factor: "impact" } : signal
+      ),
+    })).toThrow("exactly one signal");
   });
 
   it("rejects contradictory signal availability", () => {
@@ -117,6 +144,10 @@ describe("intelligence ranking schemas", () => {
       ...signal,
       normalizedValue: null,
     })).toThrow();
+    expect(() => RankingSignalSchema.parse({
+      ...signal,
+      contribution: 0.25,
+    })).toThrow("must equal normalized value");
   });
 
   it("strictly validates nested ranking input boundaries", () => {

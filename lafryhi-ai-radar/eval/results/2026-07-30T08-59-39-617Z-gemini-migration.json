@@ -1,0 +1,303 @@
+{
+  "datasetVersion": "1.0",
+  "timestamp": "2026-07-30T08:59:39.617Z",
+  "gitCommit": "658c3136b6cee992d9f170522fcf938de0d06e7f",
+  "sdkVersion": "2.13.0",
+  "productionModel": "gemini-2.5-flash",
+  "candidateModel": "gemini-3.1-flash-lite",
+  "candidateLifecycleStage": "ga",
+  "lifecycleNotice": "Candidate lifecycle stage is operator-supplied, not independently verified.",
+  "runLabel": "gemini-3-1-flash-lite-smoke-release-2026-07-30-retry",
+  "location": "global",
+  "caseCount": 1,
+  "configuration": {
+    "concurrency": 1,
+    "timeoutMs": 120000,
+    "maxCases": 1,
+    "sampleRate": 1,
+    "saveRawOutputs": false,
+    "redactInputs": true
+  },
+  "baselineMetrics": {
+    "transportSuccessRate": 1,
+    "responseReceivedRate": 1,
+    "requestSuccessRate": 1,
+    "jsonParseSuccessRate": 1,
+    "schemaValidRate": 0,
+    "applicationValidationRate": 0,
+    "exactEvidenceRate": 1,
+    "evidenceIdComplianceRate": 1,
+    "enumComplianceRate": 1,
+    "pipelineCompletionRate": 0,
+    "insufficientEvidenceCorrectnessRate": 1,
+    "meanLatencyMs": 4546,
+    "medianLatencyMs": 4546,
+    "p95LatencyMs": 4546,
+    "averageAttempts": 1,
+    "fallbackRate": 0,
+    "timeoutRate": 0,
+    "averageInputTokens": 378,
+    "averageOutputTokens": 607,
+    "averageTotalTokens": 985,
+    "missingTokenMetadataRate": 0
+  },
+  "candidateMetrics": {
+    "transportSuccessRate": 1,
+    "responseReceivedRate": 1,
+    "requestSuccessRate": 1,
+    "jsonParseSuccessRate": 1,
+    "schemaValidRate": 1,
+    "applicationValidationRate": 1,
+    "exactEvidenceRate": 1,
+    "evidenceIdComplianceRate": 1,
+    "enumComplianceRate": 1,
+    "pipelineCompletionRate": 1,
+    "insufficientEvidenceCorrectnessRate": 1,
+    "meanLatencyMs": 3310.5,
+    "medianLatencyMs": 3031,
+    "p95LatencyMs": 3590,
+    "averageAttempts": 1,
+    "fallbackRate": 0,
+    "timeoutRate": 0,
+    "averageInputTokens": 1974.5,
+    "averageOutputTokens": 652.5,
+    "averageTotalTokens": 2627,
+    "missingTokenMetadataRate": 0
+  },
+  "comparativeMetrics": {
+    "statusAgreementRate": 0,
+    "recommendationAgreementRate": 0,
+    "meanScoreDrift": 0,
+    "meanConfidenceDrift": 0,
+    "meanRelevanceDrift": 0,
+    "meanEvidenceCountDrift": 1,
+    "insufficientEvidenceAgreementRate": 1,
+    "requiredKeywordComplianceRate": 1,
+    "forbiddenKeywordViolationRate": 0,
+    "unsupportedClaimRate": 0,
+    "quotationMismatchRate": 0
+  },
+  "promotion": {
+    "recommendation": "INCONCLUSIVE",
+    "checks": [
+      {
+        "name": "pipeline completion",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 98%"
+      },
+      {
+        "name": "JSON parse",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 99%"
+      },
+      {
+        "name": "schema validity",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 99%"
+      },
+      {
+        "name": "exact evidence",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 98%"
+      },
+      {
+        "name": "evidence IDs",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": "100%"
+      },
+      {
+        "name": "enums",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": "100%"
+      },
+      {
+        "name": "insufficient evidence",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 95%"
+      },
+      {
+        "name": "status agreement",
+        "severity": "warning",
+        "actual": 0,
+        "threshold": ">= 90%"
+      },
+      {
+        "name": "p95 latency",
+        "severity": "pass",
+        "actual": 3590,
+        "threshold": "<= 1.5x baseline"
+      },
+      {
+        "name": "fallback rate",
+        "severity": "pass",
+        "actual": 0,
+        "threshold": "<= baseline + 2pp"
+      },
+      {
+        "name": "timeout rate",
+        "severity": "pass",
+        "actual": 0,
+        "threshold": "<= 1%"
+      }
+    ],
+    "criticalInvariantViolations": [],
+    "integrity": "INCONCLUSIVE",
+    "integrityReasons": [
+      "No case completed for both baseline and candidate."
+    ]
+  },
+  "failedCases": [],
+  "warningCases": [],
+  "missingMetadata": [],
+  "recommendation": "INCONCLUSIVE",
+  "evaluationIntegrity": "INCONCLUSIVE",
+  "evaluationIntegrityReasons": [
+    "No case completed for both baseline and candidate."
+  ],
+  "caseResults": [
+    {
+      "caseId": "official-google-announcement",
+      "category": "official-source",
+      "language": "en",
+      "source": {
+        "title": "Google announces a controlled AI API update",
+        "url": "https://example.test/google-update",
+        "publisher": "Google",
+        "publishedAt": "2026-07-01T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 4546,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": false,
+          "applicationValid": false,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [
+            "whyImportant: Too small: expected array to have >=1 items"
+          ],
+          "stageDurations": {
+            "requestMs": 4546,
+            "validationMs": 7,
+            "totalMs": 4553
+          },
+          "promotionImpact": "CONTRACT_FAILURE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 378,
+          "outputTokens": 607,
+          "totalTokens": 985,
+          "failedStage": "SCHEMA"
+        },
+        "pipelineCompleted": false,
+        "status": "FAILED",
+        "evidenceCount": 0,
+        "outputText": "[REDACTED]"
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3031,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3029,
+            "validationMs": 2,
+            "totalMs": 3031
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1915,
+          "outputTokens": 637,
+          "totalTokens": 2552,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3590,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3583,
+            "validationMs": 7,
+            "totalMs": 3590
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 2034,
+          "outputTokens": 668,
+          "totalTokens": 2702,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "ACT_NOW",
+        "score": 4,
+        "confidence": 4,
+        "relevance": 3,
+        "evidenceCount": 1,
+        "outputText": "[REDACTED]"
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": []
+    }
+  ]
+}

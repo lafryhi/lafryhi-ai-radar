@@ -140,4 +140,11 @@ describe("ranking normalization", () => {
       && signal.normalizedValue <= 1
     )).toBe(true);
   });
+
+  it("rejects a policy identity mismatch", () => {
+    expect(() => normalizeRankingSignals({
+      ...acceptanceInput(),
+      policyVersion: "ranking-policy-v2",
+    }, RANKING_POLICY_V1)).toThrow("does not match");
+  });
 });

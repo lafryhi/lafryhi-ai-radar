@@ -1,0 +1,122 @@
+{
+  "official-google-announcement": {
+    "evidenceState": "SUFFICIENT",
+    "uncertaintyState": "NONE",
+    "sourceAuthority": "AUTHORITATIVE",
+    "materialImpact": "MEDIUM",
+    "confidenceQualified": true,
+    "numericalClaimsVerified": false
+  },
+  "long-press-article": {
+    "evidenceState": "SUFFICIENT",
+    "uncertaintyState": "PENDING_VERIFICATION",
+    "sourceAuthority": "TRUSTED",
+    "materialImpact": "MEDIUM",
+    "confidenceQualified": true,
+    "numericalClaimsVerified": false
+  },
+  "weak-unverifiable-claim": {
+    "evidenceState": "INSUFFICIENT",
+    "uncertaintyState": "EVIDENCE_INSUFFICIENT",
+    "sourceAuthority": "UNVERIFIED",
+    "materialImpact": "LOW",
+    "confidenceQualified": false,
+    "numericalClaimsVerified": false
+  },
+  "contradictory-source": {
+    "evidenceState": "SUFFICIENT",
+    "uncertaintyState": "SOURCE_CONFLICT",
+    "sourceAuthority": "TRUSTED",
+    "materialImpact": "MEDIUM",
+    "confidenceQualified": true,
+    "numericalClaimsVerified": false
+  },
+  "insufficient-evidence": {
+    "evidenceState": "INSUFFICIENT",
+    "uncertaintyState": "EVIDENCE_INSUFFICIENT",
+    "sourceAuthority": "UNVERIFIED",
+    "materialImpact": "UNKNOWN",
+    "confidenceQualified": false,
+    "numericalClaimsVerified": false
+  },
+  "arabic-policy-update": {
+    "evidenceState": "SUFFICIENT",
+    "uncertaintyState": "NONE",
+    "sourceAuthority": "AUTHORITATIVE",
+    "materialImpact": "HIGH",
+    "confidenceQualified": true,
+    "numericalClaimsVerified": false
+  },
+  "french-platform-update": {
+    "evidenceState": "SUFFICIENT",
+    "uncertaintyState": "NONE",
+    "sourceAuthority": "TRUSTED",
+    "materialImpact": "MEDIUM",
+    "confidenceQualified": true,
+    "numericalClaimsVerified": false
+  },
+  "english-exact-quotation": {
+    "evidenceState": "SUFFICIENT",
+    "uncertaintyState": "PENDING_VERIFICATION",
+    "sourceAuthority": "TRUSTED",
+    "materialImpact": "MEDIUM",
+    "confidenceQualified": true,
+    "numericalClaimsVerified": false
+  },
+  "multiple-evidence-references": {
+    "evidenceState": "SUFFICIENT",
+    "uncertaintyState": "NONE",
+    "sourceAuthority": "TRUSTED",
+    "materialImpact": "MEDIUM",
+    "confidenceQualified": true,
+    "numericalClaimsVerified": false
+  },
+  "dates-and-numerical-claims": {
+    "evidenceState": "SUFFICIENT",
+    "uncertaintyState": "NONE",
+    "sourceAuthority": "TRUSTED",
+    "materialImpact": "HIGH",
+    "confidenceQualified": true,
+    "numericalClaimsVerified": false
+  },
+  "should-remain-pending": {
+    "evidenceState": "SUFFICIENT",
+    "uncertaintyState": "PENDING_VERIFICATION",
+    "sourceAuthority": "TRUSTED",
+    "materialImpact": "MEDIUM",
+    "confidenceQualified": true,
+    "numericalClaimsVerified": false
+  },
+  "should-be-rejected": {
+    "evidenceState": "INSUFFICIENT",
+    "uncertaintyState": "EVIDENCE_INSUFFICIENT",
+    "sourceAuthority": "UNVERIFIED",
+    "materialImpact": "LOW",
+    "confidenceQualified": false,
+    "numericalClaimsVerified": false
+  },
+  "incomplete-source": {
+    "evidenceState": "INSUFFICIENT",
+    "uncertaintyState": "EVIDENCE_INSUFFICIENT",
+    "sourceAuthority": "UNVERIFIED",
+    "materialImpact": "UNKNOWN",
+    "confidenceQualified": false,
+    "numericalClaimsVerified": false
+  },
+  "high-impact-business-news": {
+    "evidenceState": "SUFFICIENT",
+    "uncertaintyState": "NONE",
+    "sourceAuthority": "AUTHORITATIVE",
+    "materialImpact": "HIGH",
+    "confidenceQualified": true,
+    "numericalClaimsVerified": true
+  },
+  "low-impact-promotion": {
+    "evidenceState": "SUFFICIENT",
+    "uncertaintyState": "POLICY_UNCERTAINTY",
+    "sourceAuthority": "TRUSTED",
+    "materialImpact": "LOW",
+    "confidenceQualified": true,
+    "numericalClaimsVerified": false
+  }
+}

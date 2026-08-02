@@ -14,6 +14,9 @@ describe("ranking policy", () => {
     expect(RankingPolicySchema.parse(RANKING_POLICY_V1)).toEqual(RANKING_POLICY_V1);
     expect(RANKING_POLICY_V1.version).toBe("ranking-policy-v1");
     expect(RANKING_POLICY_V1.algorithmVersion).toBe("deterministic-ranking-v1");
+    expect(Object.isFrozen(RANKING_POLICY_V1)).toBe(true);
+    expect(Object.isFrozen(RANKING_POLICY_V1.weights)).toBe(true);
+    expect(Object.isFrozen(RANKING_POLICY_V1.confidenceCaps)).toBe(true);
   });
 
   it("rejects weight totals below and above one", () => {
@@ -82,6 +85,16 @@ describe("ranking policy", () => {
       ...RANKING_POLICY_V1,
       confidenceCaps: [{ below: 1.01, maximumFinalScore: 49.99 }],
     })).toThrow();
+  });
+
+  it("rejects thresholds that make a rank band unreachable", () => {
+    expect(() => RankingPolicySchema.parse({
+      ...RANKING_POLICY_V1,
+      rankBandThresholds: {
+        ...RANKING_POLICY_V1.rankBandThresholds,
+        low: 0,
+      },
+    })).toThrow("minimal band is reachable");
   });
 
   it("selects policies explicitly by version", () => {

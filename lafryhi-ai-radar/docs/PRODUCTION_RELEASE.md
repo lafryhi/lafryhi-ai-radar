@@ -1,8 +1,39 @@
 # LAFRYHI AI Radar — Production Release
 
+## Phase 3 editorial calibration
+
+The Editorial Policy Engine is model-independent and preserves mandatory human review. Its
+presence does not authorize candidate promotion, canary traffic, publication, or deployment.
+Before a production release, reviewers must approve the policy constitution version, inspect
+raw and adjusted evaluation results, replay saved fixtures, and confirm that original model
+decisions remain auditable. Rollback selects the previous reviewed constitution; it never
+rewrites historical decisions.
+
+Phase 3.1 uses constitution `editorial-policy-v1.1`. Release review must verify the
+explicit evidence-state, uncertainty-state, source-authority, material-impact,
+confidence-qualification, and numerical-verification inputs. A policy `ALLOW` never
+authorizes publication: normal application review remains mandatory. Additional
+policy-triggered review is reported independently. Known ambiguity remains whenever
+runtime data cannot supply these semantic fields; such items must retain human review
+rather than being inferred from language.
+
 ## Product
 
 LAFRYHI AI Radar is a Gemini-powered Decision Intelligence Platform for small businesses. It turns verified AI signals and validated Business Context into evidence-linked Decision Briefs, then measures usefulness, action execution, reported outcomes, and aggregate product impact.
+
+## Gemini Migration Stabilization
+
+The active primary model remains `gemini-2.5-flash`; this phase does not perform a model cutover. Selection is environment-driven through `GEMINI_PRIMARY_MODEL` with `GEMINI_MODEL` retained for backward compatibility. Controlled retries and fallback are supported, while the configured fallback remains the current model. Shadow mode is disabled by default, never contributes production output, and must be explicitly configured for a later candidate evaluation. A future candidate-model validation phase is required before deployment or traffic changes.
+
+### Phase 2: Candidate Evaluation
+
+Phase 2 adds only a local, explicitly enabled comparison framework. Candidate output is redacted and cannot be persisted, published, returned through public APIs, or substituted for the production result. Production remains `gemini-2.5-flash`; Cloud Run configuration and traffic are unchanged. A preview model may be evaluated but is not approved for production. Passing thresholds authorizes at most further testing or a separately reviewed canary using a verified generally available model.
+
+### Phase 2.5: Availability and smoke preparation
+
+Availability probes and one-case smoke comparisons are local operator actions protected by exact allowlisting, an explicit real-call flag, a traceable run label, and request/token ceilings. Probe locations are evaluation-only and never change `GOOGLE_CLOUD_LOCATION` or Cloud Run. A successful probe means only that evaluation may continue. Production remains `gemini-2.5-flash`; no candidate, shadow enablement, deployment, or traffic change is included.
+
+Smoke reports separate transport, response, JSON, schema-version, application-validation, and pipeline-completion outcomes. A downstream validation failure cannot be counted as a failed request. Reports also carry an evaluation-integrity state; dataset or harness defects and evaluations without a comparable completed case are `INCONCLUSIVE`, never production or canary approval.
 
 ## Runtime architecture
 
@@ -172,3 +203,17 @@ Rollback does not migrate or delete Firestore data. If scheduler-secret enforcem
 - Outcomes are user-reported and do not prove revenue or causality.
 - Operator aggregate analytics exclude owner IDs, business names, notes, summaries, and raw Gemini output.
 - The runtime identity requires Firestore, Vertex AI, logging, and scoped Secret Manager permissions already documented in the project cloud setup.
+
+## Phase 5.1 report gate
+
+Require evaluation v2.6 and report v1.1. Reject reports with missing metadata,
+detector disagreement, incomplete traceability, inconsistent timestamps/request totals,
+invalid manifest references, or admissible metrics under invalid integrity. The first
+shadow report remains invalid and observational only.
+
+### Phase 5.2.1 request-budget control
+
+The evaluator uses dataset case 1 as its availability gate. There is no separate
+smoke invocation. The complete 15-case plan is exactly 60 provider attempts,
+and request 61 is rejected locally. Production, models, dataset, contracts,
+policy, and thresholds are unchanged.

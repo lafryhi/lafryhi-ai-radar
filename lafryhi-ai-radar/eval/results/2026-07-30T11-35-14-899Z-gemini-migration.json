@@ -1,0 +1,3566 @@
+{
+  "datasetVersion": "1.0",
+  "timestamp": "2026-07-30T11:35:14.899Z",
+  "gitCommit": "658c3136b6cee992d9f170522fcf938de0d06e7f",
+  "sdkVersion": "2.13.0",
+  "productionModel": "gemini-2.5-flash",
+  "candidateModel": "gemini-3.1-flash-lite",
+  "candidateLifecycleStage": "ga",
+  "lifecycleNotice": "Candidate lifecycle stage is operator-supplied, not independently verified.",
+  "runLabel": "phase-5-first-controlled-shadow-2026-07-30",
+  "location": "global",
+  "caseCount": 15,
+  "configuration": {
+    "concurrency": 1,
+    "timeoutMs": 120000,
+    "maxCases": 15,
+    "sampleRate": 1,
+    "saveRawOutputs": false,
+    "redactInputs": true
+  },
+  "baselineMetrics": {
+    "transportSuccessRate": 1,
+    "responseReceivedRate": 1,
+    "requestSuccessRate": 1,
+    "jsonParseSuccessRate": 1,
+    "schemaValidRate": 1,
+    "applicationValidationRate": 1,
+    "exactEvidenceRate": 1,
+    "evidenceIdComplianceRate": 1,
+    "enumComplianceRate": 1,
+    "pipelineCompletionRate": 1,
+    "insufficientEvidenceCorrectnessRate": 0.9333333333333333,
+    "meanLatencyMs": 4819.2,
+    "medianLatencyMs": 4839,
+    "p95LatencyMs": 8066,
+    "averageAttempts": 1,
+    "fallbackRate": 0,
+    "timeoutRate": 0,
+    "averageInputTokens": 581.28,
+    "averageOutputTokens": 743.52,
+    "averageTotalTokens": 1324.8,
+    "missingTokenMetadataRate": 0
+  },
+  "candidateMetrics": {
+    "transportSuccessRate": 1,
+    "responseReceivedRate": 1,
+    "requestSuccessRate": 1,
+    "jsonParseSuccessRate": 1,
+    "schemaValidRate": 1,
+    "applicationValidationRate": 1,
+    "exactEvidenceRate": 1,
+    "evidenceIdComplianceRate": 1,
+    "enumComplianceRate": 1,
+    "pipelineCompletionRate": 1,
+    "insufficientEvidenceCorrectnessRate": 0.8666666666666667,
+    "meanLatencyMs": 3057.5416666666665,
+    "medianLatencyMs": 3266,
+    "p95LatencyMs": 4055,
+    "averageAttempts": 1,
+    "fallbackRate": 0,
+    "timeoutRate": 0,
+    "averageInputTokens": 1982.875,
+    "averageOutputTokens": 506.125,
+    "averageTotalTokens": 2489,
+    "missingTokenMetadataRate": 0
+  },
+  "comparativeMetrics": {
+    "statusAgreementRate": 0.8,
+    "recommendationAgreementRate": 0.6,
+    "rawStatusAgreementRate": 0.8,
+    "rawRecommendationAgreementRate": 0.6,
+    "policyAdjustedRecommendationAgreementRate": 0.8666666666666667,
+    "effectivePositionOverrideRate": 0.4666666666666667,
+    "effectivePositionDowngradeRate": 0.3333333333333333,
+    "effectivePositionUpgradeRate": 0,
+    "actionDowngradeRate": 0,
+    "requireHumanReviewRate": 0.4666666666666667,
+    "normalApplicationReviewRate": 1,
+    "pendingPathConversionRate": 0.13333333333333333,
+    "blockRate": 0,
+    "policyOverrideRate": 0.4666666666666667,
+    "policyDowngradeRate": 0.3333333333333333,
+    "policyBlockRate": 0,
+    "policyHumanReviewRate": 0.4666666666666667,
+    "forbiddenTermDetectionRate": 0,
+    "overEscalationCorrectionRate": 1,
+    "excessiveConservatismCorrectionRate": 1,
+    "outOfPolicyRecommendationCorrectionRate": 1,
+    "meanScoreDrift": 0.75,
+    "meanConfidenceDrift": 0.125,
+    "meanRelevanceDrift": 2.375,
+    "meanEvidenceCountDrift": 1.4,
+    "insufficientEvidenceAgreementRate": 0.8,
+    "requiredKeywordComplianceRate": 0.9333333333333333,
+    "forbiddenKeywordViolationRate": 0.13333333333333333,
+    "unsupportedClaimRate": 0,
+    "quotationMismatchRate": 0
+  },
+  "promotion": {
+    "recommendation": "NOT_ELIGIBLE",
+    "checks": [
+      {
+        "name": "pipeline completion",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 98%"
+      },
+      {
+        "name": "JSON parse",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 99%"
+      },
+      {
+        "name": "schema validity",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 99%"
+      },
+      {
+        "name": "exact evidence",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 98%"
+      },
+      {
+        "name": "evidence IDs",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": "100%"
+      },
+      {
+        "name": "enums",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": "100%"
+      },
+      {
+        "name": "insufficient evidence",
+        "severity": "fail",
+        "actual": 0.8666666666666667,
+        "threshold": ">= 95%"
+      },
+      {
+        "name": "status agreement",
+        "severity": "warning",
+        "actual": 0.8,
+        "threshold": ">= 90%"
+      },
+      {
+        "name": "p95 latency",
+        "severity": "pass",
+        "actual": 4055,
+        "threshold": "<= 1.5x baseline"
+      },
+      {
+        "name": "fallback rate",
+        "severity": "pass",
+        "actual": 0,
+        "threshold": "<= baseline + 2pp"
+      },
+      {
+        "name": "timeout rate",
+        "severity": "pass",
+        "actual": 0,
+        "threshold": "<= 1%"
+      }
+    ],
+    "criticalInvariantViolations": [],
+    "integrity": "VALID",
+    "integrityReasons": []
+  },
+  "failedCases": [],
+  "warningCases": [
+    "long-press-article",
+    "french-platform-update",
+    "should-remain-pending"
+  ],
+  "missingMetadata": [],
+  "recommendation": "NOT_ELIGIBLE",
+  "evaluationIntegrity": "VALID",
+  "evaluationIntegrityReasons": [],
+  "caseResults": [
+    {
+      "caseId": "official-google-announcement",
+      "category": "official-source",
+      "language": "en",
+      "source": {
+        "title": "Google announces a controlled AI API update",
+        "url": "https://example.test/google-update",
+        "publisher": "Google",
+        "publishedAt": "2026-07-01T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 4625,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 4605,
+            "validationMs": 20,
+            "totalMs": 4625
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 436,
+          "outputTokens": 664,
+          "totalTokens": 1100,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 6028,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 6024,
+            "validationMs": 4,
+            "totalMs": 6028
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 764,
+          "outputTokens": 864,
+          "totalTokens": 1628,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "MONITOR",
+        "score": 3,
+        "confidence": 5,
+        "relevance": 5,
+        "evidenceCount": 3,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "MONITOR",
+          "effectivePosition": "MONITOR",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "official-google-announcement",
+            "evaluatedAt": "2026-07-30T11:32:19.242Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 4062,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 4059,
+            "validationMs": 3,
+            "totalMs": 4062
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1973,
+          "outputTokens": 684,
+          "totalTokens": 2657,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3565,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3563,
+            "validationMs": 2,
+            "totalMs": 3565
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 2060,
+          "outputTokens": 770,
+          "totalTokens": 2830,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "ACT_NOW",
+        "score": 4,
+        "confidence": 4,
+        "relevance": 3,
+        "evidenceCount": 3,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "ACT_NOW",
+          "effectivePosition": "MONITOR",
+          "action": "REQUIRE_HUMAN_REVIEW",
+          "reasons": [
+            {
+              "ruleId": "EP-001",
+              "message": "ACT_NOW lacked the explicit evidence, authority, confidence, materiality, conflict, promotion, and verification conditions required by policy.",
+              "affectedField": "recommendedPosition",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3"
+              ],
+              "originalPosition": "ACT_NOW",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-008",
+              "message": "A material editorial policy finding requires additional human review.",
+              "affectedField": "humanReviewState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3"
+              ],
+              "originalPosition": "ACT_NOW",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            }
+          ],
+          "triggeredRuleIds": [
+            "EP-001",
+            "EP-008"
+          ],
+          "humanReviewRequired": true,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": true,
+          "forbiddenTermsDetected": [],
+          "policyScore": 70,
+          "auditMetadata": {
+            "itemId": "official-google-announcement",
+            "evaluatedAt": "2026-07-30T11:32:19.251Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": [
+          "RUN_EXPERIMENT",
+          "MONITOR"
+        ]
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_487ac08c2aa7a8e49a6c4c72",
+        "signalId": "signal_fcc206e707343c690f0c5cfd",
+        "decisionId": "decision_31b38a10c07889f5f793d168",
+        "policyId": "policy_d3c959460c952037e2aaed3a",
+        "reviewId": "review_1a3c3cc6817d917a87ecb22d",
+        "publicationId": "publication_7bf00ce51f65739209784fc3"
+      }
+    },
+    {
+      "caseId": "long-press-article",
+      "category": "press",
+      "language": "en",
+      "source": {
+        "title": "Synthetic press analysis of AI adoption",
+        "url": "https://example.test/press-analysis",
+        "publisher": "Example Press",
+        "publishedAt": "2026-06-20T08:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 5532,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 5531,
+            "validationMs": 1,
+            "totalMs": 5532
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 456,
+          "outputTokens": 974,
+          "totalTokens": 1430,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 8808,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 8807,
+            "validationMs": 1,
+            "totalMs": 8808
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 1013,
+          "outputTokens": 1244,
+          "totalTokens": 2257,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "MONITOR",
+        "score": 3,
+        "confidence": 3,
+        "relevance": 5,
+        "evidenceCount": 5,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "MONITOR",
+          "effectivePosition": "MONITOR",
+          "action": "REQUIRE_HUMAN_REVIEW",
+          "reasons": [
+            {
+              "ruleId": "EP-004",
+              "message": "Pending verification must remain on a defer or monitor path.",
+              "affectedField": "verificationState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3",
+                "E4",
+                "E5"
+              ],
+              "originalPosition": "MONITOR",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-008",
+              "message": "A material editorial policy finding requires additional human review.",
+              "affectedField": "humanReviewState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3",
+                "E4",
+                "E5"
+              ],
+              "originalPosition": "MONITOR",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            }
+          ],
+          "triggeredRuleIds": [
+            "EP-004",
+            "EP-008"
+          ],
+          "humanReviewRequired": true,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": true,
+          "forbiddenTermsDetected": [],
+          "policyScore": 70,
+          "auditMetadata": {
+            "itemId": "long-press-article",
+            "evaluatedAt": "2026-07-30T11:32:40.963Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3451,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3450,
+            "validationMs": 1,
+            "totalMs": 3451
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1993,
+          "outputTokens": 731,
+          "totalTokens": 2724,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3913,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3911,
+            "validationMs": 2,
+            "totalMs": 3913
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 2119,
+          "outputTokens": 836,
+          "totalTokens": 2955,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "RUN_EXPERIMENT",
+        "score": 3,
+        "confidence": 3,
+        "relevance": 2,
+        "evidenceCount": 4,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "RUN_EXPERIMENT",
+          "effectivePosition": "DEFER",
+          "action": "REQUIRE_HUMAN_REVIEW",
+          "reasons": [
+            {
+              "ruleId": "EP-004",
+              "message": "Pending verification must remain on a defer or monitor path.",
+              "affectedField": "verificationState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3",
+                "E4"
+              ],
+              "originalPosition": "RUN_EXPERIMENT",
+              "effectivePosition": "DEFER",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-008",
+              "message": "A material editorial policy finding requires additional human review.",
+              "affectedField": "humanReviewState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3",
+                "E4"
+              ],
+              "originalPosition": "RUN_EXPERIMENT",
+              "effectivePosition": "DEFER",
+              "humanReviewRequired": true
+            }
+          ],
+          "triggeredRuleIds": [
+            "EP-004",
+            "EP-008"
+          ],
+          "humanReviewRequired": true,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": true,
+          "forbiddenTermsDetected": [],
+          "policyScore": 70,
+          "auditMetadata": {
+            "itemId": "long-press-article",
+            "evaluatedAt": "2026-07-30T11:32:40.965Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": [
+          "RUN_EXPERIMENT",
+          "MONITOR",
+          "DEFER"
+        ]
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": false,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_ea5edbbe57ae700861f10c68",
+        "signalId": "signal_6fee0127d4fc2168c13b0fae",
+        "decisionId": "decision_66db001c5dde4cb170bfdf19",
+        "policyId": "policy_bcb6cea1e6f8131ee2d6f93e",
+        "reviewId": "review_a78e3db6c6a390cacd9b5c90",
+        "publicationId": "publication_55e8b0c7106be9303dc6ab8e"
+      }
+    },
+    {
+      "caseId": "weak-unverifiable-claim",
+      "category": "weak-claim",
+      "language": "en",
+      "source": {
+        "title": "Anonymous claim about a secret model",
+        "url": "https://example.test/anonymous-claim",
+        "publisher": "Anonymous Blog",
+        "publishedAt": "2026-07-02T09:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 2512,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": true,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 2511,
+            "validationMs": 1,
+            "totalMs": 2512
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 434,
+          "outputTokens": 272,
+          "totalTokens": 706,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "INSUFFICIENT_EVIDENCE",
+        "evidenceCount": 3,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "INSUFFICIENT_EVIDENCE",
+          "effectivePosition": "INSUFFICIENT_EVIDENCE",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "weak-unverifiable-claim",
+            "evaluatedAt": "2026-07-30T11:32:45.950Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 2470,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": true,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 2470,
+            "validationMs": 0,
+            "totalMs": 2470
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1971,
+          "outputTokens": 169,
+          "totalTokens": 2140,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "INSUFFICIENT_EVIDENCE",
+        "evidenceCount": 1,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "INSUFFICIENT_EVIDENCE",
+          "effectivePosition": "INSUFFICIENT_EVIDENCE",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "weak-unverifiable-claim",
+            "evaluatedAt": "2026-07-30T11:32:45.950Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": []
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_d2ed67d8fe1e420b8579f74f",
+        "signalId": "signal_69a3cceb4b874c7fe832446d",
+        "decisionId": "decision_f1dc93f045b990f11dfab2f0",
+        "policyId": "policy_5be685853067e95b0cbdf6c2",
+        "reviewId": "review_34939c776ae235815ba0b07b",
+        "publicationId": "publication_51531c34b21e2c6b0e1337e3"
+      }
+    },
+    {
+      "caseId": "contradictory-source",
+      "category": "contradictory",
+      "language": "en",
+      "source": {
+        "title": "Conflicting availability statements",
+        "url": "https://example.test/conflict",
+        "publisher": "Example Vendor",
+        "publishedAt": "2026-07-03T11:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3755,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3753,
+            "validationMs": 1,
+            "totalMs": 3755
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 432,
+          "outputTokens": 598,
+          "totalTokens": 1030,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 4963,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 4962,
+            "validationMs": 1,
+            "totalMs": 4963
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 753,
+          "outputTokens": 874,
+          "totalTokens": 1627,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "MONITOR",
+        "score": 4,
+        "confidence": 5,
+        "relevance": 5,
+        "evidenceCount": 4,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "MONITOR",
+          "effectivePosition": "MONITOR",
+          "action": "REQUIRE_HUMAN_REVIEW",
+          "reasons": [
+            {
+              "ruleId": "EP-003",
+              "message": "Conflicting evidence must remain visible and be resolved by human review.",
+              "affectedField": "sourceConflict",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3",
+                "E4"
+              ],
+              "originalPosition": "MONITOR",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-004",
+              "message": "Pending verification must remain on a defer or monitor path.",
+              "affectedField": "verificationState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3",
+                "E4"
+              ],
+              "originalPosition": "MONITOR",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-008",
+              "message": "A material editorial policy finding requires additional human review.",
+              "affectedField": "humanReviewState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3",
+                "E4"
+              ],
+              "originalPosition": "MONITOR",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            }
+          ],
+          "triggeredRuleIds": [
+            "EP-003",
+            "EP-004",
+            "EP-008"
+          ],
+          "humanReviewRequired": true,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": true,
+          "forbiddenTermsDetected": [],
+          "policyScore": 55,
+          "auditMetadata": {
+            "itemId": "contradictory-source",
+            "evaluatedAt": "2026-07-30T11:32:56.623Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 1952,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": true,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 1952,
+            "validationMs": 0,
+            "totalMs": 1952
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1969,
+          "outputTokens": 145,
+          "totalTokens": 2114,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "INSUFFICIENT_EVIDENCE",
+        "evidenceCount": 1,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "INSUFFICIENT_EVIDENCE",
+          "effectivePosition": "DEFER",
+          "action": "REQUIRE_HUMAN_REVIEW",
+          "reasons": [
+            {
+              "ruleId": "EP-007",
+              "message": "Structured context proves that reviewable uncertainty, not evidence absence, caused INSUFFICIENT_EVIDENCE.",
+              "affectedField": "status",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1"
+              ],
+              "originalPosition": "INSUFFICIENT_EVIDENCE",
+              "effectivePosition": "DEFER",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-003",
+              "message": "Conflicting evidence must remain visible and be resolved by human review.",
+              "affectedField": "sourceConflict",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1"
+              ],
+              "originalPosition": "INSUFFICIENT_EVIDENCE",
+              "effectivePosition": "DEFER",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-004",
+              "message": "Pending verification must remain on a defer or monitor path.",
+              "affectedField": "verificationState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1"
+              ],
+              "originalPosition": "INSUFFICIENT_EVIDENCE",
+              "effectivePosition": "DEFER",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-008",
+              "message": "A material editorial policy finding requires additional human review.",
+              "affectedField": "humanReviewState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1"
+              ],
+              "originalPosition": "INSUFFICIENT_EVIDENCE",
+              "effectivePosition": "DEFER",
+              "humanReviewRequired": true
+            }
+          ],
+          "triggeredRuleIds": [
+            "EP-007",
+            "EP-003",
+            "EP-004",
+            "EP-008"
+          ],
+          "humanReviewRequired": true,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": true,
+          "forbiddenTermsDetected": [],
+          "policyScore": 40,
+          "auditMetadata": {
+            "itemId": "contradictory-source",
+            "evaluatedAt": "2026-07-30T11:32:56.624Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": [
+          "MONITOR",
+          "DEFER"
+        ]
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": false,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_e2b9c3a9f811dc69dc04cb38",
+        "signalId": "signal_348db74114f667c4e11a242e",
+        "decisionId": "decision_a0b6b3663d5b2172fd3a0e84",
+        "policyId": "policy_83f7fc65dd2ea7980e10a8e2",
+        "reviewId": "review_881dc53f0cc18b80ae471970",
+        "publicationId": "publication_c169491269a6a446cf7ba283"
+      }
+    },
+    {
+      "caseId": "insufficient-evidence",
+      "category": "insufficient",
+      "language": "en",
+      "source": {
+        "title": "Coming soon notice",
+        "url": "https://example.test/coming-soon",
+        "publisher": "Example Lab",
+        "publishedAt": "2026-07-04T12:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 2236,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": true,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 2235,
+            "validationMs": 1,
+            "totalMs": 2236
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 432,
+          "outputTokens": 268,
+          "totalTokens": 700,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "INSUFFICIENT_EVIDENCE",
+        "evidenceCount": 3,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "INSUFFICIENT_EVIDENCE",
+          "effectivePosition": "INSUFFICIENT_EVIDENCE",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "insufficient-evidence",
+            "evaluatedAt": "2026-07-30T11:33:00.665Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 1804,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": true,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 1803,
+            "validationMs": 1,
+            "totalMs": 1804
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1969,
+          "outputTokens": 163,
+          "totalTokens": 2132,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "INSUFFICIENT_EVIDENCE",
+        "evidenceCount": 1,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "INSUFFICIENT_EVIDENCE",
+          "effectivePosition": "INSUFFICIENT_EVIDENCE",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "insufficient-evidence",
+            "evaluatedAt": "2026-07-30T11:33:00.666Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": []
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_5f02d51d0e369b4432e0ced1",
+        "signalId": "signal_655797b97432eb41c3d08d92",
+        "decisionId": "decision_550af3a784ac3d5343a2eff0",
+        "policyId": "policy_465ce47bb04f189f73a5ba1f",
+        "reviewId": "review_1f4a81718d4920f570a26790",
+        "publicationId": "publication_3eb256b5c9987e0bc3caaea1"
+      }
+    },
+    {
+      "caseId": "arabic-policy-update",
+      "category": "multilingual",
+      "language": "ar",
+      "source": {
+        "title": "تحديث اصطناعي لسياسة الذكاء الاصطناعي",
+        "url": "https://example.test/ar-policy",
+        "publisher": "هيئة تجريبية",
+        "publishedAt": "2026-07-05T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3468,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3467,
+            "validationMs": 1,
+            "totalMs": 3468
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 470,
+          "outputTokens": 631,
+          "totalTokens": 1101,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 7234,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 7234,
+            "validationMs": 0,
+            "totalMs": 7234
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 778,
+          "outputTokens": 1114,
+          "totalTokens": 1892,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "ACT_NOW",
+        "score": 5,
+        "confidence": 5,
+        "relevance": 5,
+        "evidenceCount": 3,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "ACT_NOW",
+          "effectivePosition": "ACT_NOW",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "arabic-policy-update",
+            "evaluatedAt": "2026-07-30T11:33:18.229Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 2899,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 2898,
+            "validationMs": 1,
+            "totalMs": 2899
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 2007,
+          "outputTokens": 606,
+          "totalTokens": 2613,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3956,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3955,
+            "validationMs": 1,
+            "totalMs": 3956
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 2051,
+          "outputTokens": 696,
+          "totalTokens": 2747,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "ACT_NOW",
+        "score": 5,
+        "confidence": 5,
+        "relevance": 5,
+        "evidenceCount": 2,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "ACT_NOW",
+          "effectivePosition": "ACT_NOW",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "arabic-policy-update",
+            "evaluatedAt": "2026-07-30T11:33:18.232Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": [
+          "ACT_NOW",
+          "MONITOR"
+        ]
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_ae63147ebbea4e42974c04c0",
+        "signalId": "signal_b4669b60789b9d868f793098",
+        "decisionId": "decision_92bd2f885b702a84053be716",
+        "policyId": "policy_7662b2d83f196fc82bd24689",
+        "reviewId": "review_aa88cd98fd124b3469a34d95",
+        "publicationId": "publication_438adbf986ce8075bb0778f7"
+      }
+    },
+    {
+      "caseId": "french-platform-update",
+      "category": "multilingual",
+      "language": "fr",
+      "source": {
+        "title": "Mise à jour synthétique d'une plateforme",
+        "url": "https://example.test/fr-update",
+        "publisher": "Plateforme Exemple",
+        "publishedAt": "2026-07-06T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3989,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3989,
+            "validationMs": 0,
+            "totalMs": 3989
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 440,
+          "outputTokens": 623,
+          "totalTokens": 1063,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 7286,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 7286,
+            "validationMs": 0,
+            "totalMs": 7286
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 746,
+          "outputTokens": 1018,
+          "totalTokens": 1764,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "MONITOR",
+        "score": 4,
+        "confidence": 5,
+        "relevance": 3,
+        "evidenceCount": 2,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "MONITOR",
+          "effectivePosition": "MONITOR",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "french-platform-update",
+            "evaluatedAt": "2026-07-30T11:33:36.754Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3186,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3185,
+            "validationMs": 1,
+            "totalMs": 3186
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1977,
+          "outputTokens": 492,
+          "totalTokens": 2469,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 4055,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 4054,
+            "validationMs": 1,
+            "totalMs": 4055
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1968,
+          "outputTokens": 681,
+          "totalTokens": 2649,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "MONITOR",
+        "score": 3,
+        "confidence": 5,
+        "relevance": 2,
+        "evidenceCount": 2,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "MONITOR",
+          "effectivePosition": "MONITOR",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "french-platform-update",
+            "evaluatedAt": "2026-07-30T11:33:36.757Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": [
+          "RUN_EXPERIMENT",
+          "MONITOR"
+        ]
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": false,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_df631a9d963c72409e3ee278",
+        "signalId": "signal_588ea5f40b9a256e36d3244b",
+        "decisionId": "decision_7dfcd30351d259e23ed028db",
+        "policyId": "policy_c4c4ed0194bda565ebe34026",
+        "reviewId": "review_68d8fe039a0c8a5b5cc4bfb6",
+        "publicationId": "publication_b4bbebbabd742337a3c6c1c5"
+      }
+    },
+    {
+      "caseId": "english-exact-quotation",
+      "category": "quotation",
+      "language": "en",
+      "source": {
+        "title": "Exact quotation contract",
+        "url": "https://example.test/exact-quote",
+        "publisher": "Example Docs",
+        "publishedAt": "2026-07-07T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3384,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3384,
+            "validationMs": 0,
+            "totalMs": 3384
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 423,
+          "outputTokens": 494,
+          "totalTokens": 917,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 5045,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 5045,
+            "validationMs": 0,
+            "totalMs": 5045
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 654,
+          "outputTokens": 748,
+          "totalTokens": 1402,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "ACT_NOW",
+        "score": 5,
+        "confidence": 5,
+        "relevance": 5,
+        "evidenceCount": 2,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "ACT_NOW",
+          "effectivePosition": "MONITOR",
+          "action": "REQUIRE_HUMAN_REVIEW",
+          "reasons": [
+            {
+              "ruleId": "EP-004",
+              "message": "Pending verification must remain on a defer or monitor path.",
+              "affectedField": "verificationState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2"
+              ],
+              "originalPosition": "ACT_NOW",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-001",
+              "message": "ACT_NOW lacked the explicit evidence, authority, confidence, materiality, conflict, promotion, and verification conditions required by policy.",
+              "affectedField": "recommendedPosition",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2"
+              ],
+              "originalPosition": "ACT_NOW",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-008",
+              "message": "A material editorial policy finding requires additional human review.",
+              "affectedField": "humanReviewState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2"
+              ],
+              "originalPosition": "ACT_NOW",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            }
+          ],
+          "triggeredRuleIds": [
+            "EP-004",
+            "EP-001",
+            "EP-008"
+          ],
+          "humanReviewRequired": true,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": true,
+          "forbiddenTermsDetected": [],
+          "policyScore": 55,
+          "auditMetadata": {
+            "itemId": "english-exact-quotation",
+            "evaluatedAt": "2026-07-30T11:33:51.410Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3357,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3357,
+            "validationMs": 0,
+            "totalMs": 3357
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1960,
+          "outputTokens": 424,
+          "totalTokens": 2384,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 2864,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 2862,
+            "validationMs": 1,
+            "totalMs": 2864
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1903,
+          "outputTokens": 589,
+          "totalTokens": 2492,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "ACT_NOW",
+        "score": 4,
+        "confidence": 5,
+        "relevance": 2,
+        "evidenceCount": 1,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "ACT_NOW",
+          "effectivePosition": "MONITOR",
+          "action": "REQUIRE_HUMAN_REVIEW",
+          "reasons": [
+            {
+              "ruleId": "EP-004",
+              "message": "Pending verification must remain on a defer or monitor path.",
+              "affectedField": "verificationState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1"
+              ],
+              "originalPosition": "ACT_NOW",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-001",
+              "message": "ACT_NOW lacked the explicit evidence, authority, confidence, materiality, conflict, promotion, and verification conditions required by policy.",
+              "affectedField": "recommendedPosition",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1"
+              ],
+              "originalPosition": "ACT_NOW",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-008",
+              "message": "A material editorial policy finding requires additional human review.",
+              "affectedField": "humanReviewState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1"
+              ],
+              "originalPosition": "ACT_NOW",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            }
+          ],
+          "triggeredRuleIds": [
+            "EP-004",
+            "EP-001",
+            "EP-008"
+          ],
+          "humanReviewRequired": true,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": true,
+          "forbiddenTermsDetected": [],
+          "policyScore": 55,
+          "auditMetadata": {
+            "itemId": "english-exact-quotation",
+            "evaluatedAt": "2026-07-30T11:33:51.411Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": [
+          "RUN_EXPERIMENT",
+          "MONITOR"
+        ]
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_91cb1b2aaaa1ff30c56714cd",
+        "signalId": "signal_186215fca7d9c530e87bc157",
+        "decisionId": "decision_597531e517f7367bca02136a",
+        "policyId": "policy_d5ffb7a07e7fa73176ec6d08",
+        "reviewId": "review_051776d1dfb23cc55b636a24",
+        "publicationId": "publication_b2ea7369c823f698f31d3095"
+      }
+    },
+    {
+      "caseId": "multiple-evidence-references",
+      "category": "evidence",
+      "language": "en",
+      "source": {
+        "title": "Two-part synthetic release",
+        "url": "https://example.test/two-part",
+        "publisher": "Example Cloud",
+        "publishedAt": "2026-07-08T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3883,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3882,
+            "validationMs": 1,
+            "totalMs": 3883
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 438,
+          "outputTokens": 610,
+          "totalTokens": 1048,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 5761,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 5760,
+            "validationMs": 0,
+            "totalMs": 5761
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 740,
+          "outputTokens": 1014,
+          "totalTokens": 1754,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "RUN_EXPERIMENT",
+        "score": 4,
+        "confidence": 5,
+        "relevance": 5,
+        "evidenceCount": 3,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "RUN_EXPERIMENT",
+          "effectivePosition": "RUN_EXPERIMENT",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "multiple-evidence-references",
+            "evaluatedAt": "2026-07-30T11:34:08.331Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3797,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3796,
+            "validationMs": 1,
+            "totalMs": 3797
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1975,
+          "outputTokens": 572,
+          "totalTokens": 2547,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3477,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3477,
+            "validationMs": 0,
+            "totalMs": 3477
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 2003,
+          "outputTokens": 673,
+          "totalTokens": 2676,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "RUN_EXPERIMENT",
+        "score": 3,
+        "confidence": 5,
+        "relevance": 2,
+        "evidenceCount": 3,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "RUN_EXPERIMENT",
+          "effectivePosition": "RUN_EXPERIMENT",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "multiple-evidence-references",
+            "evaluatedAt": "2026-07-30T11:34:08.332Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": [
+          "RUN_EXPERIMENT",
+          "MONITOR"
+        ]
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_89f45e6a8c7b4772bc267133",
+        "signalId": "signal_e06c4d5ef178c0a6411c2ed3",
+        "decisionId": "decision_57cda0077e201de4a97d4b23",
+        "policyId": "policy_7e95ffc0e8dbb4fb2b0ebcaa",
+        "reviewId": "review_26fcd3912e47f20dab384556",
+        "publicationId": "publication_8d2ef228bbaf27ab1cbab0c3"
+      }
+    },
+    {
+      "caseId": "dates-and-numerical-claims",
+      "category": "numbers",
+      "language": "en",
+      "source": {
+        "title": "Synthetic quota schedule",
+        "url": "https://example.test/quota",
+        "publisher": "Example API",
+        "publishedAt": "2026-07-09T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 4867,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 4866,
+            "validationMs": 1,
+            "totalMs": 4867
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 438,
+          "outputTokens": 872,
+          "totalTokens": 1310,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 6787,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 6787,
+            "validationMs": 0,
+            "totalMs": 6787
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 935,
+          "outputTokens": 1051,
+          "totalTokens": 1986,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "MONITOR",
+        "score": 4,
+        "confidence": 5,
+        "relevance": 5,
+        "evidenceCount": 5,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "MONITOR",
+          "effectivePosition": "MONITOR",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "dates-and-numerical-claims",
+            "evaluatedAt": "2026-07-30T11:34:26.889Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3361,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3360,
+            "validationMs": 1,
+            "totalMs": 3361
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1975,
+          "outputTokens": 515,
+          "totalTokens": 2490,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3538,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3538,
+            "validationMs": 0,
+            "totalMs": 3538
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1978,
+          "outputTokens": 644,
+          "totalTokens": 2622,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "ACT_NOW",
+        "score": 3,
+        "confidence": 5,
+        "relevance": 2,
+        "evidenceCount": 2,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "ACT_NOW",
+          "effectivePosition": "MONITOR",
+          "action": "REQUIRE_HUMAN_REVIEW",
+          "reasons": [
+            {
+              "ruleId": "EP-005",
+              "message": "Date or numerical escalation lacks explicit verification or another strict ACT_NOW condition.",
+              "affectedField": "recommendedPosition",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2"
+              ],
+              "originalPosition": "ACT_NOW",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-008",
+              "message": "A material editorial policy finding requires additional human review.",
+              "affectedField": "humanReviewState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2"
+              ],
+              "originalPosition": "ACT_NOW",
+              "effectivePosition": "MONITOR",
+              "humanReviewRequired": true
+            }
+          ],
+          "triggeredRuleIds": [
+            "EP-005",
+            "EP-008"
+          ],
+          "humanReviewRequired": true,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": true,
+          "forbiddenTermsDetected": [],
+          "policyScore": 70,
+          "auditMetadata": {
+            "itemId": "dates-and-numerical-claims",
+            "evaluatedAt": "2026-07-30T11:34:26.891Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": [
+          "ACT_NOW",
+          "MONITOR"
+        ]
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_39de66b6cc39205ca3698485",
+        "signalId": "signal_9694e5362aa716af002a5a87",
+        "decisionId": "decision_4080b525d4d52a4bd816085b",
+        "policyId": "policy_550f518f6f613584176a2b40",
+        "reviewId": "review_1c83b74c8cc4fcf7844cc9ef",
+        "publicationId": "publication_8afd95feafc97427f9808505"
+      }
+    },
+    {
+      "caseId": "should-remain-pending",
+      "category": "editorial-state",
+      "language": "en",
+      "source": {
+        "title": "Preview with unresolved terms",
+        "url": "https://example.test/unresolved-preview",
+        "publisher": "Example Startup",
+        "publishedAt": "2026-07-10T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3434,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3433,
+            "validationMs": 1,
+            "totalMs": 3434
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 427,
+          "outputTokens": 597,
+          "totalTokens": 1024,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 8066,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 8065,
+            "validationMs": 1,
+            "totalMs": 8066
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 725,
+          "outputTokens": 1215,
+          "totalTokens": 1940,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "DEFER",
+        "score": 3,
+        "confidence": 4,
+        "relevance": 5,
+        "evidenceCount": 3,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "DEFER",
+          "effectivePosition": "DEFER",
+          "action": "REQUIRE_HUMAN_REVIEW",
+          "reasons": [
+            {
+              "ruleId": "EP-004",
+              "message": "Pending verification must remain on a defer or monitor path.",
+              "affectedField": "verificationState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3"
+              ],
+              "originalPosition": "DEFER",
+              "effectivePosition": "DEFER",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-008",
+              "message": "A material editorial policy finding requires additional human review.",
+              "affectedField": "humanReviewState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3"
+              ],
+              "originalPosition": "DEFER",
+              "effectivePosition": "DEFER",
+              "humanReviewRequired": true
+            }
+          ],
+          "triggeredRuleIds": [
+            "EP-004",
+            "EP-008"
+          ],
+          "humanReviewRequired": true,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": true,
+          "forbiddenTermsDetected": [],
+          "policyScore": 70,
+          "auditMetadata": {
+            "itemId": "should-remain-pending",
+            "evaluatedAt": "2026-07-30T11:34:40.331Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 1938,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": true,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 1938,
+            "validationMs": 0,
+            "totalMs": 1938
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1964,
+          "outputTokens": 170,
+          "totalTokens": 2134,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "INSUFFICIENT_EVIDENCE",
+        "evidenceCount": 1,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "INSUFFICIENT_EVIDENCE",
+          "effectivePosition": "DEFER",
+          "action": "REQUIRE_HUMAN_REVIEW",
+          "reasons": [
+            {
+              "ruleId": "EP-007",
+              "message": "Structured context proves that reviewable uncertainty, not evidence absence, caused INSUFFICIENT_EVIDENCE.",
+              "affectedField": "status",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1"
+              ],
+              "originalPosition": "INSUFFICIENT_EVIDENCE",
+              "effectivePosition": "DEFER",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-004",
+              "message": "Pending verification must remain on a defer or monitor path.",
+              "affectedField": "verificationState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1"
+              ],
+              "originalPosition": "INSUFFICIENT_EVIDENCE",
+              "effectivePosition": "DEFER",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-008",
+              "message": "A material editorial policy finding requires additional human review.",
+              "affectedField": "humanReviewState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1"
+              ],
+              "originalPosition": "INSUFFICIENT_EVIDENCE",
+              "effectivePosition": "DEFER",
+              "humanReviewRequired": true
+            }
+          ],
+          "triggeredRuleIds": [
+            "EP-007",
+            "EP-004",
+            "EP-008"
+          ],
+          "humanReviewRequired": true,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": true,
+          "forbiddenTermsDetected": [],
+          "policyScore": 55,
+          "auditMetadata": {
+            "itemId": "should-remain-pending",
+            "evaluatedAt": "2026-07-30T11:34:40.331Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": [
+          "MONITOR",
+          "DEFER",
+          "AVOID"
+        ]
+      },
+      "expectationChecks": {
+        "requiredKeywords": false,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": false,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": [
+          "missing"
+        ]
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_2f7ab4bec798a2269960b7f8",
+        "signalId": "signal_1cb606ca9cac9a96364c6bd7",
+        "decisionId": "decision_8ead783de9bfd2e3e3b24b65",
+        "policyId": "policy_1fa4b21ccfacc58de8d261f7",
+        "reviewId": "review_d8d30a182543511279bfd63f",
+        "publicationId": "publication_1cbad8a253de4ccaef739bea"
+      }
+    },
+    {
+      "caseId": "should-be-rejected",
+      "category": "editorial-state",
+      "language": "en",
+      "source": {
+        "title": "Fabricated guaranteed return offer",
+        "url": "https://example.test/guaranteed-return",
+        "publisher": "Promotion Example",
+        "publishedAt": "2026-07-11T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 2053,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": true,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 2053,
+            "validationMs": 0,
+            "totalMs": 2053
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 432,
+          "outputTokens": 262,
+          "totalTokens": 694,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "INSUFFICIENT_EVIDENCE",
+        "evidenceCount": 2,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "INSUFFICIENT_EVIDENCE",
+          "effectivePosition": "INSUFFICIENT_EVIDENCE",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "should-be-rejected",
+            "evaluatedAt": "2026-07-30T11:34:44.192Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 1807,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": true,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 1807,
+            "validationMs": 0,
+            "totalMs": 1807
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1969,
+          "outputTokens": 173,
+          "totalTokens": 2142,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "INSUFFICIENT_EVIDENCE",
+        "evidenceCount": 1,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "INSUFFICIENT_EVIDENCE",
+          "effectivePosition": "INSUFFICIENT_EVIDENCE",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "should-be-rejected",
+            "evaluatedAt": "2026-07-30T11:34:44.192Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": [
+          "IGNORE",
+          "AVOID"
+        ]
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_0be9b1b20c2ab4264a5dcc7a",
+        "signalId": "signal_c8ea926fcef1dc72eba7b70b",
+        "decisionId": "decision_9a8b6de23c45168b9f63bfa1",
+        "policyId": "policy_6ff597bb6da309a1c0a48754",
+        "reviewId": "review_3377c97b80f3dfc2f0d380ba",
+        "publicationId": "publication_30a07e8992fe2be777ed4faa"
+      }
+    },
+    {
+      "caseId": "incomplete-source",
+      "category": "malformed",
+      "language": "en",
+      "source": {
+        "title": "Incomplete synthetic notice",
+        "url": "https://example.test/incomplete",
+        "publisher": "Unknown Example",
+        "publishedAt": "2026-07-12T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 2829,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": true,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 2829,
+            "validationMs": 0,
+            "totalMs": 2829
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 423,
+          "outputTokens": 283,
+          "totalTokens": 706,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "INSUFFICIENT_EVIDENCE",
+        "evidenceCount": 2,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "INSUFFICIENT_EVIDENCE",
+          "effectivePosition": "INSUFFICIENT_EVIDENCE",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "incomplete-source",
+            "evaluatedAt": "2026-07-30T11:34:49.260Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 2238,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": true,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 2237,
+            "validationMs": 1,
+            "totalMs": 2238
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1960,
+          "outputTokens": 169,
+          "totalTokens": 2129,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "INSUFFICIENT_EVIDENCE",
+        "evidenceCount": 1,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "INSUFFICIENT_EVIDENCE",
+          "effectivePosition": "INSUFFICIENT_EVIDENCE",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "incomplete-source",
+            "evaluatedAt": "2026-07-30T11:34:49.260Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": []
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_9c35e228d69af9f3e006b508",
+        "signalId": "signal_975111666cad71093d16e10d",
+        "decisionId": "decision_86063ae11a736e95c3acbfea",
+        "policyId": "policy_da36e0170e3b7ca91e1c93ce",
+        "reviewId": "review_28e4b090f3619d1e463dd356",
+        "publicationId": "publication_99ae2d7c248ace81bb0760ff"
+      }
+    },
+    {
+      "caseId": "high-impact-business-news",
+      "category": "high-impact",
+      "language": "en",
+      "source": {
+        "title": "Synthetic mandatory API retirement",
+        "url": "https://example.test/api-retirement",
+        "publisher": "Example Cloud",
+        "publishedAt": "2026-07-13T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 4839,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 4839,
+            "validationMs": 0,
+            "totalMs": 4839
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 435,
+          "outputTokens": 880,
+          "totalTokens": 1315,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 6543,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 6543,
+            "validationMs": 0,
+            "totalMs": 6543
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 879,
+          "outputTokens": 1134,
+          "totalTokens": 2013,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "ACT_NOW",
+        "score": 5,
+        "confidence": 5,
+        "relevance": 7,
+        "evidenceCount": 4,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "ACT_NOW",
+          "effectivePosition": "ACT_NOW",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "high-impact-business-news",
+            "evaluatedAt": "2026-07-30T11:35:07.415Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3504,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3503,
+            "validationMs": 1,
+            "totalMs": 3504
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1972,
+          "outputTokens": 639,
+          "totalTokens": 2611,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 3266,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 3265,
+            "validationMs": 1,
+            "totalMs": 3266
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 2030,
+          "outputTokens": 715,
+          "totalTokens": 2745,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "ACT_NOW",
+        "score": 4,
+        "confidence": 5,
+        "relevance": 3,
+        "evidenceCount": 2,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "ACT_NOW",
+          "effectivePosition": "ACT_NOW",
+          "action": "ALLOW",
+          "reasons": [],
+          "triggeredRuleIds": [],
+          "humanReviewRequired": false,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": false,
+          "forbiddenTermsDetected": [],
+          "policyScore": 100,
+          "auditMetadata": {
+            "itemId": "high-impact-business-news",
+            "evaluatedAt": "2026-07-30T11:35:07.415Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": [
+          "ACT_NOW"
+        ]
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_1a14768cb1e03a2ed10aad38",
+        "signalId": "signal_053f75d0999cd55df539d682",
+        "decisionId": "decision_202556b32a0c7ff26884f40c",
+        "policyId": "policy_24bb6979d742fade39515ebf",
+        "reviewId": "review_b7110ea9e002a242b149a58c",
+        "publicationId": "publication_b7809457eba374001b3a48d0"
+      }
+    },
+    {
+      "caseId": "low-impact-promotion",
+      "category": "low-impact",
+      "language": "en",
+      "source": {
+        "title": "Synthetic marketing color refresh",
+        "url": "https://example.test/color-refresh",
+        "publisher": "Example App",
+        "publishedAt": "2026-07-14T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 2553,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": true,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 2553,
+            "validationMs": 0,
+            "totalMs": 2553
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-2.5-flash",
+          "inputTokens": 429,
+          "outputTokens": 284,
+          "totalTokens": 713,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "INSUFFICIENT_EVIDENCE",
+        "evidenceCount": 3,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "INSUFFICIENT_EVIDENCE",
+          "effectivePosition": "IGNORE",
+          "action": "REQUIRE_HUMAN_REVIEW",
+          "reasons": [
+            {
+              "ruleId": "EP-007",
+              "message": "Structured context proves that reviewable uncertainty, not evidence absence, caused INSUFFICIENT_EVIDENCE.",
+              "affectedField": "status",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3"
+              ],
+              "originalPosition": "INSUFFICIENT_EVIDENCE",
+              "effectivePosition": "IGNORE",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-008",
+              "message": "A material editorial policy finding requires additional human review.",
+              "affectedField": "humanReviewState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1",
+                "E2",
+                "E3"
+              ],
+              "originalPosition": "INSUFFICIENT_EVIDENCE",
+              "effectivePosition": "IGNORE",
+              "humanReviewRequired": true
+            }
+          ],
+          "triggeredRuleIds": [
+            "EP-007",
+            "EP-008"
+          ],
+          "humanReviewRequired": true,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": true,
+          "forbiddenTermsDetected": [],
+          "policyScore": 70,
+          "auditMetadata": {
+            "itemId": "low-impact-promotion",
+            "evaluatedAt": "2026-07-30T11:35:14.892Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 2317,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 2317,
+            "validationMs": 0,
+            "totalMs": 2317
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1966,
+          "outputTokens": 358,
+          "totalTokens": 2324,
+          "schemaVersionMatched": "signal-intelligence-v1"
+        },
+        "decision": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 2604,
+          "requestSucceeded": true,
+          "transportSuccess": true,
+          "responseReceived": true,
+          "jsonParseValid": true,
+          "jsonParsed": true,
+          "schemaValid": true,
+          "applicationValid": true,
+          "exactQuoteValid": true,
+          "evidenceIdsValid": true,
+          "enumValid": true,
+          "insufficientEvidence": false,
+          "candidateCount": 1,
+          "validationErrors": [],
+          "stageDurations": {
+            "requestMs": 2604,
+            "validationMs": 0,
+            "totalMs": 2604
+          },
+          "promotionImpact": "NONE",
+          "finishReason": "STOP",
+          "modelVersion": "gemini-3.1-flash-lite",
+          "inputTokens": 1877,
+          "outputTokens": 533,
+          "totalTokens": 2410,
+          "schemaVersionMatched": "decision-intelligence-v1"
+        },
+        "pipelineCompleted": true,
+        "status": "READY",
+        "recommendation": "MONITOR",
+        "score": 2,
+        "confidence": 5,
+        "relevance": 1,
+        "evidenceCount": 1,
+        "outputText": "[REDACTED]",
+        "editorialPolicy": {
+          "policyVersion": "editorial-policy-v1.1",
+          "originalPosition": "MONITOR",
+          "effectivePosition": "IGNORE",
+          "action": "REQUIRE_HUMAN_REVIEW",
+          "reasons": [
+            {
+              "ruleId": "EP-002",
+              "message": "Promotional or low-impact content cannot exceed its demonstrated material impact.",
+              "affectedField": "recommendedPosition",
+              "severity": "BLOCKING",
+              "evidenceIds": [
+                "E1"
+              ],
+              "originalPosition": "MONITOR",
+              "effectivePosition": "IGNORE",
+              "humanReviewRequired": true
+            },
+            {
+              "ruleId": "EP-008",
+              "message": "A material editorial policy finding requires additional human review.",
+              "affectedField": "humanReviewState",
+              "severity": "WARNING",
+              "evidenceIds": [
+                "E1"
+              ],
+              "originalPosition": "MONITOR",
+              "effectivePosition": "IGNORE",
+              "humanReviewRequired": true
+            }
+          ],
+          "triggeredRuleIds": [
+            "EP-002",
+            "EP-008"
+          ],
+          "humanReviewRequired": true,
+          "normalApplicationReviewRequired": true,
+          "additionalPolicyReviewRequired": true,
+          "forbiddenTermsDetected": [],
+          "policyScore": 55,
+          "auditMetadata": {
+            "itemId": "low-impact-promotion",
+            "evaluatedAt": "2026-07-30T11:35:14.892Z",
+            "modelIndependent": true
+          }
+        }
+      },
+      "policyExpectation": {
+        "allowedPositions": [
+          "IGNORE"
+        ]
+      },
+      "expectationChecks": {
+        "requiredKeywords": true,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": false,
+        "missingRequiredKeywords": []
+      },
+      "invariantViolations": [],
+      "traceability": {
+        "evaluationId": "eval_b954becef2dee07cb07ef999",
+        "caseId": "case_6bf909442b83c20dab55f23f",
+        "signalId": "signal_3f55dba9e713ec29068910b4",
+        "decisionId": "decision_2bb3f3a193d60841865c506c",
+        "policyId": "policy_584859763db5da14a35e243a",
+        "reviewId": "review_96cad72e7f913536c7597a96",
+        "publicationId": "publication_280ffe9a28c1d74105b8fbfd"
+      }
+    }
+  ]
+}

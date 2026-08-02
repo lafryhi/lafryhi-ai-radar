@@ -1,0 +1,267 @@
+{
+  "datasetVersion": "1.0",
+  "timestamp": "2026-07-30T08:58:49.508Z",
+  "gitCommit": "658c3136b6cee992d9f170522fcf938de0d06e7f",
+  "sdkVersion": "2.13.0",
+  "productionModel": "gemini-2.5-flash",
+  "candidateModel": "gemini-3.1-flash-lite",
+  "candidateLifecycleStage": "ga",
+  "lifecycleNotice": "Candidate lifecycle stage is operator-supplied, not independently verified.",
+  "runLabel": "gemini-3-1-flash-lite-smoke-release-2026-07-30",
+  "location": "global",
+  "caseCount": 1,
+  "configuration": {
+    "concurrency": 1,
+    "timeoutMs": 120000,
+    "maxCases": 1,
+    "sampleRate": 1,
+    "saveRawOutputs": false,
+    "redactInputs": true
+  },
+  "baselineMetrics": {
+    "transportSuccessRate": 0,
+    "responseReceivedRate": 0,
+    "requestSuccessRate": 0,
+    "jsonParseSuccessRate": 0,
+    "schemaValidRate": 0,
+    "applicationValidationRate": 0,
+    "exactEvidenceRate": 0,
+    "evidenceIdComplianceRate": 0,
+    "enumComplianceRate": 0,
+    "pipelineCompletionRate": 0,
+    "insufficientEvidenceCorrectnessRate": 1,
+    "meanLatencyMs": 1190,
+    "medianLatencyMs": 1190,
+    "p95LatencyMs": 1190,
+    "averageAttempts": 1,
+    "fallbackRate": 0,
+    "timeoutRate": 0,
+    "missingTokenMetadataRate": 1
+  },
+  "candidateMetrics": {
+    "transportSuccessRate": 0,
+    "responseReceivedRate": 0,
+    "requestSuccessRate": 0,
+    "jsonParseSuccessRate": 0,
+    "schemaValidRate": 0,
+    "applicationValidationRate": 0,
+    "exactEvidenceRate": 0,
+    "evidenceIdComplianceRate": 0,
+    "enumComplianceRate": 0,
+    "pipelineCompletionRate": 0,
+    "insufficientEvidenceCorrectnessRate": 1,
+    "meanLatencyMs": 650,
+    "medianLatencyMs": 650,
+    "p95LatencyMs": 650,
+    "averageAttempts": 1,
+    "fallbackRate": 0,
+    "timeoutRate": 0,
+    "missingTokenMetadataRate": 1
+  },
+  "comparativeMetrics": {
+    "statusAgreementRate": 1,
+    "recommendationAgreementRate": 1,
+    "meanScoreDrift": 0,
+    "meanConfidenceDrift": 0,
+    "meanRelevanceDrift": 0,
+    "meanEvidenceCountDrift": 0,
+    "insufficientEvidenceAgreementRate": 1,
+    "requiredKeywordComplianceRate": 0,
+    "forbiddenKeywordViolationRate": 0,
+    "unsupportedClaimRate": 0,
+    "quotationMismatchRate": 1
+  },
+  "promotion": {
+    "recommendation": "INCONCLUSIVE",
+    "checks": [
+      {
+        "name": "pipeline completion",
+        "severity": "fail",
+        "actual": 0,
+        "threshold": ">= 98%"
+      },
+      {
+        "name": "JSON parse",
+        "severity": "fail",
+        "actual": 0,
+        "threshold": ">= 99%"
+      },
+      {
+        "name": "schema validity",
+        "severity": "fail",
+        "actual": 0,
+        "threshold": ">= 99%"
+      },
+      {
+        "name": "exact evidence",
+        "severity": "fail",
+        "actual": 0,
+        "threshold": ">= 98%"
+      },
+      {
+        "name": "evidence IDs",
+        "severity": "critical",
+        "actual": 0,
+        "threshold": "100%"
+      },
+      {
+        "name": "enums",
+        "severity": "critical",
+        "actual": 0,
+        "threshold": "100%"
+      },
+      {
+        "name": "insufficient evidence",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 95%"
+      },
+      {
+        "name": "status agreement",
+        "severity": "pass",
+        "actual": 1,
+        "threshold": ">= 90%"
+      },
+      {
+        "name": "p95 latency",
+        "severity": "pass",
+        "actual": 650,
+        "threshold": "<= 1.5x baseline"
+      },
+      {
+        "name": "fallback rate",
+        "severity": "pass",
+        "actual": 0,
+        "threshold": "<= baseline + 2pp"
+      },
+      {
+        "name": "timeout rate",
+        "severity": "pass",
+        "actual": 0,
+        "threshold": "<= 1%"
+      }
+    ],
+    "criticalInvariantViolations": [],
+    "integrity": "INCONCLUSIVE",
+    "integrityReasons": [
+      "No case completed for both baseline and candidate."
+    ]
+  },
+  "failedCases": [
+    "official-google-announcement"
+  ],
+  "warningCases": [
+    "official-google-announcement"
+  ],
+  "missingMetadata": [
+    "official-google-announcement"
+  ],
+  "recommendation": "INCONCLUSIVE",
+  "evaluationIntegrity": "INCONCLUSIVE",
+  "evaluationIntegrityReasons": [
+    "No case completed for both baseline and candidate."
+  ],
+  "caseResults": [
+    {
+      "caseId": "official-google-announcement",
+      "category": "official-source",
+      "language": "en",
+      "source": {
+        "title": "Google announces a controlled AI API update",
+        "url": "https://example.test/google-update",
+        "publisher": "Google",
+        "publishedAt": "2026-07-01T10:00:00Z",
+        "contentRedacted": true
+      },
+      "baseline": {
+        "model": "gemini-2.5-flash",
+        "signal": {
+          "requestedModel": "gemini-2.5-flash",
+          "actualModel": "gemini-2.5-flash",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 1190,
+          "requestSucceeded": false,
+          "transportSuccess": false,
+          "responseReceived": false,
+          "jsonParseValid": false,
+          "jsonParsed": false,
+          "schemaValid": false,
+          "applicationValid": false,
+          "exactQuoteValid": false,
+          "evidenceIdsValid": false,
+          "enumValid": false,
+          "insufficientEvidence": false,
+          "candidateCount": 0,
+          "validationErrors": [
+            "request to https://oauth2.googleapis.com/token failed, reason: connect EACCES 192.178.223.95:443"
+          ],
+          "stageDurations": {
+            "requestMs": 1190,
+            "validationMs": 0,
+            "totalMs": 1190
+          },
+          "promotionImpact": "RELIABILITY_FAILURE",
+          "failedStage": "REQUEST",
+          "requestErrorCategory": "permanent",
+          "failureCategory": "permanent",
+          "sanitizedError": "request to https://oauth2.googleapis.com/token failed, reason: connect EACCES 192.178.223.95:443"
+        },
+        "pipelineCompleted": false,
+        "status": "FAILED",
+        "evidenceCount": 0,
+        "outputText": "[REDACTED]"
+      },
+      "candidate": {
+        "model": "gemini-3.1-flash-lite",
+        "signal": {
+          "requestedModel": "gemini-3.1-flash-lite",
+          "actualModel": "gemini-3.1-flash-lite",
+          "fallbackUsed": false,
+          "attempts": 1,
+          "durationMs": 650,
+          "requestSucceeded": false,
+          "transportSuccess": false,
+          "responseReceived": false,
+          "jsonParseValid": false,
+          "jsonParsed": false,
+          "schemaValid": false,
+          "applicationValid": false,
+          "exactQuoteValid": false,
+          "evidenceIdsValid": false,
+          "enumValid": false,
+          "insufficientEvidence": false,
+          "candidateCount": 0,
+          "validationErrors": [
+            "request to https://oauth2.googleapis.com/token failed, reason: connect EACCES 192.178.223.95:443"
+          ],
+          "stageDurations": {
+            "requestMs": 650,
+            "validationMs": 0,
+            "totalMs": 650
+          },
+          "promotionImpact": "RELIABILITY_FAILURE",
+          "failedStage": "REQUEST",
+          "requestErrorCategory": "permanent",
+          "failureCategory": "permanent",
+          "sanitizedError": "request to https://oauth2.googleapis.com/token failed, reason: connect EACCES 192.178.223.95:443"
+        },
+        "pipelineCompleted": false,
+        "status": "FAILED",
+        "evidenceCount": 0,
+        "outputText": "[REDACTED]"
+      },
+      "expectationChecks": {
+        "requiredKeywords": false,
+        "forbiddenKeywords": true,
+        "insufficientEvidenceCorrect": true,
+        "unsupportedClaims": false,
+        "quotationMismatch": true,
+        "missingRequiredKeywords": [
+          "API | APIs | application programming interface"
+        ]
+      },
+      "invariantViolations": []
+    }
+  ]
+}
