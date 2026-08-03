@@ -1,0 +1,59 @@
+{
+  "fulfillment": {
+    "briefId": "brief-contract-fixture-001",
+    "serviceId": "lafryhi-ai-radar-decision-brief",
+    "serviceVersion": "1.0.0",
+    "topic": "AI adoption",
+    "verifiedTitle": "Approved fixture: measured AI adoption",
+    "verifiedSummary": "A labeled contract fixture representing public, approved, human-verified decision intelligence.",
+    "verifiedSignals": ["Start with a measurable and reversible workflow."],
+    "sourceReferences": [
+      {
+        "title": "LAFRYHI approved contract fixture",
+        "url": "https://example.com/lafryhi-approved-contract-fixture",
+        "publishedAt": null
+      }
+    ],
+    "verificationStatus": "HUMAN_VERIFIED",
+    "verificationTimestamp": "2026-08-03T12:00:00.000Z",
+    "businessImpact": [
+      "A bounded pilot can establish evidence before wider adoption."
+    ],
+    "risks": ["Unmeasured automation can shift rather than remove cost."],
+    "opportunities": ["Prioritize repetitive work with observable outcomes."],
+    "recommendations": [
+      "Define one workflow, owner, baseline, and stop condition."
+    ],
+    "confidence": 0.82,
+    "suggestedPromotionalAngle": "Use verified evidence without overstating certainty.",
+    "suggestedNarrationOutline": [
+      "Verified signal",
+      "Business impact",
+      "Recommended next step"
+    ],
+    "buyerAgentReference": "operator-001",
+    "businessGoalReference": "goal-001",
+    "paymentReference": "payment-contract-fixture-001",
+    "generatedAt": "2026-08-03T12:00:00.000Z",
+    "fulfillmentDigest": "6cf6b500908a92c108bb4d7186c8a1fec85ad0812f543557194d5701fe1915f8",
+    "fulfillmentStatus": "FULFILLMENT_DELIVERED"
+  },
+  "receipt": {
+    "serviceId": "lafryhi-ai-radar-decision-brief",
+    "serviceVersion": "1.0.0",
+    "buyerAgentReference": "operator-001",
+    "businessGoalReference": "goal-001",
+    "paymentReference": "payment-contract-fixture-001",
+    "payerPublicReference": "payer-contract-fixture",
+    "sellerPublicWallet": null,
+    "amount": "10000",
+    "currency": "USDC",
+    "network": "eip155:5042002",
+    "requestFingerprint": "2a8c2d0e58a3cab95a51aedda36164ffbdd83dc74866bbdb679b5c91d6a2e9dc",
+    "fulfillmentDigest": "6cf6b500908a92c108bb4d7186c8a1fec85ad0812f543557194d5701fe1915f8",
+    "authorizationVerificationStatus": "AUTHORIZATION_VERIFIED",
+    "settlementStatus": "SETTLEMENT_PENDING",
+    "createdAt": "2026-08-03T12:00:00.000Z",
+    "fulfilledAt": "2026-08-03T12:00:00.000Z"
+  }
+}

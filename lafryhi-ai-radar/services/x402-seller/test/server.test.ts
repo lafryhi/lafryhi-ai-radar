@@ -14,6 +14,7 @@ import type {
 import type { PublicVerifiedItem } from "../src/contracts.js";
 import { DecisionBriefRequestSchema } from "../src/contracts.js";
 import { readFile } from "node:fs/promises";
+import { digest } from "../src/crypto.js";
 
 const request = {
   topic: "AI adoption",
@@ -262,6 +263,38 @@ describe("validation and public endpoints", () => {
     );
     expect(DecisionBriefRequestSchema.safeParse(example.request).success).toBe(
       true,
+    );
+  });
+  it("owns a canonical response fixture with correlated fulfillment and receipt", async () => {
+    const fixture = JSON.parse(
+      await readFile(
+        new URL(
+          "../examples/decision-brief-response.fixture.json",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    );
+    expect(fixture.fulfillment.serviceId).toBe(
+      "lafryhi-ai-radar-decision-brief",
+    );
+    expect(fixture.receipt.serviceId).toBe(fixture.fulfillment.serviceId);
+    expect(fixture.receipt.paymentReference).toBe(
+      fixture.fulfillment.paymentReference,
+    );
+    expect(fixture.receipt.fulfillmentDigest).toBe(
+      fixture.fulfillment.fulfillmentDigest,
+    );
+    const { fulfillmentDigest, ...core } = fixture.fulfillment;
+    expect(fulfillmentDigest).toBe(digest(core));
+    const requestExample = JSON.parse(
+      await readFile(
+        new URL("../examples/decision-brief.example.json", import.meta.url),
+        "utf8",
+      ),
+    );
+    expect(fixture.receipt.requestFingerprint).toBe(
+      digest(requestExample.request),
     );
   });
 });
