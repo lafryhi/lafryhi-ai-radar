@@ -1,6 +1,8 @@
 import {
   FixtureRadarContentAdapter,
+  GoogleMetadataIdentityTokenProvider,
   HttpRadarContentAdapter,
+  StaticDevelopmentTokenProvider,
 } from "./content.js";
 import { DisabledPaymentVerifier, circleMiddlewareAdapter } from "./payment.js";
 import type { SellerPaymentVerifierPort } from "./ports.js";
@@ -9,15 +11,8 @@ import { createApp } from "./server.js";
 
 const port = Number(process.env.PORT ?? "8080");
 const paymentMode = process.env.PAYMENT_MODE ?? "disabled";
-const contentMode = process.env.RADAR_CONTENT_MODE ?? "fixture";
-const content =
-  contentMode === "http"
-    ? new HttpRadarContentAdapter(
-        required("RADAR_EXPORT_URL"),
-        required("RADAR_EXPORT_AUDIENCE"),
-        process.env.RADAR_EXPORT_LOCAL_TOKEN,
-      )
-    : new FixtureRadarContentAdapter();
+const contentMode = process.env.RADAR_CONTENT_MODE ?? "disabled";
+const content = contentAdapter(contentMode);
 let middleware;
 let payments: SellerPaymentVerifierPort = new DisabledPaymentVerifier();
 if (paymentMode === "circle") {
@@ -50,4 +45,28 @@ function required(name: string) {
   const value = process.env[name]?.trim();
   if (!value) throw new Error(`Missing required configuration: ${name}`);
   return value;
+}
+
+function contentAdapter(mode: string) {
+  if (mode === "fixture") {
+    if (process.env.NODE_ENV === "production")
+      throw new Error("Fixture Radar content is prohibited in production");
+    return new FixtureRadarContentAdapter();
+  }
+  if (mode !== "http")
+    throw new Error(
+      "RADAR_CONTENT_MODE must be http, or fixture outside production",
+    );
+  const localToken = process.env.RADAR_EXPORT_LOCAL_TOKEN?.trim();
+  return new HttpRadarContentAdapter({
+    endpoint: required("RADAR_EXPORT_URL"),
+    audience: required("RADAR_EXPORT_AUDIENCE"),
+    tokenProvider: localToken
+      ? new StaticDevelopmentTokenProvider(localToken)
+      : new GoogleMetadataIdentityTokenProvider(),
+    timeoutMs: Number(process.env.RADAR_EXPORT_TIMEOUT_MS ?? "8000"),
+    maximumResponseBytes: Number(
+      process.env.RADAR_EXPORT_MAX_RESPONSE_BYTES ?? "64000",
+    ),
+  });
 }

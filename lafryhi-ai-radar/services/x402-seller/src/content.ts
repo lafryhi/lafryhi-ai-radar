@@ -1,3 +1,4 @@
+import { z } from "zod";
 import {
   PublicVerifiedItemSchema,
   type DecisionBriefRequest,
@@ -43,6 +44,71 @@ export const APPROVED_DEMO_FIXTURES: PublicVerifiedItem[] = [
   }),
 ];
 
+const ExportItemSchema = z.strictObject({
+  radarItemId: z.string().min(1).max(128),
+  title: z.string().min(1).max(300),
+  summary: z.string().min(20).max(800),
+  whyItMatters: z.string().min(20).max(1_000),
+  recommendedAction: z.string().min(10).max(800),
+  category: z.string().min(1).max(80),
+  sourceReferences: z
+    .array(
+      z.strictObject({
+        title: z.string().min(1).max(300),
+        url: z.string().url().max(2_048),
+        publishedAt: z.string().datetime(),
+      }),
+    )
+    .min(1)
+    .max(1),
+  verificationStatus: z.literal("approved"),
+  humanReviewRequired: z.literal(true),
+  verificationTimestamp: z.string().datetime(),
+  publiclyEligible: z.literal(true),
+  relevance: z.number().int().min(0).max(100),
+  confidence: z.number().int().min(0).max(100),
+  publishedAt: z.string().datetime(),
+  language: z.string().nullable(),
+  publicUrl: z.string().url().nullable(),
+});
+const ExportResponseSchema = z.strictObject({
+  schemaVersion: z.literal("1.0.0"),
+  items: z.array(ExportItemSchema).max(5),
+});
+
+export interface RadarExportTokenProvider {
+  token(audience: string): Promise<string>;
+}
+
+export class StaticDevelopmentTokenProvider implements RadarExportTokenProvider {
+  constructor(private readonly value: string) {}
+  async token() {
+    if (process.env.NODE_ENV === "production" || this.value.length < 20)
+      throw new Error("Development Radar export authorization is unavailable");
+    return this.value;
+  }
+}
+
+export class GoogleMetadataIdentityTokenProvider implements RadarExportTokenProvider {
+  constructor(private readonly fetcher: typeof fetch = fetch) {}
+  async token(audience: string) {
+    const url = new URL(
+      "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/identity",
+    );
+    url.searchParams.set("audience", audience);
+    url.searchParams.set("format", "full");
+    const response = await this.fetcher(url, {
+      headers: { "Metadata-Flavor": "Google" },
+      redirect: "error",
+      signal: AbortSignal.timeout(3_000),
+    });
+    if (!response.ok) throw new Error("Radar export identity unavailable");
+    const token = (await response.text()).trim();
+    if (!token) throw new Error("Radar export identity unavailable");
+    return token;
+  }
+}
+
 function matches(item: PublicVerifiedItem, topic: string) {
   const words = topic
     .toLowerCase()
@@ -55,7 +121,10 @@ function matches(item: PublicVerifiedItem, topic: string) {
 }
 
 export class FixtureRadarContentAdapter implements VerifiedRadarContentPort {
-  constructor(private readonly items = APPROVED_DEMO_FIXTURES) {}
+  constructor(private readonly items = APPROVED_DEMO_FIXTURES) {
+    if (process.env.NODE_ENV === "production")
+      throw new Error("Fixture Radar content is prohibited in production");
+  }
   async findVerified(request: DecisionBriefRequest) {
     return this.items
       .map((item) => PublicVerifiedItemSchema.safeParse(item))
@@ -66,42 +135,96 @@ export class FixtureRadarContentAdapter implements VerifiedRadarContentPort {
   }
 }
 
+export interface HttpRadarContentOptions {
+  endpoint: string;
+  audience: string;
+  tokenProvider: RadarExportTokenProvider;
+  timeoutMs?: number;
+  maximumResponseBytes?: number;
+  fetcher?: typeof fetch;
+}
+
 export class HttpRadarContentAdapter implements VerifiedRadarContentPort {
-  constructor(
-    private readonly endpoint: string,
-    private readonly audience: string,
-    private readonly localToken?: string,
-    private readonly fetcher: typeof fetch = fetch,
-  ) {}
+  private readonly endpoint: URL;
+  constructor(private readonly options: HttpRadarContentOptions) {
+    this.endpoint = new URL(options.endpoint);
+    if (
+      process.env.NODE_ENV === "production" &&
+      this.endpoint.protocol !== "https:"
+    )
+      throw new Error("Production Radar export URL must use HTTPS");
+    if (
+      this.endpoint.username ||
+      this.endpoint.password ||
+      this.endpoint.search ||
+      this.endpoint.hash
+    )
+      throw new Error(
+        "Radar export URL must not contain credentials, query, or fragment",
+      );
+  }
+
   async findVerified(
     request: DecisionBriefRequest,
   ): Promise<PublicVerifiedItem[]> {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 8_000);
-    try {
-      const headers: Record<string, string> = {
-        "content-type": "application/json",
-        "x-radar-export-contract": "1.0.0",
-      };
-      if (this.localToken) headers.authorization = `Bearer ${this.localToken}`;
-      // On Cloud Run, an audience-bound Google identity token must be supplied by the runtime integration.
-      headers["x-expected-audience"] = this.audience;
-      const response = await this.fetcher(this.endpoint, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          topic: request.topic,
-          maximumItemCount: request.maximumItemCount,
-        }),
-        signal: controller.signal,
-      });
-      if (!response.ok) throw new Error("Radar export unavailable");
-      const body: unknown = await response.json();
-      const parsed = PublicVerifiedItemSchema.array().max(5).safeParse(body);
-      if (!parsed.success) throw new Error("Radar export contract rejected");
-      return parsed.data;
-    } finally {
-      clearTimeout(timer);
+    const token = await this.options.tokenProvider.token(this.options.audience);
+    const url = new URL(this.endpoint);
+    url.searchParams.set("topic", request.topic);
+    url.searchParams.set("maximumItemCount", String(request.maximumItemCount));
+    url.searchParams.set("language", request.targetLanguage);
+    let response: Response | null = null;
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        response = await (this.options.fetcher ?? fetch)(url, {
+          method: "GET",
+          headers: {
+            authorization: `Bearer ${token}`,
+            "x-radar-export-contract": "1.0.0",
+          },
+          redirect: "error",
+          signal: AbortSignal.timeout(this.options.timeoutMs ?? 8_000),
+        });
+      } catch (error) {
+        if (attempt === 1)
+          throw new Error("Radar export unavailable", { cause: error });
+        continue;
+      }
+      if (![502, 503, 504].includes(response.status) || attempt === 1) break;
     }
+    if (!response?.ok) throw new Error("Radar export unavailable");
+    const length = Number(response.headers.get("content-length") ?? "0");
+    const maximum = this.options.maximumResponseBytes ?? 64_000;
+    if (length > maximum) throw new Error("Radar export response too large");
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    if (bytes.byteLength > maximum)
+      throw new Error("Radar export response too large");
+    let body: unknown;
+    try {
+      body = JSON.parse(new TextDecoder().decode(bytes));
+    } catch {
+      throw new Error("Radar export contract rejected");
+    }
+    const parsed = ExportResponseSchema.safeParse(body);
+    if (!parsed.success) throw new Error("Radar export contract rejected");
+    return parsed.data.items.map((item) =>
+      PublicVerifiedItemSchema.parse({
+        id: item.radarItemId,
+        topicTags: [item.category],
+        verifiedTitle: item.title,
+        verifiedSummary: item.summary,
+        verifiedSignals: [item.whyItMatters],
+        sourceReferences: item.sourceReferences,
+        publicationStatus: "published",
+        reviewStatus: item.verificationStatus,
+        humanReviewRequired: item.humanReviewRequired,
+        verificationTimestamp: item.verificationTimestamp,
+        publiclyEligible: item.publiclyEligible,
+        businessImpact: [item.whyItMatters],
+        risks: [],
+        opportunities: [],
+        recommendations: [item.recommendedAction],
+        confidence: item.confidence / 100,
+      }),
+    );
   }
 }

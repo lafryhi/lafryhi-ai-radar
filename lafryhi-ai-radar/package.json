@@ -26,6 +26,7 @@
   "dependencies": {
     "@google-cloud/firestore": "latest",
     "@google/genai": "2.13.0",
+    "google-auth-library": "10.9.1",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
