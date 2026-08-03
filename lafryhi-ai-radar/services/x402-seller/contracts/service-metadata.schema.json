@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lafryhi.example/contracts/x402-seller/service-metadata/1.0.0",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "serviceId",
+    "serviceVersion",
+    "name",
+    "category",
+    "deploymentStatus",
+    "paymentConfigurationStatus",
+    "marketplaceListingStatus",
+    "providerVerificationStatus"
+  ]
+}

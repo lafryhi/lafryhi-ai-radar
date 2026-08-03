@@ -1,0 +1,40 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: lafryhi-x402-seller
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "3"
+        run.googleapis.com/startup-cpu-boost: "true"
+    spec:
+      serviceAccountName: REPLACE_WITH_DEDICATED_SELLER_SERVICE_ACCOUNT
+      containerConcurrency: 20
+      timeoutSeconds: 30
+      containers:
+        - image: REPLACE_WITH_IMMUTABLE_IMAGE_DIGEST
+          ports:
+            - name: http1
+              containerPort: 8080
+          resources:
+            limits: { cpu: "1", memory: 512Mi }
+          env:
+            - { name: NODE_ENV, value: production }
+            - { name: PAYMENT_MODE, value: disabled }
+            - { name: RADAR_CONTENT_MODE, value: http }
+            - { name: SERVICE_PRICE_USD, value: "0.01" }
+            - { name: REQUEST_TIMEOUT_MS, value: "10000" }
+            - { name: MAX_REQUEST_BYTES, value: "16384" }
+            - name: SELLER_WALLET_ADDRESS
+              valueFrom:
+                {
+                  secretKeyRef:
+                    { name: REPLACE_SELLER_WALLET_SECRET, key: latest },
+                }
+  traffic:
+    - latestRevision: true
+      percent: 100

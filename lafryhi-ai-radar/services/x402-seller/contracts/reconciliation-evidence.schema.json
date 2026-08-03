@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lafryhi.example/contracts/x402-seller/reconciliation-evidence/1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "paymentReference",
+    "buyerLedgerReference",
+    "sellerReceiptReference",
+    "authorizationStatus",
+    "settlementStatus",
+    "explorerProofStatus"
+  ],
+  "properties": {
+    "paymentReference": { "type": "string" },
+    "buyerLedgerReference": { "type": ["string", "null"] },
+    "sellerReceiptReference": { "type": ["string", "null"] },
+    "authorizationStatus": {
+      "enum": [
+        "PAYMENT_REQUIRED",
+        "AUTHORIZATION_VERIFIED",
+        "PENDING_REAL_PROOF"
+      ]
+    },
+    "settlementStatus": {
+      "enum": [
+        "SETTLEMENT_PENDING",
+        "SETTLEMENT_CONFIRMED",
+        "PENDING_REAL_PROOF"
+      ]
+    },
+    "explorerProofStatus": {
+      "enum": ["EXPLORER_PROOF_AVAILABLE", "PENDING_REAL_PROOF"]
+    }
+  }
+}

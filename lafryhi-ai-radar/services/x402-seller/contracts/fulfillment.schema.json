@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lafryhi.example/contracts/x402-seller/fulfillment/1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "briefId",
+    "serviceId",
+    "serviceVersion",
+    "topic",
+    "verifiedTitle",
+    "verifiedSummary",
+    "verifiedSignals",
+    "sourceReferences",
+    "verificationStatus",
+    "verificationTimestamp",
+    "businessImpact",
+    "risks",
+    "opportunities",
+    "recommendations",
+    "confidence",
+    "suggestedPromotionalAngle",
+    "suggestedNarrationOutline",
+    "buyerAgentReference",
+    "businessGoalReference",
+    "paymentReference",
+    "generatedAt",
+    "fulfillmentDigest",
+    "fulfillmentStatus"
+  ]
+}

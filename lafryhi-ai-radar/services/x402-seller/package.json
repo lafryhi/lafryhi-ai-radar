@@ -1,0 +1,33 @@
+{
+  "name": "@lafryhi/x402-seller",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "format:check": "prettier --check .",
+    "lint": "tsc --noEmit",
+    "start": "node dist/main.js",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@circle-fin/x402-batching": "3.2.0",
+    "@x402/core": "2.20.0",
+    "@x402/evm": "2.20.0",
+    "express": "5.2.1",
+    "viem": "2.55.10",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.6",
+    "@types/node": "26.1.2",
+    "prettier": "3.8.1",
+    "tsx": "4.23.5",
+    "typescript": "7.0.2",
+    "vitest": "4.1.10"
+  }
+}
