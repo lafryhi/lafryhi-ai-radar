@@ -9,32 +9,47 @@ spec:
     metadata:
       annotations:
         autoscaling.knative.dev/minScale: "0"
-        autoscaling.knative.dev/maxScale: "3"
+        autoscaling.knative.dev/maxScale: "1"
         run.googleapis.com/startup-cpu-boost: "true"
     spec:
-      serviceAccountName: REPLACE_WITH_DEDICATED_SELLER_SERVICE_ACCOUNT
-      containerConcurrency: 20
+      serviceAccountName: lafryhi-x402-seller-runtime@lafryhi-ai-radar-xprize.iam.gserviceaccount.com
+      containerConcurrency: 10
       timeoutSeconds: 30
       containers:
         - image: REPLACE_WITH_IMMUTABLE_IMAGE_DIGEST
           ports:
             - name: http1
               containerPort: 8080
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 0
+            timeoutSeconds: 5
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            timeoutSeconds: 5
+            periodSeconds: 30
+            failureThreshold: 3
           resources:
             limits: { cpu: "1", memory: 512Mi }
           env:
             - { name: NODE_ENV, value: production }
             - { name: PAYMENT_MODE, value: disabled }
             - { name: RADAR_CONTENT_MODE, value: http }
-            - { name: SERVICE_PRICE_USD, value: "0.01" }
+            - { name: RADAR_EXPORT_URL, value: REPLACE_WITH_RADAR_EXPORT_URL }
+            - {
+                name: RADAR_EXPORT_AUDIENCE,
+                value: REPLACE_WITH_CANONICAL_RADAR_ORIGIN,
+              }
+            - { name: RADAR_EXPORT_TIMEOUT_MS, value: "8000" }
+            - { name: RADAR_EXPORT_MAX_RESPONSE_BYTES, value: "64000" }
             - { name: REQUEST_TIMEOUT_MS, value: "10000" }
             - { name: MAX_REQUEST_BYTES, value: "16384" }
-            - name: SELLER_WALLET_ADDRESS
-              valueFrom:
-                {
-                  secretKeyRef:
-                    { name: REPLACE_SELLER_WALLET_SECRET, key: latest },
-                }
   traffic:
     - latestRevision: true
       percent: 100

@@ -2,7 +2,9 @@
   "name": "lafryhi-ai-radar",
   "version": "0.1.0",
   "private": true,
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,6 +12,9 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "deployment:validate": "node scripts/validate-deployment-readiness.mjs",
+    "deployment:render": "node scripts/render-cloud-run-manifests.mjs",
+    "deployment:smoke": "node scripts/smoke-production.mjs",
     "eval:gemini:validate": "tsx scripts/evaluate-gemini-migration.ts validate",
     "eval:gemini:dry-run": "tsx scripts/evaluate-gemini-migration.ts dry-run",
     "eval:gemini:run": "tsx scripts/evaluate-gemini-migration.ts run",
