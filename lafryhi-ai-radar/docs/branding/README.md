@@ -8,11 +8,11 @@ This directory is the official repository for the LAFRYHI AI Radar visual identi
 
 ## Single Source of Truth
 
-[`reference/brand-kit-reference-v1.png`](./reference/brand-kit-reference-v1.png) is the **official master reference and single source of truth for the visual identity**.
+[`reference/brand-kit-reference-v1.png`](./reference/brand-kit-reference-v1.png) is the official master reference for the broader visual identity. [`public/lafryhi-ai-radar-logo.png`](../../public/lafryhi-ai-radar-logo.png) is the **single source of truth for the logo**.
 
 The following files are approved, deterministic extracts from that master:
 
-1. [`01-logo.png`](./reference/01-logo.png) — primary horizontal logo lockup.
+1. [`public/lafryhi-ai-radar-logo.png`](../../public/lafryhi-ai-radar-logo.png) — official logo used by every application surface.
 2. [`02-profile-picture.png`](./reference/02-profile-picture.png) — standalone social profile mark.
 3. [`03-facebook-cover.png`](./reference/03-facebook-cover.png) — Facebook cover composition.
 4. [`04-linkedin-cover.png`](./reference/04-linkedin-cover.png) — LinkedIn cover composition.

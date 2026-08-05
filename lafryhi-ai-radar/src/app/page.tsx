@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { BrandLogo } from "@/components/brand-logo";
 
 const repositoryUrl = "https://github.com/lafryhi/lafryhi-ai-radar";
 const architectureUrl = `${repositoryUrl}/blob/main/GEMINI_XPRIZE_ARCHITECTURE.md`;
@@ -67,6 +68,7 @@ export default function Home() {
   return <>
     <section className="hero governance-hero">
       <div className="hero-copy">
+        <BrandLogo className="hero-brand-logo" priority />
         <p className="hero-product">LAFRYHI AI Radar</p>
         <p className="eyebrow">Evidence-Driven AI Governance for Editorial Intelligence</p>
         <h1><span>AI evaluates the news.</span> LAFRYHI AI Radar evaluates the AI.</h1>

@@ -17,7 +17,7 @@ The identity should communicate trust, evidence, clarity, human judgment, transp
 
 ## Official References
 
-[`brand-kit-reference-v1.png`](./reference/brand-kit-reference-v1.png) is the official master reference and single source of truth for visual identity. [`06-brand-kit-reference.png`](./reference/06-brand-kit-reference.png) is a complete copy of that master, while `01` through `05` are pixel crops of approved sections.
+[`brand-kit-reference-v1.png`](./reference/brand-kit-reference-v1.png) is the official master reference for the broader visual identity. [`06-brand-kit-reference.png`](./reference/06-brand-kit-reference.png) is a complete copy of that master.
 
 The extracted references must not be independently redesigned. Production exports placed in `logos/` or `social/` must be derived from, reviewed against, and visually consistent with the official master.
 
@@ -33,7 +33,7 @@ The primary lockup combines:
 - The wordmark **LAFRYHI AI Radar**.
 - The descriptor **Decision Intelligence for Small Businesses** when space permits.
 
-Use [`01-logo.png`](./reference/01-logo.png) as the authoritative lockup reference.
+Use [`public/lafryhi-ai-radar-logo.png`](../../public/lafryhi-ai-radar-logo.png) as the authoritative logo and single source of truth. Do not recreate, modify, crop, or convert it.
 
 ### Standalone Mark
 

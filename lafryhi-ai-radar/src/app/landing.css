@@ -61,6 +61,7 @@
 /* Homepage v3 — Hackathon submission edition */
 .governance-hero { min-height: 720px; }
 .hero-product { margin: 0 0 .5rem; color: var(--brand-navy); font-size: .92rem; font-weight: 900; letter-spacing: .08em; }
+.hero-brand-logo { display: block; width: auto; height: clamp(76px,9vw,104px); margin-bottom: 1.25rem; object-fit: contain; }
 .governance-hero h1 { max-width: 790px; color: var(--brand-primary); font-size: clamp(3rem,5.25vw,5.45rem); }
 .governance-hero h1 span { display: block; color: var(--brand-navy); }
 .text-button { padding-inline: .45rem; background: transparent; box-shadow: none; color: var(--brand-navy); }

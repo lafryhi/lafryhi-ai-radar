@@ -27,7 +27,7 @@ The format follows semantic versioning:
 ### Changed
 
 - Adopted `reference/brand-kit-reference-v1.png` as the approved official master Brand Kit.
-- Replaced `01-logo.png` through `05-social-post-template.png` with deterministic crops from the approved master.
+- Replaced the legacy numbered reference crops with deterministic crops from the approved master.
 - Replaced `06-brand-kit-reference.png` with a complete copy of the approved master.
 - Clarified that extracted assets must not be independently redesigned.
 

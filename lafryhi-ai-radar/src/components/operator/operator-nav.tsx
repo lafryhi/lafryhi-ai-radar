@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { logout } from "@/app/operator/actions";
+import { BrandLogo } from "@/components/brand-logo";
 
 export function OperatorNav() {
   return <aside className="operator-nav" aria-label="Operator navigation">
-    <div><p className="eyebrow">Human Verification</p><strong>Intelligence operations</strong></div>
+    <div><BrandLogo className="operator-brand-logo" /><p className="eyebrow">Human Verification</p><strong>Intelligence operations</strong></div>
     <nav>
       <Link href="/operator">Decision Center</Link>
       <Link href="/operator/review">Verification Queue</Link>
