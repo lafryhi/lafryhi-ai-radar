@@ -9,6 +9,14 @@ import {
 } from "./contracts.js";
 import { digest } from "./crypto.js";
 import { buildFulfillment, buildReceipt } from "./fulfillment.js";
+import {
+  DecisionBriefQuoteRequestSchema,
+  issueDecisionBriefQuote,
+  QuoteError,
+  type QuoteConfig,
+  type QuoteSourcePort,
+  type QuoteStorePort,
+} from "./quote.js";
 import type {
   FulfillmentRepositoryPort,
   SellerPaymentVerifierPort,
@@ -23,6 +31,9 @@ export interface ServerDependencies {
   sellerWallet?: string | null;
   officialPaymentMiddleware?: RequestHandler;
   maxRequestBytes?: number;
+  quoteSource?: QuoteSourcePort;
+  quoteStore?: QuoteStorePort;
+  quoteConfig?: QuoteConfig;
 }
 const safeError = (code: string) => ({ error: code });
 
@@ -58,6 +69,29 @@ export function createApp(deps: ServerDependencies) {
       providerVerificationStatus: "NOT_OWNER_APPROVED",
     }),
   );
+
+  app.post("/decision-brief/quote", async (request, response) => {
+    const parsed = DecisionBriefQuoteRequestSchema.safeParse(request.body);
+    if (!parsed.success)
+      return response.status(400).json(safeError("INVALID_QUOTE_REQUEST"));
+    if (!deps.quoteSource || !deps.quoteStore || !deps.quoteConfig)
+      return response.status(503).json(safeError("QUOTE_SERVICE_UNAVAILABLE"));
+    try {
+      return response.json(
+        await issueDecisionBriefQuote(
+          parsed.data,
+          deps.quoteSource,
+          deps.quoteStore,
+          deps.quoteConfig,
+          new Date((deps.now ?? (() => new Date().toISOString()))()),
+        ),
+      );
+    } catch (error) {
+      if (error instanceof QuoteError)
+        return response.status(error.status).json(safeError(error.code));
+      return response.status(503).json(safeError("QUOTE_SERVICE_UNAVAILABLE"));
+    }
+  });
 
   const paymentBridge: RequestHandler =
     deps.officialPaymentMiddleware ?? ((_req, _res, next) => next());

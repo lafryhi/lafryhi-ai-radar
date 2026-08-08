@@ -48,6 +48,16 @@ spec:
               }
             - { name: RADAR_EXPORT_TIMEOUT_MS, value: "8000" }
             - { name: RADAR_EXPORT_MAX_RESPONSE_BYTES, value: "64000" }
+            - { name: QUOTE_TESTNET_NETWORK, value: "eip155:5042002" }
+            - {
+                name: QUOTE_SELLER_ADDRESS,
+                value: "0xb1fcfc3bb86a11128414d692c21d3c511aed4247",
+              }
+            - {
+                name: QUOTE_ARTIFACT_DIGEST,
+                value: "554e5451421640b0bc550efeaf4f49321e17c8a3289e69e1cb2ac6e5d6066c30",
+              }
+            - { name: QUOTE_TTL_MS, value: "300000" }
             - { name: REQUEST_TIMEOUT_MS, value: "10000" }
             - { name: MAX_REQUEST_BYTES, value: "16384" }
   traffic:

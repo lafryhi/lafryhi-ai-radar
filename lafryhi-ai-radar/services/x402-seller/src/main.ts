@@ -8,11 +8,20 @@ import { DisabledPaymentVerifier, circleMiddlewareAdapter } from "./payment.js";
 import type { SellerPaymentVerifierPort } from "./ports.js";
 import { InMemoryFulfillmentRepository } from "./repository.js";
 import { createApp } from "./server.js";
+import { Firestore } from "@google-cloud/firestore";
+import {
+  FirestoreQuoteSource,
+  FirestoreQuoteStore,
+  type FirestoreLike,
+} from "./firestore-quote.js";
 
 const port = Number(process.env.PORT ?? "8080");
 const paymentMode = process.env.PAYMENT_MODE ?? "disabled";
 const contentMode = process.env.RADAR_CONTENT_MODE ?? "disabled";
 const content = contentAdapter(contentMode);
+const quoteFirestore = new Firestore({
+  databaseId: process.env.FIRESTORE_DATABASE_ID ?? "(default)",
+}) as unknown as FirestoreLike;
 let middleware;
 let payments: SellerPaymentVerifierPort = new DisabledPaymentVerifier();
 if (paymentMode === "circle") {
@@ -34,6 +43,14 @@ const app = createApp({
   sellerWallet: process.env.SELLER_WALLET_ADDRESS ?? null,
   ...(middleware ? { officialPaymentMiddleware: middleware } : {}),
   maxRequestBytes: Number(process.env.MAX_REQUEST_BYTES ?? "16384"),
+  quoteSource: new FirestoreQuoteSource(quoteFirestore),
+  quoteStore: new FirestoreQuoteStore(quoteFirestore),
+  quoteConfig: {
+    network: process.env.QUOTE_TESTNET_NETWORK,
+    sellerAddress: process.env.QUOTE_SELLER_ADDRESS,
+    contentDigest: process.env.QUOTE_ARTIFACT_DIGEST,
+    ttlMilliseconds: Number(process.env.QUOTE_TTL_MS ?? "300000"),
+  },
 });
 app.listen(port, "0.0.0.0", () =>
   console.info(
