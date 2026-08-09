@@ -59,8 +59,8 @@ requireText(
 );
 requireText(
   radar,
-  /name: RADAR_EXPORT_AUDIENCE/,
-  "declares the export audience",
+  /name: RADAR_EXPORT_AUDIENCE\s+value: https:\/\/lafryhi-ai-radar-1090908272413\.us-central1\.run\.app/,
+  "uses the approved numbered export audience",
 );
 requireText(
   radar,
@@ -124,11 +124,20 @@ requireText(
   /name: RADAR_CONTENT_MODE, value: http/,
   "uses the production HTTP content adapter",
 );
-requireText(seller, /name: RADAR_EXPORT_URL/, "requires the Radar export URL");
 requireText(
   seller,
-  /name: RADAR_EXPORT_AUDIENCE/,
-  "requires the Radar token audience",
+  /name: RADAR_EXPORT_URL,\s+value: "https:\/\/lafryhi-ai-radar-1090908272413\.us-central1\.run\.app\/api\/internal\/agent-services\/published-radar-export"/,
+  "uses the approved numbered Radar export URL",
+);
+requireText(
+  seller,
+  /name: RADAR_EXPORT_AUDIENCE,\s+value: "https:\/\/lafryhi-ai-radar-1090908272413\.us-central1\.run\.app"/,
+  "uses the approved numbered Radar token audience",
+);
+forbidText(
+  seller,
+  /lafryhi-ai-radar-c5a4cs6xgq-uc\.a\.run\.app/,
+  "does not use the old Radar origin",
 );
 requireText(
   seller,

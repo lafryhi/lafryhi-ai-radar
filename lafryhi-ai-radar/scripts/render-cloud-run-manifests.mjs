@@ -9,22 +9,15 @@ const root = resolve(import.meta.dirname, "..");
 const output = required("--output-dir");
 const radarImage = image(required("--radar-image"), "--radar-image");
 const sellerImage = image(required("--seller-image"), "--seller-image");
-const radarOrigin = origin(required("--radar-origin"));
-const exportUrl = `${radarOrigin}/api/internal/agent-services/published-radar-export`;
 
 mkdirSync(output, { recursive: true });
 render("cloudrun.service.yaml", "radar.cloudrun.service.yaml", [
   ["REPLACE_WITH_IMMUTABLE_RADAR_IMAGE_DIGEST", radarImage],
-  ["REPLACE_WITH_CANONICAL_RADAR_ORIGIN", radarOrigin],
 ]);
 render(
   "services/x402-seller/cloudrun.service.yaml",
   "seller.cloudrun.service.yaml",
-  [
-    ["REPLACE_WITH_IMMUTABLE_IMAGE_DIGEST", sellerImage],
-    ["REPLACE_WITH_RADAR_EXPORT_URL", exportUrl],
-    ["REPLACE_WITH_CANONICAL_RADAR_ORIGIN", radarOrigin],
-  ],
+  [["REPLACE_WITH_IMMUTABLE_IMAGE_DIGEST", sellerImage]],
 );
 
 console.log(
@@ -51,18 +44,6 @@ function image(value, name) {
       `${name} must be a digest-qualified image in the approved repository`,
     );
   return value;
-}
-
-function origin(value) {
-  const url = new URL(value);
-  if (
-    url.protocol !== "https:" ||
-    url.pathname !== "/" ||
-    url.search ||
-    url.hash
-  )
-    throw new Error("--radar-origin must be an exact HTTPS origin");
-  return url.origin;
 }
 
 function render(source, destination, replacements) {

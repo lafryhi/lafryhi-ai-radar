@@ -41,10 +41,13 @@ spec:
             - { name: NODE_ENV, value: production }
             - { name: PAYMENT_MODE, value: disabled }
             - { name: RADAR_CONTENT_MODE, value: http }
-            - { name: RADAR_EXPORT_URL, value: REPLACE_WITH_RADAR_EXPORT_URL }
+            - {
+                name: RADAR_EXPORT_URL,
+                value: "https://lafryhi-ai-radar-1090908272413.us-central1.run.app/api/internal/agent-services/published-radar-export",
+              }
             - {
                 name: RADAR_EXPORT_AUDIENCE,
-                value: REPLACE_WITH_CANONICAL_RADAR_ORIGIN,
+                value: "https://lafryhi-ai-radar-1090908272413.us-central1.run.app",
               }
             - { name: RADAR_EXPORT_TIMEOUT_MS, value: "8000" }
             - { name: RADAR_EXPORT_MAX_RESPONSE_BYTES, value: "64000" }
