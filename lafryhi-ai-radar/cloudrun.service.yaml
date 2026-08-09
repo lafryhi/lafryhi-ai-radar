@@ -94,7 +94,7 @@ spec:
                   name: lafryhi-ai-radar-scheduler-secret
                   key: "2"
             - name: RADAR_EXPORT_AUDIENCE
-              value: REPLACE_WITH_CANONICAL_RADAR_ORIGIN
+              value: https://lafryhi-ai-radar-1090908272413.us-central1.run.app
             - name: RADAR_EXPORT_SELLER_SERVICE_ACCOUNT
               value: lafryhi-x402-seller-runtime@lafryhi-ai-radar-xprize.iam.gserviceaccount.com
             - name: RADAR_EXPORT_LOCAL_AUTH_ENABLED

@@ -8,7 +8,16 @@ import {
 } from "@/domain/schemas";
 import { sourceDefinitionFixture, sourceFixture } from "@/test/fixtures";
 import { handlePublishedRadarExport } from "./published-radar-export-route";
-import type { RadarExportIdentityVerifier } from "./published-radar-export";
+import {
+  GoogleRadarExportIdentityVerifier,
+  type RadarExportIdentityVerifier,
+} from "./published-radar-export";
+
+const approvedOrigin =
+  "https://lafryhi-ai-radar-1090908272413.us-central1.run.app";
+const oldOrigin = "https://lafryhi-ai-radar-c5a4cs6xgq-uc.a.run.app";
+const sellerEmail =
+  "lafryhi-x402-seller-runtime@lafryhi-ai-radar-xprize.iam.gserviceaccount.com";
 
 const allowed: RadarExportIdentityVerifier = {
   async verify(value) {
@@ -197,5 +206,46 @@ describe("IAM-protected published Radar export", () => {
       );
       expect(response.status).toBe(400);
     }
+  });
+});
+
+describe("Google Radar export identity verification", () => {
+  afterEach(() => {
+    delete process.env.RADAR_EXPORT_AUDIENCE;
+    delete process.env.RADAR_EXPORT_SELLER_SERVICE_ACCOUNT;
+  });
+
+  function verifier(tokenAudience: string, email = sellerEmail) {
+    process.env.RADAR_EXPORT_AUDIENCE = approvedOrigin;
+    process.env.RADAR_EXPORT_SELLER_SERVICE_ACCOUNT = sellerEmail;
+    return new GoogleRadarExportIdentityVerifier({
+      async verifyIdToken({ audience }: { audience: string }) {
+        if (audience !== tokenAudience) throw new Error("audience mismatch");
+        return {
+          getPayload: () => ({ email, email_verified: true }),
+        };
+      },
+    } as never);
+  }
+
+  it("accepts the approved numbered audience and exact verified seller identity", async () => {
+    await expect(verifier(approvedOrigin).verify("Bearer token")).resolves.toBe(
+      true,
+    );
+  });
+
+  it("rejects a token issued for the old audience", async () => {
+    await expect(verifier(oldOrigin).verify("Bearer token")).resolves.toBe(
+      false,
+    );
+  });
+
+  it("rejects anonymous requests and the wrong service-account identity", async () => {
+    await expect(verifier(approvedOrigin).verify(null)).resolves.toBe(false);
+    await expect(
+      verifier(approvedOrigin, "wrong-runtime@example.test").verify(
+        "Bearer token",
+      ),
+    ).resolves.toBe(false);
   });
 });
