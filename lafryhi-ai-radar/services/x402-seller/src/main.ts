@@ -14,6 +14,11 @@ import {
   FirestoreQuoteStore,
   type FirestoreLike,
 } from "./firestore-quote.js";
+import { FirestoreProofV1Repository } from "./firestore-proof-v1.js";
+import {
+  CircleReadOnlySettlementVerifier,
+  FrozenProofV1ArtifactLoader,
+} from "./proof-v1-fulfillment.js";
 
 const port = Number(process.env.PORT ?? "8080");
 const paymentMode = process.env.PAYMENT_MODE ?? "disabled";
@@ -22,6 +27,9 @@ const content = contentAdapter(contentMode);
 const quoteFirestore = new Firestore({
   databaseId: process.env.FIRESTORE_DATABASE_ID ?? "(default)",
 }) as unknown as FirestoreLike;
+const proofV1Repository = new FirestoreProofV1Repository(
+  quoteFirestore as unknown as Firestore,
+);
 let middleware;
 let payments: SellerPaymentVerifierPort = new DisabledPaymentVerifier();
 if (paymentMode === "circle") {
@@ -51,6 +59,20 @@ const app = createApp({
     contentDigest: process.env.QUOTE_ARTIFACT_DIGEST,
     ttlMilliseconds: Number(process.env.QUOTE_TTL_MS ?? "300000"),
   },
+  ...(process.env.CIRCLE_API_KEY
+    ? {
+        proofV1: {
+          quote: proofV1Repository,
+          store: proofV1Repository,
+          circle: new CircleReadOnlySettlementVerifier(
+            process.env.CIRCLE_API_KEY,
+          ),
+          artifact: new FrozenProofV1ArtifactLoader(
+            process.env.PROOF_V1_ARTIFACT_PATH,
+          ),
+        },
+      }
+    : {}),
 });
 app.listen(port, "0.0.0.0", () =>
   console.info(
