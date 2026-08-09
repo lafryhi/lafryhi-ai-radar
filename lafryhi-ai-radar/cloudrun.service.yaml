@@ -17,10 +17,25 @@ spec:
       containerConcurrency: 10
       timeoutSeconds: 120
       containers:
-        - image: us-central1-docker.pkg.dev/lafryhi-ai-radar-xprize/lafryhi-ai-radar/lafryhi-ai-radar:sprint7-paid-plans
+        - image: REPLACE_WITH_IMMUTABLE_RADAR_IMAGE_DIGEST
           ports:
             - name: http1
               containerPort: 8080
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 0
+            timeoutSeconds: 5
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            timeoutSeconds: 5
+            periodSeconds: 30
+            failureThreshold: 3
           resources:
             limits:
               cpu: "1"
@@ -78,6 +93,12 @@ spec:
                 secretKeyRef:
                   name: lafryhi-ai-radar-scheduler-secret
                   key: "2"
+            - name: RADAR_EXPORT_AUDIENCE
+              value: REPLACE_WITH_CANONICAL_RADAR_ORIGIN
+            - name: RADAR_EXPORT_SELLER_SERVICE_ACCOUNT
+              value: lafryhi-x402-seller-runtime@lafryhi-ai-radar-xprize.iam.gserviceaccount.com
+            - name: RADAR_EXPORT_LOCAL_AUTH_ENABLED
+              value: "false"
   traffic:
     - latestRevision: true
       percent: 100

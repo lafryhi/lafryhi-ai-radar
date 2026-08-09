@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lafryhi.example/contracts/x402-seller/seller-receipt/1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "serviceId",
+    "serviceVersion",
+    "buyerAgentReference",
+    "businessGoalReference",
+    "paymentReference",
+    "payerPublicReference",
+    "sellerPublicWallet",
+    "amount",
+    "currency",
+    "network",
+    "requestFingerprint",
+    "fulfillmentDigest",
+    "authorizationVerificationStatus",
+    "settlementStatus",
+    "createdAt",
+    "fulfilledAt"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "request": {
+    "topic": "AI adoption",
+    "targetLanguage": "en",
+    "targetAudience": "small-business owners",
+    "requestedFormat": "structured-json",
+    "maximumItemCount": 2,
+    "businessGoalReference": "goal-001",
+    "buyerAgentReference": "operator-001"
+  },
+  "evidence": {
+    "paymentReference": "PENDING_REAL_PROOF",
+    "buyerLedgerReference": null,
+    "sellerReceiptReference": null,
+    "authorizationStatus": "PENDING_REAL_PROOF",
+    "settlementStatus": "PENDING_REAL_PROOF",
+    "explorerProofStatus": "PENDING_REAL_PROOF"
+  }
+}

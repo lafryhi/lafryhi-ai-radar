@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lafryhi.example/contracts/published-radar-export/1.0.0",
+  "title": "Published Radar Export 1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "items"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "items": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "radarItemId",
+          "title",
+          "summary",
+          "whyItMatters",
+          "recommendedAction",
+          "category",
+          "sourceReferences",
+          "verificationStatus",
+          "humanReviewRequired",
+          "verificationTimestamp",
+          "publiclyEligible",
+          "relevance",
+          "confidence",
+          "publishedAt",
+          "language",
+          "publicUrl"
+        ],
+        "properties": {
+          "radarItemId": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "title": { "type": "string", "minLength": 1, "maxLength": 300 },
+          "summary": { "type": "string", "minLength": 20, "maxLength": 800 },
+          "whyItMatters": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 1000
+          },
+          "recommendedAction": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 800
+          },
+          "category": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "sourceReferences": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["title", "url", "publishedAt"],
+              "properties": {
+                "title": { "type": "string" },
+                "url": { "type": "string", "format": "uri" },
+                "publishedAt": { "type": "string", "format": "date-time" }
+              }
+            }
+          },
+          "verificationStatus": { "const": "approved" },
+          "humanReviewRequired": { "const": true },
+          "verificationTimestamp": { "type": "string", "format": "date-time" },
+          "publiclyEligible": { "const": true },
+          "relevance": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "confidence": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "publishedAt": { "type": "string", "format": "date-time" },
+          "language": { "type": ["string", "null"] },
+          "publicUrl": { "type": ["string", "null"], "format": "uri" }
+        }
+      }
+    }
+  }
+}

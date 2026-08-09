@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lafryhi.example/contracts/x402-seller/decision-brief-request/1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "topic",
+    "targetLanguage",
+    "targetAudience",
+    "requestedFormat",
+    "maximumItemCount",
+    "businessGoalReference",
+    "buyerAgentReference"
+  ],
+  "properties": {
+    "topic": { "type": "string", "minLength": 3, "maxLength": 240 },
+    "targetLanguage": { "enum": ["en", "fr", "ar"] },
+    "targetAudience": { "type": "string", "minLength": 2, "maxLength": 120 },
+    "requestedFormat": { "enum": ["structured-json", "executive-brief"] },
+    "maximumItemCount": { "type": "integer", "minimum": 1, "maximum": 5 },
+    "businessGoalReference": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]+$",
+      "maxLength": 128
+    },
+    "buyerAgentReference": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]+$",
+      "maxLength": 128
+    }
+  }
+}
