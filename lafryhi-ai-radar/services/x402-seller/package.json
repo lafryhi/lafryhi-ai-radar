@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@circle-fin/x402-batching": "3.2.0",
+    "@google-cloud/firestore": "8.7.0",
     "@x402/core": "2.20.0",
     "@x402/evm": "2.20.0",
     "express": "5.2.1",
