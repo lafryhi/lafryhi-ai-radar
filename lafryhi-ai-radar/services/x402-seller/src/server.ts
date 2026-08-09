@@ -22,6 +22,12 @@ import type {
   SellerPaymentVerifierPort,
   VerifiedRadarContentPort,
 } from "./ports.js";
+import {
+  fulfillProofV1,
+  ProofV1Error,
+  ProofV1FulfillmentRequestSchema,
+  type ProofV1Ports,
+} from "./proof-v1-fulfillment.js";
 
 export interface ServerDependencies {
   content: VerifiedRadarContentPort;
@@ -34,6 +40,7 @@ export interface ServerDependencies {
   quoteSource?: QuoteSourcePort;
   quoteStore?: QuoteStorePort;
   quoteConfig?: QuoteConfig;
+  proofV1?: ProofV1Ports;
 }
 const safeError = (code: string) => ({ error: code });
 
@@ -90,6 +97,26 @@ export function createApp(deps: ServerDependencies) {
       if (error instanceof QuoteError)
         return response.status(error.status).json(safeError(error.code));
       return response.status(503).json(safeError("QUOTE_SERVICE_UNAVAILABLE"));
+    }
+  });
+  app.post("/proof-v1/decision-brief/fulfill", async (request, response) => {
+    const parsed = ProofV1FulfillmentRequestSchema.safeParse(request.body);
+    if (!parsed.success)
+      return response
+        .status(400)
+        .json(safeError("INVALID_PROOF_V1_FULFILLMENT_REQUEST"));
+    if (!deps.proofV1)
+      return response
+        .status(503)
+        .json(safeError("PROOF_V1_FULFILLMENT_UNAVAILABLE"));
+    try {
+      return response.json(await fulfillProofV1(parsed.data, deps.proofV1));
+    } catch (error) {
+      if (error instanceof ProofV1Error)
+        return response.status(error.status).json(safeError(error.code));
+      return response
+        .status(503)
+        .json(safeError("PROOF_V1_FULFILLMENT_UNAVAILABLE"));
     }
   });
 

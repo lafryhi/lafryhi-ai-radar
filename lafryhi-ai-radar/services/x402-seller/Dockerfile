@@ -17,6 +17,7 @@ RUN addgroup --system --gid 1001 seller && adduser --system --uid 1001 seller
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build --chown=seller:seller /app/dist ./dist
 COPY --chown=seller:seller package.json ./package.json
+COPY --chown=seller:seller proof-v1-decision-brief-artifact.json ./proof-v1-decision-brief-artifact.json
 USER seller
 EXPOSE 8080
 CMD ["node", "dist/main.js"]
