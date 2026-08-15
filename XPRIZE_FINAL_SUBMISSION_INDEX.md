@@ -41,9 +41,15 @@ Proof v1 extends a Decision Brief through quote, governance/authorization, Circl
 
 <https://www.youtube.com/watch?v=EW3NWJQ9Cko>
 
-This is the selected final submission video. Confirm Public visibility, playback, relevance and duration under three minutes before freeze. The earlier `BDI_BVvO6tA` demo remains only in the dated 2026-08-02 historical evidence for provenance.
+The founder manually confirmed the selected final video is **Public, playable, and under three minutes**. The earlier `BDI_BVvO6tA` demo remains only in the dated 2026-08-02 historical evidence for provenance.
 
-## 6. Final financial position — reconciled
+## 6. Repository / judge access
+
+The repository is **public** and the final branch inspection confirmed the production Node/Next.js manifest, Dockerfile, runtime configuration example, source tree, and XPRIZE/Proof documentation are present. Public visibility gives judges basic read/clone access without a private-repository invitation.
+
+Repository: <https://github.com/lafryhi/lafryhi-ai-radar>
+
+## 7. Final financial position — reconciled
 
 All four paid transactions visible in the supplied billing history were confirmed by the founder as project expenses:
 
@@ -70,7 +76,7 @@ Final P&L:
 
 The original billing screenshot should remain private because it displays payment-method information. Use it as private submission/judging evidence; do not commit it unredacted to the public repository.
 
-## 7. Customer evidence — transparent status
+## 8. Customer evidence — transparent status
 
 - Paying commercial customers: **0**
 - Confirmed external testers/users available as submission evidence: **0**
@@ -78,15 +84,15 @@ The original billing screenshot should remain private because it displays paymen
 
 The product is in its initial production and validation stage. Internal executions, Gemini runs, Decision Briefs and Proof v1 are product evidence, not customer traction.
 
-## 8. Narrative
+## 9. Narrative
 
 Use [`XPRIZE_SUBMISSION_NARRATIVE.md`](XPRIZE_SUBMISSION_NARRATIVE.md) for the required 500–1000 word narrative.
 
-## 9. Final freeze checklist
+## 10. Final freeze checklist
 
 - [x] Live product manually checked by founder and confirmed working.
-- [ ] Final video `EW3NWJQ9Cko` confirmed Public/playable and under three minutes.
-- [ ] Repository contains all necessary source code and required judge access confirmed.
+- [x] Final video `EW3NWJQ9Cko` confirmed Public/playable and under three minutes.
+- [x] Repository public and final source/project structure confirmed present for judge access.
 - [x] 500–1000 word evidence-grounded narrative prepared.
 - [x] Commercial revenue recorded as US$0.00.
 - [x] P&L reconciled to billing history: US$0 revenue / US$224 expenses / US$224 net loss.
@@ -94,7 +100,8 @@ Use [`XPRIZE_SUBMISSION_NARRATIVE.md`](XPRIZE_SUBMISSION_NARRATIVE.md) for the r
 - [x] Marketing/customer-acquisition spend recorded as US$0.00.
 - [x] Proof v1 0.01 USDC retained as testnet technical evidence, not revenue.
 - [x] Customer evidence reported as 0 customers / 0 confirmed external testers / no testimonials.
-- [ ] Select/upload final product-running evidence.
+- [x] Final Product Evidence set selected.
+- [ ] Upload/attach Product Evidence items in Devpost where requested.
 - [ ] Resolve corporate ID only if applicable.
 - [ ] Re-open submitted links from a logged-out/private browser where possible.
 - [ ] After deadline, freeze repository/video/submission until rules permit changes.
