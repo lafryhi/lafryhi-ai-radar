@@ -22,7 +22,7 @@
 ## Final-submission reconciliation
 
 - [x] Live product manually re-opened by founder and confirmed working during final submission preparation.
-- [ ] Final selected video `EW3NWJQ9Cko` manually confirmed Public/playable and under 3 minutes.
+- [x] Final selected video `EW3NWJQ9Cko` manually confirmed by founder as Public/playable and under 3 minutes.
 - [ ] Repository/judge access and final source-code completeness confirmed.
 - [x] Final 500–1000 word Devpost narrative prepared.
 - [x] Commercial revenue reconciled from founder records: **US$0.00**.
