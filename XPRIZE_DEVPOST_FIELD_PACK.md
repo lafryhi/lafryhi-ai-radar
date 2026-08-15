@@ -5,7 +5,7 @@
 **Deadline:** 2026-08-17 1:00 PM Pacific Time  
 **Purpose:** One copy/paste and evidence-reconciliation surface for the final Devpost form.
 
-> Official rules control. This file intentionally leaves financial/user fields unresolved where genuine final records are not yet available.
+> Official rules control. Financial/user fields remain unresolved only where genuine final records are still required.
 
 ## Public project description
 
@@ -35,7 +35,7 @@ Captured production evidence dated 2026-08-02 records Cloud Run, Vertex AI with 
 
 <https://github.com/lafryhi/lafryhi-ai-radar>
 
-Repository is public and includes an MIT License in the production application history/evidence. Reconfirm final judge access before submission.
+Repository is public. Reconfirm final source completeness and judge access before submission.
 
 ## Demo video
 
@@ -49,22 +49,37 @@ Captured duration: **1:46**. Re-open before submission and confirm public playba
 
 Use [`XPRIZE_SUBMISSION_NARRATIVE.md`](XPRIZE_SUBMISSION_NARRATIVE.md). It is designed for the required 500–1000 word narrative and covers daily AI operation, human-vs-AI responsibilities, economic opportunity, category impact, and evidence boundaries.
 
-## Revenue evidence — FINAL RECORDS REQUIRED
+## Revenue evidence — commercial revenue is $0.00
 
-Official reporting window is the Hackathon period and revenue must be arms-length third-party customer revenue in USD.
+The founder has confirmed that **commercial revenue for the project is US$0.00**. The final submission should report zero rather than reinterpret technical testnet activity as sales.
 
-| Revenue field | Final value | Evidence |
+| Revenue field | Final value | Evidence/interpretation |
 |---|---:|---|
-| May 2026 | `TBD_FROM_GENUINE_RECORDS` | processor/bank/receipt |
-| June 2026 | `TBD_FROM_GENUINE_RECORDS` | processor/bank/receipt |
-| July 2026 | `TBD_FROM_GENUINE_RECORDS` | processor/bank/receipt |
-| August 2026 through submission | `TBD_FROM_GENUINE_RECORDS` | processor/bank/receipt |
-| **Total arms-length revenue** | `TBD_FROM_GENUINE_RECORDS` | reconciled total |
-| Related-party revenue | `TBD_FROM_GENUINE_RECORDS` | report separately |
+| Commercial / arms-length customer revenue | **US$0.00** | founder-confirmed; no commercial sales claimed |
+| Paying commercial customers | **0 claimed** | follows from zero commercial revenue; do not infer non-paying user count |
+| Proof v1 technical transaction | **0.01 USDC** | Arc Testnet execution evidence only |
+| **Revenue counted in P&L** | **US$0.00** | excludes testnet activity |
 
-**Do not count:** Arc Testnet `0.01 USDC`, trial credits, internal transfers, fabricated sales, or unverified promises to pay.
+### Required distinction for judges
 
-## Expenses / P&L — FINAL RECORDS REQUIRED
+> **Commercial Revenue: US$0.00.** Separately, Proof v1 successfully executed and verified a **0.01 USDC transaction on Arc Testnet** as part of the end-to-end governed agent execution flow. This testnet transaction is presented as **technical product evidence, not commercial revenue**.
+
+Do not count Arc Testnet `0.01 USDC`, trial credits, internal transfers, fabricated sales, or unverified promises to pay as revenue.
+
+If the Devpost form requires month-by-month revenue fields, enter genuine zero values for the applicable hackathon months rather than inventing allocations.
+
+## Expenses / P&L — FINAL EXPENSE RECORDS REQUIRED
+
+With commercial revenue fixed at US$0.00, the final P&L becomes:
+
+```text
+Commercial revenue                         US$0.00
+Less: final hackathon-period expenses      US$TBD
+-------------------------------------------------
+Profit / (loss)                            -US$TBD
+```
+
+If genuine final expenses are also zero, profit/(loss) is US$0.00. If there are genuine expenses, the result is a loss equal to those expenses.
 
 | Expense field | Final value | Evidence/description |
 |---|---:|---|
@@ -74,7 +89,7 @@ Official reporting window is the Hackathon period and revenue must be arms-lengt
 | Software/services | `TBD_FROM_GENUINE_RECORDS` | if any |
 | Other project expenses | `TBD_FROM_GENUINE_RECORDS` | explain |
 | **Total expenses** | `TBD_FROM_GENUINE_RECORDS` | reconciled total |
-| **Profit/(loss)** | `TOTAL_REVENUE - TOTAL_EXPENSES` | simple P&L |
+| **Profit/(loss)** | `US$0.00 - TOTAL_EXPENSES` | simple P&L |
 
 Dated evidence from 2026-08-02 showed project spend of US$0.00 at that capture point and remaining trial credit of US$299.25/US$300.00. That dated capture is not a substitute for final-period expense reconciliation.
 
@@ -84,7 +99,7 @@ Dated evidence from 2026-08-02 showed project spend of US$0.00 at that capture p
 |---|---|
 | Number of individual real users | `TBD_FROM_GENUINE_RECORDS` |
 | High-level user breakdown | `TBD_FROM_GENUINE_RECORDS` |
-| Paying arms-length customers | `TBD_FROM_GENUINE_RECORDS` |
+| Paying commercial customers | **0 claimed** |
 | Testimonials/feedback | `TBD_FROM_GENUINE_RECORDS_WITH_CONSENT` |
 | Customer contact evidence if requested | private judging channel; do not commit PII here |
 
@@ -106,7 +121,7 @@ For final submission, prefer fresh screenshots/exports where possible. Keep the 
 
 Recommended wording:
 
-> Proof v1 demonstrates governed execution beyond analysis using Arc Testnet, a bounded quote/authorization boundary, read-only Circle settlement verification, Firestore-backed idempotent fulfillment, and SHA-256 artifact verification. The frozen `0.01 USDC` testnet transaction is technical execution evidence and is not counted as commercial revenue.
+> Proof v1 demonstrates governed execution beyond analysis using Arc Testnet, a bounded quote/authorization boundary, read-only Circle settlement verification, Firestore-backed idempotent fulfillment, and SHA-256 artifact verification. The frozen **0.01 USDC** testnet transaction is technical execution evidence and is not counted as commercial revenue. Commercial project revenue is **US$0.00**.
 
 ## Corporate ID
 
@@ -122,8 +137,8 @@ Do not declare the submission complete until all of the following are resolved:
 - final video confirmed public and under three minutes;
 - repository/source completeness and judge access confirmed;
 - narrative pasted and reviewed;
-- May/June/July/August revenue reconciled;
-- related-party revenue separately disclosed;
+- commercial revenue entered as US$0.00;
+- Proof v1 `0.01 USDC` retained prominently as testnet technical evidence, not revenue;
 - total expenses reconciled;
 - marketing/customer-acquisition spend explicitly disclosed, including zero if genuinely zero;
 - simple P&L completed;
@@ -131,4 +146,4 @@ Do not declare the submission complete until all of the following are resolved:
 - genuine testimonials/feedback supplied only with appropriate awareness/consent;
 - product-running evidence selected/uploaded;
 - corporate ID supplied only if applicable;
-- all testnet activity kept outside revenue.
+- repository/video/submission frozen after the deadline as required.
