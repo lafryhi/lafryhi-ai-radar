@@ -10,7 +10,7 @@ LAFRYHI AI Radar is a production-deployed system that turns governed source mate
 
 See [`XPRIZE_FINAL_SUBMISSION_INDEX.md`](XPRIZE_FINAL_SUBMISSION_INDEX.md) for the shortest path through the submission evidence, production architecture, demo, Proof v1, and financial/customer evidence boundaries.
 
-The canonical production evidence package is in [`submission/product-evidence/`](submission/product-evidence/).
+The restored privacy-safe production evidence index is in [`Product_Evidence/`](Product_Evidence/), and the evidence-grounded 500–1000 word submission narrative draft is [`XPRIZE_SUBMISSION_NARRATIVE.md`](XPRIZE_SUBMISSION_NARRATIVE.md).
 
 ## Verified production state
 
@@ -22,7 +22,7 @@ The repository contains evidence captured from the deployed product and authenti
 - Secret Manager-backed runtime secrets.
 - Cloud Logging / Monitoring evidence and successful health/readiness checks.
 - Authenticated Human Verification states and published Decision Briefs.
-- A public 1:46 demo video and product screenshots.
+- A public 1:46 demo video.
 
 These are evidence-capture facts, not a promise that an old revision remains the currently serving revision. See the evidence register for provenance.
 
@@ -30,7 +30,7 @@ These are evidence-capture facts, not a promise that an old revision remains the
 
 Gemini is the intelligence layer. Given controlled source content, it produces structured decision intelligence such as business significance, opportunity/risk assessment, confidence, recommended actions, evidence selection, and warnings. The application parses and validates Gemini output against strict schemas before it can enter the governed workflow.
 
-Production configuration uses Vertex AI and `gemini-2.5-flash`. Mock/test adapters are for deterministic testing only and must not be represented as production AI evidence.
+Production evidence captured Vertex AI with `gemini-2.5-flash`. Mock/test adapters are for deterministic testing only and must not be represented as production AI evidence.
 
 ## What deterministic controls do
 
@@ -145,9 +145,10 @@ Security mechanisms evolve across repository phases. Historical phase documents 
 Start with:
 
 - [`XPRIZE_FINAL_SUBMISSION_INDEX.md`](XPRIZE_FINAL_SUBMISSION_INDEX.md)
-- [`submission/product-evidence/README.md`](submission/product-evidence/README.md)
-- [`submission/product-evidence/PRODUCT_EVIDENCE.md`](submission/product-evidence/PRODUCT_EVIDENCE.md)
-- [`submission/product-evidence/EVIDENCE_CHECKLIST.md`](submission/product-evidence/EVIDENCE_CHECKLIST.md)
+- [`XPRIZE_SUBMISSION_NARRATIVE.md`](XPRIZE_SUBMISSION_NARRATIVE.md)
+- [`Product_Evidence/README.md`](Product_Evidence/README.md)
+- [`Product_Evidence/PRODUCT_EVIDENCE.md`](Product_Evidence/PRODUCT_EVIDENCE.md)
+- [`Product_Evidence/EVIDENCE_CHECKLIST.md`](Product_Evidence/EVIDENCE_CHECKLIST.md)
 - [`GEMINI_XPRIZE_ARCHITECTURE.md`](GEMINI_XPRIZE_ARCHITECTURE.md)
 
 Historical implementation and sprint documents remain in the repository to preserve engineering traceability. Statements such as “deployment has not occurred” inside early Phase 1 documents describe that historical phase only; later production evidence supersedes those historical status statements.
