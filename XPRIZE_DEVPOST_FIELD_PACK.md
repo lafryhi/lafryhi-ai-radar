@@ -5,7 +5,7 @@
 **Deadline:** 2026-08-17 1:00 PM Pacific Time  
 **Purpose:** One copy/paste and evidence-reconciliation surface for the final Devpost form.
 
-> Official rules control. User/customer fields remain unresolved only where genuine final records are still required.
+> Official rules control. This field pack uses only evidence and financial/user facts actually available for the submission.
 
 ## Public project description
 
@@ -56,7 +56,7 @@ The founder has confirmed that **commercial revenue for the project is US$0.00**
 | Revenue field | Final value | Evidence/interpretation |
 |---|---:|---|
 | Commercial / arms-length customer revenue | **US$0.00** | founder-confirmed; no commercial sales claimed |
-| Paying commercial customers | **0 claimed** | do not infer non-paying user count |
+| Paying commercial customers | **0** | no paying customers claimed |
 | Proof v1 technical transaction | **0.01 USDC** | Arc Testnet execution evidence only |
 | **Revenue counted in P&L** | **US$0.00** | excludes testnet activity |
 
@@ -106,17 +106,22 @@ Net profit / (loss)                        US$(150.00)
 - The Arc Testnet `0.01 USDC` Proof v1 transaction is not revenue and is excluded from this P&L.
 - Do not commit card numbers, bank account details, or unrelated personal financial information to the public repository.
 
-## User/customer evidence — FINAL RECORDS REQUIRED
+## Customer / user evidence — final transparent status
 
-| Field | Final value/evidence |
+The product is at its initial production and validation stage. At submission preparation time, the founder has confirmed that there are **no external customers or external product testers whose activity can be submitted as customer evidence**. No testimonials are claimed.
+
+| Field | Final status |
 |---|---|
-| Number of individual real users | `TBD_FROM_GENUINE_RECORDS` |
-| High-level user breakdown | `TBD_FROM_GENUINE_RECORDS` |
-| Paying commercial customers | **0 claimed** |
-| Testimonials/feedback | `TBD_FROM_GENUINE_RECORDS_WITH_CONSENT` |
-| Customer contact evidence if requested | private judging channel; do not commit PII here |
+| Paying commercial customers | **0** |
+| Confirmed external product testers/users available as submission evidence | **0** |
+| Customer testimonials | **None claimed** |
+| Customer contact list | **None claimed** |
 
-The dated Operator Dashboard execution counts are **not automatically customer/user counts** and must not be presented as such.
+### Recommended submission wording
+
+> **Customer evidence status:** LAFRYHI AI Radar is in its initial production and validation stage. At the time of submission, it has no paying customers and no external customer/tester testimonials that can be truthfully submitted as customer evidence. We do not fabricate traction. The submission therefore relies on production execution evidence, Gemini/Google Cloud usage evidence, governance records, and the Proof v1 end-to-end testnet execution. Customer acquisition and longitudinal usage validation are post-launch objectives.
+
+This is a deliberate evidence-integrity statement, not a claim that internal operator executions are customers. The dated Operator Dashboard execution counts, Gemini runs, Decision Briefs, and Proof v1 activity are **product evidence only** and must not be relabeled as customer/user traction.
 
 ## Product-running evidence
 
@@ -155,8 +160,7 @@ Do not declare the submission complete until all of the following are resolved:
 - final P&L entered as Revenue US$0.00 / Expenses US$150.00 / Net Loss US$150.00;
 - US$150 Codex expense supported by genuine private billing evidence;
 - marketing/customer-acquisition spend disclosed as US$0.00;
-- real-user count and high-level breakdown supplied;
-- genuine testimonials/feedback supplied only with appropriate awareness/consent;
+- customer evidence reported transparently as 0 customers / 0 confirmed external testers / no testimonials;
 - product-running evidence selected/uploaded;
 - corporate ID supplied only if applicable;
 - repository/video/submission frozen after the deadline as required.
