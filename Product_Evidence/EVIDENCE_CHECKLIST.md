@@ -23,7 +23,7 @@
 
 - [x] Live product manually re-opened by founder and confirmed working during final submission preparation.
 - [x] Final selected video `EW3NWJQ9Cko` manually confirmed by founder as Public/playable and under 3 minutes.
-- [ ] Repository/judge access and final source-code completeness confirmed.
+- [x] Repository confirmed **public** and readable for judges. Repository root contains the production Node/Next.js project manifest, Dockerfile, runtime configuration example, source tree and XPRIZE/Proof documentation; no private-repository invitation is required for basic source access.
 - [x] Final 500–1000 word Devpost narrative prepared.
 - [x] Commercial revenue reconciled from founder records: **US$0.00**.
 - [x] Final expenses reconciled to supplied billing history: **US$224.00**.
@@ -32,14 +32,13 @@
 - [x] Customer evidence reported transparently: **0 paying customers / 0 confirmed external testers / no testimonials**.
 - [x] Proof v1 described as **0.01 USDC Arc Testnet technical execution evidence, not revenue**.
 - [x] Private financial screenshot kept out of public repository because it contains payment-method information.
-- [ ] Final Devpost product-running evidence attachments/screenshots selected and uploaded.
+- [x] Final Product Evidence set selected: live/operator view; Vertex AI/Gemini execution; Cloud Run; Human Verification/Decision Brief; logs/health; Proof v1; private billing evidence.
+- [ ] Upload/attach the selected Product Evidence items in the final Devpost form where requested.
 - [ ] Corporate ID resolved only if applicable.
 - [ ] Submitted links re-opened from a logged-out/private browser where possible.
 - [ ] Repository/video/submission frozen after deadline as required.
 
 ## Recommended Product Evidence set for Devpost
-
-Use the strongest genuine evidence already captured, preferring fresh final screenshots where available:
 
 1. **Live product / operator dashboard** — proves the product is accessible and running.
 2. **Vertex AI / Gemini execution evidence** — model/configuration plus completed Gemini analyses.
