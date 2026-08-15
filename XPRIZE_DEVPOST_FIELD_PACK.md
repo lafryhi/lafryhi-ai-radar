@@ -37,13 +37,15 @@ Captured production evidence dated 2026-08-02 records Cloud Run, Vertex AI with 
 
 Repository is public. Reconfirm final source completeness and judge access before submission.
 
-## Demo video
+## Final Devpost demo video
 
-Historical production evidence records this public demo URL:
+Selected final submission video:
 
-<https://www.youtube.com/watch?v=BDI_BVvO6tA>
+<https://www.youtube.com/watch?v=EW3NWJQ9Cko>
 
-Captured duration: **1:46**. Re-open before submission and confirm public playback, final relevance, and duration under three minutes.
+This is the video to paste into the final Devpost submission. Before final freeze, manually confirm that it is Public, playable without account-specific access, relevant to the submitted product, and under three minutes.
+
+**Historical provenance note:** the dated 2026-08-02 production evidence package recorded an earlier public 1:46 demo (`BDI_BVvO6tA`). That historical URL remains in the dated evidence record and should not be confused with the selected final Devpost video above.
 
 ## Written narrative
 
@@ -152,7 +154,7 @@ Do not manufacture a corporate identifier. If submitting as an individual and no
 Do not declare the submission complete until all of the following are resolved:
 
 - live product/test access confirmed;
-- final video confirmed public and under three minutes;
+- selected final video `EW3NWJQ9Cko` confirmed public, playable, relevant, and under three minutes;
 - repository/source completeness and judge access confirmed;
 - narrative pasted and reviewed;
 - commercial revenue entered as US$0.00;
