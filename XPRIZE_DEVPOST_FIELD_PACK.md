@@ -66,32 +66,38 @@ The founder has confirmed that **commercial revenue for the project is US$0.00**
 
 Do not count Arc Testnet `0.01 USDC`, trial credits, internal transfers, fabricated sales, or unverified promises to pay as revenue.
 
-If the Devpost form requires month-by-month revenue fields, enter genuine zero values for the applicable hackathon months rather than inventing allocations.
+## Expenses / P&L — provisional with confirmed Codex expense
 
-## Expenses / P&L — FINAL EXPENSE RECORDS REQUIRED
+The founder has reported **US$150.00 in Codex expense** incurred for work on the project. This is recorded as a software/development-tool expense, subject to retaining the corresponding genuine receipt/invoice/account statement for the submission evidence.
 
-With commercial revenue fixed at US$0.00, the final P&L becomes:
+Current provisional P&L:
 
 ```text
-Commercial revenue                         US$0.00
-Less: final hackathon-period expenses      US$TBD
--------------------------------------------------
-Profit / (loss)                            -US$TBD
+Commercial revenue                         US$  0.00
+Codex development-tool expense             US$150.00
+Other final hackathon-period expenses      US$   TBD
+---------------------------------------------------
+Current known profit / (loss)              US$(150.00)
+Final profit / (loss)                      US$(150.00 + other expenses)
 ```
 
-If genuine final expenses are also zero, profit/(loss) is US$0.00. If there are genuine expenses, the result is a loss equal to those expenses.
-
-| Expense field | Final value | Evidence/description |
+| Expense field | Current value | Evidence/description |
 |---|---:|---|
-| Google Cloud / hosting / AI | `TBD_FROM_GENUINE_RECORDS` | final billing record |
-| Marketing & customer acquisition | `TBD_FROM_GENUINE_RECORDS` | must disclose even if zero |
-| Contractors | `TBD_FROM_GENUINE_RECORDS` | if any |
-| Software/services | `TBD_FROM_GENUINE_RECORDS` | if any |
-| Other project expenses | `TBD_FROM_GENUINE_RECORDS` | explain |
-| **Total expenses** | `TBD_FROM_GENUINE_RECORDS` | reconciled total |
-| **Profit/(loss)** | `US$0.00 - TOTAL_EXPENSES` | simple P&L |
+| Codex / development tooling | **US$150.00** | founder-reported; retain genuine billing evidence |
+| Google Cloud / hosting / Gemini | `TBD_FINAL_RECONCILIATION` | final billing record; credits are not revenue |
+| Marketing & customer acquisition | `TBD_FINAL_RECONCILIATION` | must disclose even if genuinely zero |
+| Contractors | `TBD_FINAL_RECONCILIATION` | if any |
+| Other software/services | `TBD_FINAL_RECONCILIATION` | avoid double-counting Codex |
+| Other project expenses | `TBD_FINAL_RECONCILIATION` | explain |
+| **Known expenses so far** | **US$150.00** | Codex only |
+| **Final total expenses** | `US$150.00 + OTHER_CONFIRMED_EXPENSES` | reconciled total |
+| **Current known profit/(loss)** | **US$(150.00)** | revenue $0 less known Codex expense |
 
-Dated evidence from 2026-08-02 showed project spend of US$0.00 at that capture point and remaining trial credit of US$299.25/US$300.00. That dated capture is not a substitute for final-period expense reconciliation.
+Dated Google Cloud evidence from 2026-08-02 showed project spend of US$0.00 at that capture point and remaining trial credit of US$299.25/US$300.00. That dated capture is not a substitute for final-period reconciliation.
+
+### Expense evidence to retain privately
+
+For the US$150 Codex expense, keep the genuine invoice, receipt, subscription/billing page export, card/bank charge, or other account record that identifies the charge sufficiently for judging. Do not commit card numbers, bank account details, or unrelated personal financial information to this public repository.
 
 ## User/customer evidence — FINAL RECORDS REQUIRED
 
@@ -139,7 +145,8 @@ Do not declare the submission complete until all of the following are resolved:
 - narrative pasted and reviewed;
 - commercial revenue entered as US$0.00;
 - Proof v1 `0.01 USDC` retained prominently as testnet technical evidence, not revenue;
-- total expenses reconciled;
+- US$150 Codex expense supported by genuine private billing evidence;
+- all other expenses reconciled;
 - marketing/customer-acquisition spend explicitly disclosed, including zero if genuinely zero;
 - simple P&L completed;
 - real-user count and high-level breakdown supplied;
