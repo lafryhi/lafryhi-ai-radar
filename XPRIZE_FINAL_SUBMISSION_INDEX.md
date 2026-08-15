@@ -108,7 +108,7 @@ Use [`XPRIZE_SUBMISSION_NARRATIVE.md`](XPRIZE_SUBMISSION_NARRATIVE.md) for the r
 
 Before the Devpost deadline:
 
-- [ ] Re-open the live product and confirm the judge-accessible path works.
+- [x] Live product manually checked by the founder and confirmed working during final submission preparation.
 - [ ] Confirm final video `EW3NWJQ9Cko` is Public/playable and under three minutes.
 - [ ] Confirm repository contains all necessary source code and required judge access.
 - [x] Prepare the 500–1000 word evidence-grounded narrative.
