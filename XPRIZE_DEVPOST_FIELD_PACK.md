@@ -5,7 +5,7 @@
 **Deadline:** 2026-08-17 1:00 PM Pacific Time  
 **Purpose:** One copy/paste and evidence-reconciliation surface for the final Devpost form.
 
-> Official rules control. Financial/user fields remain unresolved only where genuine final records are still required.
+> Official rules control. User/customer fields remain unresolved only where genuine final records are still required.
 
 ## Public project description
 
@@ -49,14 +49,14 @@ Captured duration: **1:46**. Re-open before submission and confirm public playba
 
 Use [`XPRIZE_SUBMISSION_NARRATIVE.md`](XPRIZE_SUBMISSION_NARRATIVE.md). It is designed for the required 500–1000 word narrative and covers daily AI operation, human-vs-AI responsibilities, economic opportunity, category impact, and evidence boundaries.
 
-## Revenue evidence — commercial revenue is $0.00
+## Revenue evidence — final
 
-The founder has confirmed that **commercial revenue for the project is US$0.00**. The final submission should report zero rather than reinterpret technical testnet activity as sales.
+The founder has confirmed that **commercial revenue for the project is US$0.00**.
 
 | Revenue field | Final value | Evidence/interpretation |
 |---|---:|---|
 | Commercial / arms-length customer revenue | **US$0.00** | founder-confirmed; no commercial sales claimed |
-| Paying commercial customers | **0 claimed** | follows from zero commercial revenue; do not infer non-paying user count |
+| Paying commercial customers | **0 claimed** | do not infer non-paying user count |
 | Proof v1 technical transaction | **0.01 USDC** | Arc Testnet execution evidence only |
 | **Revenue counted in P&L** | **US$0.00** | excludes testnet activity |
 
@@ -64,40 +64,47 @@ The founder has confirmed that **commercial revenue for the project is US$0.00**
 
 > **Commercial Revenue: US$0.00.** Separately, Proof v1 successfully executed and verified a **0.01 USDC transaction on Arc Testnet** as part of the end-to-end governed agent execution flow. This testnet transaction is presented as **technical product evidence, not commercial revenue**.
 
-Do not count Arc Testnet `0.01 USDC`, trial credits, internal transfers, fabricated sales, or unverified promises to pay as revenue.
+## Final P&L
 
-## Expenses / P&L — provisional with confirmed Codex expense
-
-The founder has reported **US$150.00 in Codex expense** incurred for work on the project. This is recorded as a software/development-tool expense, subject to retaining the corresponding genuine receipt/invoice/account statement for the submission evidence.
-
-Current provisional P&L:
+The founder has confirmed that the project's **total net hackathon-period expenses are US$150.00**, consisting of Codex/development-tooling cost. No other project expenses are being claimed.
 
 ```text
-Commercial revenue                         US$  0.00
-Codex development-tool expense             US$150.00
-Other final hackathon-period expenses      US$   TBD
+LAFRYHI AI Radar — Final Hackathon P&L
+
+Commercial revenue                         US$   0.00
+
+Expenses
+  Codex / development tooling              US$ 150.00
+  Google Cloud / hosting / Gemini           US$   0.00
+  Marketing & customer acquisition         US$   0.00
+  Contractors                              US$   0.00
+  Other software/services                  US$   0.00
+  Other project expenses                   US$   0.00
 ---------------------------------------------------
-Current known profit / (loss)              US$(150.00)
-Final profit / (loss)                      US$(150.00 + other expenses)
+Total expenses                             US$ 150.00
+---------------------------------------------------
+Net profit / (loss)                        US$(150.00)
 ```
 
-| Expense field | Current value | Evidence/description |
-|---|---:|---|
-| Codex / development tooling | **US$150.00** | founder-reported; retain genuine billing evidence |
-| Google Cloud / hosting / Gemini | `TBD_FINAL_RECONCILIATION` | final billing record; credits are not revenue |
-| Marketing & customer acquisition | `TBD_FINAL_RECONCILIATION` | must disclose even if genuinely zero |
-| Contractors | `TBD_FINAL_RECONCILIATION` | if any |
-| Other software/services | `TBD_FINAL_RECONCILIATION` | avoid double-counting Codex |
-| Other project expenses | `TBD_FINAL_RECONCILIATION` | explain |
-| **Known expenses so far** | **US$150.00** | Codex only |
-| **Final total expenses** | `US$150.00 + OTHER_CONFIRMED_EXPENSES` | reconciled total |
-| **Current known profit/(loss)** | **US$(150.00)** | revenue $0 less known Codex expense |
+| P&L field | Final value |
+|---|---:|
+| Commercial revenue | **US$0.00** |
+| Codex / development tooling | **US$150.00** |
+| Google Cloud / hosting / Gemini | **US$0.00** |
+| Marketing & customer acquisition | **US$0.00** |
+| Contractors | **US$0.00** |
+| Other software/services | **US$0.00** |
+| Other project expenses | **US$0.00** |
+| **Total expenses** | **US$150.00** |
+| **Net profit/(loss)** | **US$(150.00)** |
 
-Dated Google Cloud evidence from 2026-08-02 showed project spend of US$0.00 at that capture point and remaining trial credit of US$299.25/US$300.00. That dated capture is not a substitute for final-period reconciliation.
+### Financial evidence notes
 
-### Expense evidence to retain privately
-
-For the US$150 Codex expense, keep the genuine invoice, receipt, subscription/billing page export, card/bank charge, or other account record that identifies the charge sufficiently for judging. Do not commit card numbers, bank account details, or unrelated personal financial information to this public repository.
+- Retain genuine Codex invoice/receipt/subscription or account billing evidence supporting the US$150.00 expense.
+- Dated Google Cloud evidence from 2026-08-02 showed project spend of US$0.00 at that capture point and remaining trial credit of US$299.25/US$300.00.
+- Google Cloud credits are not revenue.
+- The Arc Testnet `0.01 USDC` Proof v1 transaction is not revenue and is excluded from this P&L.
+- Do not commit card numbers, bank account details, or unrelated personal financial information to the public repository.
 
 ## User/customer evidence — FINAL RECORDS REQUIRED
 
@@ -145,10 +152,9 @@ Do not declare the submission complete until all of the following are resolved:
 - narrative pasted and reviewed;
 - commercial revenue entered as US$0.00;
 - Proof v1 `0.01 USDC` retained prominently as testnet technical evidence, not revenue;
+- final P&L entered as Revenue US$0.00 / Expenses US$150.00 / Net Loss US$150.00;
 - US$150 Codex expense supported by genuine private billing evidence;
-- all other expenses reconciled;
-- marketing/customer-acquisition spend explicitly disclosed, including zero if genuinely zero;
-- simple P&L completed;
+- marketing/customer-acquisition spend disclosed as US$0.00;
 - real-user count and high-level breakdown supplied;
 - genuine testimonials/feedback supplied only with appropriate awareness/consent;
 - product-running evidence selected/uploaded;
