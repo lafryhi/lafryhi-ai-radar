@@ -8,11 +8,9 @@
 
 Start with [`Product_Evidence/README.md`](Product_Evidence/README.md), then read [`Product_Evidence/PRODUCT_EVIDENCE.md`](Product_Evidence/PRODUCT_EVIDENCE.md).
 
-The restored textual evidence record is based on the production evidence captured on 2026-08-02. It records a deployed Cloud Run service, Vertex AI Gemini 2.5 Flash execution, Firestore-backed records, Secret Manager-backed runtime configuration, Cloud Logging/Monitoring evidence, Human Verification states, billing evidence, and a public 1:46 demo video.
+The restored textual evidence record is based on production evidence captured on 2026-08-02. It records a deployed Cloud Run service, Vertex AI Gemini 2.5 Flash execution, Firestore-backed records, Secret Manager-backed runtime configuration, Cloud Logging/Monitoring evidence, Human Verification states, billing evidence, and the demo used in that dated evidence package.
 
-Use [`Product_Evidence/EVIDENCE_CHECKLIST.md`](Product_Evidence/EVIDENCE_CHECKLIST.md) to distinguish **dated verified evidence** from **final-deadline revalidation still required**.
-
-Historical binary screenshots and the PDF are not blindly restored on this branch because dated captures should first pass a final privacy/freshness review before being presented as deadline evidence.
+Use [`Product_Evidence/EVIDENCE_CHECKLIST.md`](Product_Evidence/EVIDENCE_CHECKLIST.md) to distinguish dated verified evidence from final-deadline revalidation.
 
 ## 2. AI-operated workflow
 
@@ -28,9 +26,7 @@ Governed source
 
 Gemini performs the intelligence work: structured analysis, business significance, opportunity/risk assessment, confidence, recommended action, evidence selection, and warnings.
 
-Deterministic application code controls admission, validation, duplicate detection, state transitions, policy, publication gates, authorization correlation, idempotency, and cryptographic verification.
-
-A human operator is accountable for the consequential authorization boundary. Model output is not automatically published merely because Gemini produced it.
+Deterministic application code controls admission, validation, duplicate detection, state transitions, policy, publication gates, authorization correlation, idempotency, and cryptographic verification. A human operator remains accountable for the consequential authorization boundary.
 
 ## 3. Google Cloud requirement
 
@@ -46,8 +42,6 @@ Architecture: [`GEMINI_XPRIZE_ARCHITECTURE.md`](GEMINI_XPRIZE_ARCHITECTURE.md).
 
 ## 4. Proof v1 — execution beyond analysis
 
-Proof v1 extends a Decision Brief across a bounded seller boundary:
-
 ```text
 Decision Brief
   -> quote
@@ -57,9 +51,9 @@ Decision Brief
   -> SHA-256 artifact verification
 ```
 
-Repository history includes the Proof v1 implementation and frozen artifact. The implementation records an Arc Testnet fixture for `0.01 USDC`, correlates Circle transaction identifiers, verifies settlement read-only, and stores/returns fulfillment idempotently against a frozen artifact digest.
+Repository history includes the Proof v1 implementation and frozen artifact. The implementation records an Arc Testnet fixture for **0.01 USDC**, correlates Circle transaction identifiers, verifies settlement read-only, and stores/returns fulfillment idempotently against a frozen artifact digest.
 
-**Proof v1 is testnet technical evidence, not commercial revenue.** Do not count the `0.01 USDC` testnet transaction as revenue or describe it as a mainnet customer purchase.
+**Proof v1 is testnet technical evidence, not commercial revenue.** The 0.01 USDC transaction is intentionally prominent because it demonstrates end-to-end execution, but it is excluded from the P&L.
 
 ## 5. Human versus AI responsibilities
 
@@ -70,63 +64,69 @@ Repository history includes the Proof v1 implementation and frozen artifact. The
 | Human operator | Review evidence and recommendation; approve/reject consequential publication/action boundaries. |
 | Google Cloud | Run the production application and provide AI, persistence, secrets, logging, monitoring, health/readiness infrastructure. |
 
-## 6. Demo
+## 6. Final Devpost demo
 
-The 2026-08-02 evidence package records a public YouTube demo of 1 minute 46 seconds:
+**Selected final submission video:**
 
-<https://www.youtube.com/watch?v=BDI_BVvO6tA>
+<https://www.youtube.com/watch?v=EW3NWJQ9Cko>
 
-Before final Devpost submission, re-confirm that the single selected video is public/playable, under three minutes, and visibly demonstrates the live AI workflow and the important decision/execution boundaries.
+This is the video intended for the Devpost video field. Manually confirm Public visibility, playback, relevance, and duration under three minutes before final freeze.
 
-## 7. Revenue, expenses, and P&L — truth boundary
+**Historical provenance:** the 2026-08-02 evidence package recorded an earlier public 1:46 demo (`BDI_BVvO6tA`). That earlier URL remains in the dated Product Evidence record only so the historical evidence remains internally consistent.
 
-The submission must use genuine financial evidence.
+## 7. Final financial position
 
-- **Revenue:** use only genuine commercial receipts/bank/processor evidence. If genuine project revenue is zero, report zero.
-- **Expenses:** disclose genuine hackathon-period expenses, including marketing/customer-acquisition spend even when zero.
-- **Google Cloud billing:** dated cost evidence, not revenue. The 2026-08-02 capture showed US$0.00 current-period spend at that moment; final-period expense still requires reconciliation.
-- **P&L:** calculate only from genuine final revenue and expense records.
-- **Corporate ID:** include only if genuinely available and appropriate for the submission.
+Founder-confirmed final hackathon-period P&L:
 
-Sensitive financial documents should be uploaded through the appropriate submission mechanism rather than committed to this public repository.
+| Field | Final value |
+|---|---:|
+| Commercial revenue | **US$0.00** |
+| Codex / development-tooling expense | **US$150.00** |
+| Google Cloud / hosting / Gemini | **US$0.00** |
+| Marketing & customer acquisition | **US$0.00** |
+| Other claimed expenses | **US$0.00** |
+| **Total expenses** | **US$150.00** |
+| **Net profit/(loss)** | **US$(150.00)** |
 
-## 8. Customer evidence — privacy and truth boundary
+Retain genuine private billing evidence supporting the US$150 Codex expense. Google Cloud credits are not revenue. Proof v1 testnet USDC is not revenue.
 
-Use only real customer/tester contact information, testimonials, or feedback that actually exists and is appropriate to submit. Do not invent customers or testimonials. Do not commit private customer phone numbers, email addresses, bank records, or other sensitive evidence to this public repository.
+## 8. Customer evidence — transparent final status
 
-## 9. Narrative — drafted
+| Field | Final status |
+|---|---|
+| Paying commercial customers | **0** |
+| Confirmed external testers/users available as submission evidence | **0** |
+| Testimonials | **None claimed** |
 
-An evidence-grounded narrative draft is now available at [`XPRIZE_SUBMISSION_NARRATIVE.md`](XPRIZE_SUBMISSION_NARRATIVE.md). It covers:
+LAFRYHI AI Radar is in its initial production and validation stage. Internal operator executions, Gemini runs, Decision Briefs and Proof v1 activity are product evidence and are not relabeled as customer traction.
 
-- day-to-day AI use;
-- Gemini versus deterministic software versus human responsibilities;
-- governed execution and Proof v1;
-- jobs/economic opportunities beyond the founder;
-- Small Business Services impact;
-- truthful revenue/customer/evidence boundaries.
+## 9. Narrative
 
-Before copying it into Devpost, do a final word-count and form-specific review against the then-current competition requirements.
+Use [`XPRIZE_SUBMISSION_NARRATIVE.md`](XPRIZE_SUBMISSION_NARRATIVE.md) for the required 500–1000 word narrative. It covers day-to-day AI use, human-versus-AI responsibilities, economic opportunity, category impact, Proof v1, and evidence integrity.
 
-## 10. Repository and final freeze checklist
+## 10. Final freeze checklist
 
 Before the Devpost deadline:
 
-- [ ] Confirm the repository contains all necessary source code.
-- [ ] Confirm judge access requirements are satisfied.
-- [ ] Re-confirm the live product URL.
-- [ ] Re-confirm the final public demo video is playable and under three minutes.
-- [x] Prepare a 500–1000 word evidence-grounded narrative draft.
-- [ ] Reconcile genuine revenue evidence / genuine zero revenue as applicable.
-- [ ] Reconcile genuine P&L and hackathon-period expenses, including marketing/customer-acquisition spend even if zero.
-- [ ] Select/refresh production evidence: agent execution logs, API usage, dashboards and screenshots.
-- [ ] Provide genuine customer evidence if available; do not fabricate missing evidence.
+- [ ] Re-open the live product and confirm the judge-accessible path works.
+- [ ] Confirm final video `EW3NWJQ9Cko` is Public/playable and under three minutes.
+- [ ] Confirm repository contains all necessary source code and required judge access.
+- [x] Prepare the 500–1000 word evidence-grounded narrative.
+- [x] Record commercial revenue as US$0.00.
+- [x] Record final P&L: US$0 revenue / US$150 expenses / US$150 net loss.
+- [x] Record marketing/customer-acquisition spend as US$0.00.
+- [x] Keep Proof v1 0.01 USDC prominent as testnet technical evidence, not revenue.
+- [x] Report customer evidence transparently: 0 customers / 0 confirmed external testers / no testimonials.
+- [ ] Preserve genuine private Codex billing evidence.
+- [ ] Select/upload final product-running evidence required by the Devpost form.
+- [ ] Resolve corporate ID only if applicable.
 - [ ] Re-open every submitted link from a logged-out/private browser where possible.
-- [ ] After the deadline, do not edit the repository, replace the video, or change submission materials until the competition permits it.
+- [ ] After the deadline, do not edit repository, replace video, or change submission materials until competition rules permit it.
 
 ## 11. Historical-document warning
 
-This repository preserves historical Phase 1 and sprint documents for engineering traceability. Some early documents correctly stated at that earlier time that deployment or production usage had not yet occurred. Those statements are historical snapshots and must not be used to characterize the later production state. For submission status, prefer the dated production evidence record and this final index.
+The repository preserves historical Phase 1 and sprint documents for engineering traceability. Early statements that deployment had not yet occurred describe their historical phase only. For submission status, prefer the dated production evidence record and this final index.
 
 ## Evidence policy
 
-**No fabricated evidence. No inflated claims. No conversion of testnet activity into revenue. No private customer data committed to the public repository.**
+**No fabricated evidence. No inflated claims. No conversion of testnet activity into revenue. No private customer or financial data committed to the public repository.**
